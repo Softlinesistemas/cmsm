@@ -6,7 +6,7 @@ exports.up = function(knex) {
       table.integer('QtdCadeiras').notNullable();
       table.string('Predio', 10);
       table.string('Andar', 10);
-      table.char('PortadorNec', 1);
+      table.string('PortadorNec', 1);
     })
 
     .createTable('Funcao', function(table) {
@@ -34,30 +34,30 @@ exports.up = function(knex) {
       table.string('HoraCad', 5).notNullable();
       table.string('CPF', 12).notNullable();
       table.dateTime('Nasc');
-      table.char('Sexo', 1);
+      table.string('Sexo', 1);
       table.string('Email', 100);
       table.string('Cep', 9);
       table.string('Endereco', 60);
       table.string('Complemento', 30);
       table.string('Bairro', 30);
       table.string('Cidade', 30);
-      table.char('UF', 2);
+      table.string('UF', 2);
       // Cotação até 10 colunas
       for (let i = 1; i <= 10; i++) {
         table.integer(`CodCot${i}`);
       }
-      table.char('PortadorNec', 1);
-      table.char('AtendimentoEsp', 1);
+      table.string('PortadorNec', 1);
+      table.string('AtendimentoEsp', 1);
       table.string('Responsavel', 100);
       table.string('CPFResp', 12);
       table.dateTime('NascResp');
-      table.char('SexoResp', 1);
+      table.string('SexoResp', 1);
       table.string('CepResp', 9);
       table.string('EnderecoResp', 60);
       table.string('ComplementoResp', 30);
       table.string('BairroResp', 30);
       table.string('CidadeResp', 30);
-      table.char('UFResp', 2);
+      table.string('UFResp', 2);
       table.string('ProfissaoResp', 100);
       table.string('EmailResp', 100);
       table.string('TelResp', 14);
@@ -77,7 +77,7 @@ exports.up = function(knex) {
       table.string('Status', 20);
       table.string('CaminhoResposta', 100);
       table.string('CaminhoRedacao', 100);
-      table.char('RevisaoGabarito', 1);
+      table.string('RevisaoGabarito', 1);
       table.date('DataImportacao');
       table.string('HoraImportacao', 5);
       table.integer('CodUsuImportacao');
@@ -94,7 +94,7 @@ exports.up = function(knex) {
     .createTable('Senha', function(table) {
       table.integer('CodUsu').notNullable().primary();
       table.string('Usuario', 20).notNullable();
-      table.char('ADM', 1).notNullable();
+      table.string('ADM', 1);
       table.dateTime('DataCad').notNullable();
       table.string('HoraCad', 5).notNullable();
 
