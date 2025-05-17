@@ -1,0 +1,106 @@
+CREATE TABLE Sala (
+    CodSala         INT           NOT NULL PRIMARY KEY,
+    Sala            VARCHAR(5)    NOT NULL,
+    QtdCadeiras     INT           NOT NULL,
+    Predio          VARCHAR(10)   NULL,
+    Andar           VARCHAR(10)   NULL,
+    PortadorNec     CHAR(1)       NULL  -- 'X' se necessário
+);
+
+CREATE TABLE Candidato (
+    CodIns              INT            NOT NULL PRIMARY KEY,   -- inicia em 10000
+    Nome                VARCHAR(100)   NOT NULL,
+    Seletivo            VARCHAR(10)    NOT NULL,
+    DataCad             DATETIME       NOT NULL,
+    HoraCad             CHAR(5)        NOT NULL,               -- 'HH:MM'
+    CPF                 VARCHAR(12)    NOT NULL,
+    Nasc                DATETIME       NULL,
+    Sexo                CHAR(1)        NULL,                   -- 'M' ou 'F'
+    Email               VARCHAR(100)   NULL,
+    Cep                 VARCHAR(9)     NULL,
+    Endereco            VARCHAR(60)    NULL,
+    Complemento         VARCHAR(30)    NULL,
+    Bairro              VARCHAR(30)    NULL,
+    Cidade              VARCHAR(30)    NULL,
+    UF                  CHAR(2)        NULL,
+    CodCot1             INT            NULL,
+    CodCot2             INT            NULL,
+    CodCot3             INT            NULL,
+    CodCot4             INT            NULL,
+    CodCot5             INT            NULL,
+    CodCot6             INT            NULL,
+    CodCot7             INT            NULL,
+    CodCot8             INT            NULL,
+    CodCot9             INT            NULL,
+    CodCot10            INT            NULL,
+    PortadorNec         CHAR(1)        NULL,                   -- 'X'
+    AtendimentoEsp      CHAR(1)        NULL,                   -- 'X'
+    Responsavel         VARCHAR(100)   NULL,
+    CPFResp             VARCHAR(12)    NULL,
+    NascResp            DATETIME       NULL,
+    SexoResp            CHAR(1)        NULL,
+    CepResp             VARCHAR(9)     NULL,
+    EnderecoResp        VARCHAR(60)    NULL,
+    ComplementoResp     VARCHAR(30)    NULL,
+    BairroResp          VARCHAR(30)    NULL,
+    CidadeResp          VARCHAR(30)    NULL,
+    UFResp              CHAR(2)        NULL,
+    ProfissaoResp       VARCHAR(100)   NULL,
+    EmailResp           VARCHAR(100)   NULL,
+    TelResp             VARCHAR(14)    NULL,
+    Parentesco          VARCHAR(20)    NULL,
+    PertenceFA          VARCHAR(20)    NULL,
+    CaminhoFoto         VARCHAR(100)   NULL,
+    CaminhoDoc1         VARCHAR(100)   NULL,
+    CaminhoDoc2         VARCHAR(100)   NULL,
+    RegistroGRU         VARCHAR(100)   NULL,
+    GRUData             DATETIME       NULL,
+    GRUValor            DECIMAL(9,2)   NULL,
+    GRUHora             CHAR(5)        NULL,
+    CodSala             INT            NULL,
+    DataEnsalamento     DATETIME       NULL,
+    HoraEnsalamento     CHAR(6)        NULL,
+    CodUsuEnsalamento   INT            NULL,
+    Status              VARCHAR(20)    NULL,
+    CaminhoResposta     VARCHAR(100)   NULL,
+    CaminhoRedacao      VARCHAR(100)   NULL,
+    RevisaoGabarito     CHAR(1)        NULL,                   -- 'X'
+    DataImportacao      DATE           NULL,
+    HoraImportacao      CHAR(5)        NULL,
+    CodUsuImportacao    INT            NULL,
+    NotaMatematica      DECIMAL(5,2)   NULL,
+    NotaPortugues       DECIMAL(5,2)   NULL,
+    NotaRedacao         VARCHAR(6)     NULL,                   -- 'APTO'/'INAPTO'
+    DataRevisao         DATETIME       NULL,
+    CodUsuRev           INT            NULL,
+    CONSTRAINT FK_Candidato_Sala FOREIGN KEY (CodSala)
+        REFERENCES Sala(CodSala)
+);
+
+CREATE TABLE Senha (
+    CodUsu     INT          NOT NULL PRIMARY KEY,  -- PK e FK para candidato
+    Usuario    VARCHAR(20)  NOT NULL,
+    ADM        CHAR(1)      NOT NULL,              -- flag admin
+    DataCad    DATETIME     NOT NULL,
+    HoraCad    CHAR(5)      NOT NULL,
+    CONSTRAINT FK_Senha_Candidato FOREIGN KEY (CodUsu)
+        REFERENCES Candidato(CodIns)
+);
+
+CREATE TABLE Funcao (
+    ProcessoSel    VARCHAR(20)    NOT NULL PRIMARY KEY,   -- chave natural (identifica o processo seletivo)
+    NascIniEF      DATE           NULL,
+    NascFimEF      DATE           NULL,
+    HoraIniEF      CHAR(5)        NULL,                   -- formato 'HH:MM'
+    HoraFimEF      CHAR(5)        NULL,
+    NascIniEM      DATE           NULL,
+    NascFimEM      DATE           NULL,
+    HoraIniEM      CHAR(5)        NULL,
+    HoraFimEM      CHAR(5)        NULL,
+    ValInscricao   DECIMAL(9,2)   NULL,                   -- até 999.999,99
+    GRUDataFim     DATE           NULL,
+    GRUHoraFim     CHAR(5)        NULL,
+    NotaMinMat     DECIMAL(5,2)   NULL,
+    NotaMinPor     DECIMAL(5,2)   NULL
+);
+
