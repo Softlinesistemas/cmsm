@@ -1,9 +1,10 @@
 'use client'
 
-import Formulario from '@/app/formulario/page';
-import Link from 'next/link';
+import LoginAdm from '@/app/LoginAdm/page';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
+  const router = useRouter()
   return (
     <div className="w-full">
       {/* Faixa camuflada */}
@@ -19,11 +20,11 @@ export default function Header() {
             </h1>
           </div>
 
-          <Link href="/formulario" className="mt-4 sm:mt-0">
-            <button className="bg-blue-900 text-white px-6 py-2 rounded-full hover:bg-yellow-600 transition" onClick={Formulario}>
+          
+            <button className="bg-blue-900 text-white px-6 py-2 rounded-full hover:bg-yellow-600 transition" onClick={() => router.push("/LoginAdm")}>
               ACOMPANHAMENTO
             </button>
-          </Link>
+          
         </div>
       </header>
     </div>

@@ -8,10 +8,10 @@ const Footer: React.FC = () => {
   const router = useRouter()
   return (
     <footer className="w-full bg-blue-900 text-white flex flex-col">
-      {/* Container principal com flex e espaçamento interno */}
+      {/* Container principal com flex e espaçamento interno
       <div className="flex flex-col md:flex-row justify-between items-start px-6 py-4">
         {/* Bloco do Mapa e endereço */}
-        <div className="flex items-start">
+        {/* <div className="flex items-start">
           <iframe
             title="Mapa"
             width="240"
@@ -27,30 +27,30 @@ const Footer: React.FC = () => {
             <p>Rua Radialista Osvaldo Nobre, Nº 132 - Juscelino Kubitschek</p>
             <p>Santa Maria - RS, CEP: 97035-000</p>
           </div>
-        </div>
+        </div> */}
 
         {/* Bloco Institucional */}
-        <div className="text-sm mt-4 md:mt-0 md:ml-6">
+        {/* <div className="text-sm mt-4 md:mt-0 md:ml-6">
           <p className="font-bold mb-1">Institucional</p>
           <ul>
             <li>Histórico da OM</li>
             <li>Legislação</li>
             <li>Projeto Pedagógico</li>
           </ul>
-        </div>
+        </div> */}
 
         {/* Bloco Contato */}
-        <div className="text-sm mt-4 md:mt-0 md:ml-6">
+        {/* <div className="text-sm mt-4 md:mt-0 md:ml-6">
           <p className="font-bold mb-1">Contato</p>
           <ul>
             <li>Central de Atendimento</li>
             <li>Fale conosco</li>
             <li>Perguntas frequentes</li>
           </ul>
-        </div>
+        </div> */}
 
         {/* Botão Entrar */}
-        <div className="text-sm mt-4 md:mt-0 md:ml-6 text-center">
+        {/* <div className="text-sm mt-4 md:mt-0 md:ml-6 text-center">
           <p className="font-bold mb-2">INSTITUCIONAL</p>
           <button
             className="bg-yellow-400 text-black font-semibold px-6 py-2 rounded-full hover:bg-yellow-500 transition"
@@ -59,7 +59,7 @@ const Footer: React.FC = () => {
             ENTRAR
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* Linha final separada e fixa abaixo */}
       <div className="bg-blue-950 text-center text-xs py-2 w-full">

@@ -19,6 +19,7 @@ export default function Formulario() {
     endereco: '',
     cidade: '',
     uf: '',
+    numero: '',
     complemento: '',
     necessidades: 'não',
     tipoNecessidade: '',
@@ -70,6 +71,7 @@ export default function Formulario() {
                 endereco_Resp: data.logradouro || '',
                 complemento_Resp: data.complemento || '',
                 cidade_Resp: data.localidade || '',
+                numero_resp: data.numero || '',
                 uf_Resp: data.uf || ''
               }
             : {
@@ -77,6 +79,7 @@ export default function Formulario() {
                 endereco: data.logradouro || '',
                 complemento: data.complemento || '',
                 cidade: data.localidade || '',
+                numero_resp: data.numero || '',
                 uf: data.uf || ''
               })
         }))
@@ -215,6 +218,14 @@ export default function Formulario() {
                 />
                 <input
                   type="text"
+                  name="numero"
+                  placeholder="numero"
+                  value={formData.numero}
+                  onChange={handleChange}
+                  className="col-span-4 md:col-span-2 border border-gray-300 rounded px-3 py-2 text-sm"
+                />
+                <input
+                  type="text"
                   name="complemento"
                   placeholder="Complemento"
                   value={formData.complemento}
@@ -227,7 +238,8 @@ export default function Formulario() {
                   onChange={handleChange}
                   className="col-span-12 sm:col-span-6 md:col-span-3 border border-gray-300 rounded px-3 py-2 text-sm"
                 >
-                  <option value="não">Necessidades Especiais?</option>
+                  <option value="">Necessidades Especiais?</option>
+                  <option value="nao">Não</option>
                   <option value="sim">Sim</option>
                 </select>
                 {formData.necessidades === 'sim' && (
@@ -252,7 +264,8 @@ export default function Formulario() {
                   onChange={handleChange}
                   className="col-span-12 sm:col-span-6 md:col-span-3 border border-gray-300 rounded px-3 py-2 text-sm"
                 >
-                  <option value="não">Atendimento Especial?</option>
+                  <option value="">Atendimento Especial?</option>
+                  <option value="nao">Não</option>
                   <option value="sim">Sim</option>
                 </select>
                 {formData.atendimentoEspecial === 'sim' && (

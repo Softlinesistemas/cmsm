@@ -61,7 +61,11 @@ h4 {
   @apply text-lg;
 }
 option, select{
-  @apply !text-gray-500;
+  @apply !text-gray-700;
+}
+
+input{
+  @apply text-black;
 }
 
 /* -------------------------------
@@ -73,13 +77,19 @@ option, select{
   @apply w-full px-4 py-2 border border-blue-300 rounded-md text-blue-900 bg-white placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
 }
 
+.input{
+  @apply !text-black;
+}
+
 .input-sm {
-  @apply text-sm py-1 px-3;
+  @apply text-sm py-1 px-3 !text-black;
 }
 
 .input-lg {
   @apply text-lg py-3 px-5;
 }
+
+
 
 /* Botões */
 .btn {
@@ -105,7 +115,7 @@ option, select{
 
 /* Títulos de seções */
 .section-title {
-  @apply text-xl font-bold mb-4 text-green-800 dark:text-green-400;
+  @apply text-xl font-bold mb-4 text-blue-800 dark:text-blue-400;
 }
 
 /* Alertas */
@@ -114,7 +124,7 @@ option, select{
 }
 
 .alert-success {
-  @apply bg-green-50 text-green-800 border-green-300;
+  @apply bg-blue-50 text-blue-800 border-blue-300;
 }
 
 .alert-error {

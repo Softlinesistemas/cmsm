@@ -8,13 +8,17 @@ export default function Home() {
   const router = useRouter()
 
   const handleGovLogin = () => {
-    const clientId = process.env.NEXT_PUBLIC_GOV_BR_CLIENT_ID
-    const redirectUri = encodeURIComponent(process.env.NEXT_PUBLIC_GOV_BR_REDIRECT_URI!)
-    const state = encodeURIComponent(window.location.pathname)
-    const scope = encodeURIComponent('openid profile email')
-    const authUrl = `https://sso.gov.br/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`
-    window.location.href = authUrl
-  }
+    const clientId = process.env.NEXT_PUBLIC_GOV_BR_CLIENT_ID;
+    const redirectUri = encodeURIComponent(process.env.NEXT_PUBLIC_GOV_BR_REDIRECT_URI!);
+    const state = encodeURIComponent(window.location.pathname);
+    const scope = encodeURIComponent('openid profile email');
+
+    // Corrigindo a URL de autorização
+    const authUrl = `https://sso.acesso.gov.br/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
+
+    window.location.href = authUrl;
+  };
+
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -68,7 +72,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-          {/* Editais e Documentos */}
+        {/* Editais e Documentos */}
         <section className="max-w-4xl mx-auto px-4 p-10">
           <h2 className="text-center text-blue-900 font-semibold uppercase text-md sm:text-md mb-6">
             Editais e Documentos
