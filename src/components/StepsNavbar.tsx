@@ -21,13 +21,13 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
   const handleClick = (index: number) => {
     switch (index) {
       case 0:
-        router.push('/inscricao/dados')
+        router.push('/acompanhamento')
         break
       case 1:
-        router.push('/inscricao/local')
+        router.push('/local')
         break
       case 2:
-        router.push('/inscricao/pagamento')
+        router.push('/pagamento')
         break
       case 3:
         router.push('/')

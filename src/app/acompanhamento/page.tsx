@@ -210,10 +210,10 @@ export default function Formulario() {
 
           {/* BLOCOS SIM/NAO organizados em grid 2-3 colunas */}
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Necessidades */}
               <div>
-                <label className="text-blue-800 font-medium mb-1 block">Candidato com Deficiência?</label>
+                <label className="text-blue-800 font-medium mb-1 block">Necessidades Especiais?</label>
                 <select name="necessidades" value={formData.necessidades} onChange={handleChange} className={baseInput}>
                   <option value="">Selecione</option>
                   <option value="não">Não</option>
@@ -233,14 +233,14 @@ export default function Formulario() {
 
               {/* Transtorno Funcional */}
               <div>
-                <label className="text-blue-800 font-medium mb-1 block">Transtorno Funcional Especifico?</label>
+                <label className="text-blue-800 font-medium mb-1 block">Transtorno Funcional?</label>
                 <select name="transtornoFuncional" value={formData.transtornoFuncional} onChange={handleChange} className={baseInput}>
                   <option value="">Selecione</option>
                   <option value="não">Não</option>
                   <option value="sim">Sim</option>
                 </select>
                 {formData.transtornoFuncional === 'sim' && (
-                  <div className="mt-2 grid grid-cols-3 gap-2 text-sm text-blue-800">
+                  <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                     {['TDA', 'TDAH', 'TOD', 'DISLEXIA', 'DISCALCULIA', 'OUTROS'].map(tipo => (
                       <label key={tipo} className="inline-flex items-center">
                         <input
@@ -259,7 +259,7 @@ export default function Formulario() {
 
               {/* Atendimento Especial */}
               <div>
-                <label className="text-blue-800 font-medium mb-1 block">Necessita Condições Especifica no dia da prova?</label>
+                <label className="text-blue-800 font-medium mb-1 block">Atendimento Especial?</label>
                 <select name="atendimentoEspecial" value={formData.atendimentoEspecial} onChange={handleChange} className={baseInput}>
                   <option value="">Selecione</option>
                   <option value="não">Não</option>
@@ -295,7 +295,7 @@ export default function Formulario() {
               </div>
 
               {/* Condições na Prova */}
-              {/* <div>
+              <div>
                 <label className="text-blue-800 font-medium mb-1 block">Condições Especiais na Prova?</label>
                 <select
                   name="necessitaCondicoes"
@@ -316,7 +316,7 @@ export default function Formulario() {
                     <option value="acompanhante">Acompanhante</option>
                   </select>
                 )}
-              </div> */}
+              </div>
             </div>
           </div>
 
