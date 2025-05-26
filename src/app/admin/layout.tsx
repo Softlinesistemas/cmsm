@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import SideNav from "@/components/admin/SideNav/SideNav";
-import Footer from "@/components/admin/Footer";
+import Footer from "@/components/Footer";
 import { DashboardProvider }  from "@/context/DashboardContext";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";

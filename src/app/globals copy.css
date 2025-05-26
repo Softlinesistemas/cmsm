@@ -1,0 +1,286 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #5c1c1c;
+  --white: #f8fafc;
+  --disabled: #fcbb5a;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.auth {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+.home-page {
+  width: 100%;
+  height: 100vh;
+  background: #764545;
+  object-fit: cover;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Hover Gradient */
+.gradient-to-r {
+  background-image: linear-gradient(
+    195deg,
+    rgb(92, 28, 28),
+    rgb(115, 21, 21)
+  );
+}
+
+.custom-border {
+  flex-shrink: 0;
+  border-top: 0px solid rgba(0, 0, 0, 0.08);
+  border-right: 0px solid rgba(0, 0, 0, 0.08);
+  border-left: 0px solid rgba(0, 0, 0, 0.08);
+  height: 0.0625rem;
+  margin: 1rem 0px;
+  border-bottom: none;
+  opacity: 0.25;
+  background-color: transparent;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    rgb(255, 255, 255),
+    rgba(255, 255, 255, 0)
+  ) !important;
+}
+
+.hover-bg-gray-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(126, 71, 71);
+}
+
+p {
+  @apply text-primary font-semibold;
+}
+
+button,
+.button {
+  @apply bg-primary px-5 py-1 rounded-l-3xl rounded-r-3xl font-bold text-lg text-white-light mx-auto;
+}
+
+.button-left {
+  @apply bg-primary px-5 py-1 rounded-l-3xl rounded-r-3xl font-bold text-lg text-white-light ml-auto;
+}
+
+select {
+  @apply border-primary border-2 rounded-sm px-4 py-[0.563rem] font-[600] text-lg bg-white-medium text-primary sm:w-full w-[396.56px];
+}
+
+.select {
+  appearance: none; /* Remove a aparência padrão da seta */
+  -webkit-appearance: none; /* Remover no Safari */
+  -moz-appearance: none; /* Remover no Firefox */
+  background: url('../../public/icon/arrowDown.svg') no-repeat; /* Caminho para a sua seta */
+  background-position: calc(100% - 13px) center; /* Reposiciona a seta */
+  background-color: #EAEAEA;
+  background-size: 20px; /* Tamanho da seta */
+}
+
+.select::-ms-expand {
+  display: none; /* Esconde a seta padrão no IE */
+}
+
+option {
+  @apply bg-white-light text-black-all;
+}
+
+input {
+  @apply border-primary border-2 rounded-sm px-4 py-2 text-lg bg-transparent sm:w-full w-[396.56px];
+}
+
+.input-placeholder::placeholder {
+  font-size: 16px;
+  font-weight: normal;
+  color: #5b5b5b;
+  opacity: 1;
+}
+
+/* Text Area */
+textarea {
+  @apply border-primary border-2 px-4 py-2 text-lg bg-[#FFFFFF] w-80 rounded-md resize-none;
+}
+
+textarea:focus,
+select:focus {
+  @apply outline border-2;
+}
+
+/* Input type radio */
+input[type="radio"]:after {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  background-color: #535353;
+  content: "";
+  display: inline-block;
+  visibility: visible;
+  border: 3px solid white;
+}
+
+input[type="radio"]:checked:after {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  background-color: var(--primary);
+  content: "";
+  display: inline-block;
+  visibility: visible;
+  border: 3px solid white;
+}
+
+input[type='file'],
+input[type='file']::-webkit-file-upload-button {
+  cursor: pointer;
+}
+
+h1 {
+  @apply text-primary font-semibold text-2xl;
+}
+
+/* Carousel */
+.carousel {
+  background: rgb(92, 28, 28);
+}
+
+.swiper-button-next {
+  display: none !important;
+}
+
+.swiper-button-prev {
+  display: none !important;
+}
+
+.swiper-pagination-bullet {
+  opacity: 1 !important;
+  background: #ffffff !important;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1 !important;
+  background: #2e2e2e !important;
+}
+
+/* Blockquote */
+blockquote {
+  background: #ececec;
+  border-left: 10px solid #ccc;
+  padding: 0.5em 10px;
+  quotes: none;
+}
+
+blockquote span {
+  display: inline;
+  color: #7e7e7e;
+}
+
+/* React Calendar */
+.rdp-range_end .rdp-day_button {
+  background-color: var(--primary) !important;
+}
+
+.rdp-range_start .rdp-day_button {
+  background-color: var(--primary) !important;
+}
+
+.rdp-range_start {
+  background: #5c1c1c36 !important;
+  border-top-left-radius: 999px;
+  border-bottom-left-radius: 999px;
+}
+
+.rdp-range_end {
+  background: #5c1c1c36 !important;
+  border-top-right-radius: 999px;
+  border-bottom-right-radius: 999px;
+}
+
+.rdp-selected .rdp-day_button {
+  border: #5c1c1c36 !important;
+}
+
+.rdp-range_middle {
+  background-color: #5c1c1c36 !important;
+}
+
+.rdp-today:not(.rdp-outside) {
+  color: #731515 !important;
+}
+
+.rdp-chevron {
+  fill: var(--primary) !important;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.overflowAnywhere{
+  overflow-wrap: anywhere;
+}
+
+.css-15lsz6c-indicatorContainer:hover {
+  width: 33px  !important;
+  color: #000000;
+  padding: 0 16px 0 0 !important;
+}
+
+.css-15lsz6c-indicatorContainer {
+  width: 33px  !important;
+  color: #000000;
+  padding: 0 16px 0 0 !important;
+}
+
+.css-1xc3v61-indicatorContainer{
+  width: 33px  !important;
+  padding: 0 16px 0 0 !important;
+}
+
+.input {
+  @apply border rounded p-2 w-full;
+}
+
