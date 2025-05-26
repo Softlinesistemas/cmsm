@@ -63,7 +63,7 @@ export default function Sidebar() {
           PROCESSO SELETIVO
         </div>
         <button
-          onClick={() => router.push('/inscricao/configuracoes')}
+          onClick={() => router.push('/configuracoes')}
           className="text-left py-2 px-4 hover:bg-blue-700"
         >
           CONFIGURAÇÕES
