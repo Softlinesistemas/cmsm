@@ -30,7 +30,7 @@ export async function GET(request: NextRequest, { params }: { params: { zipcode:
     });
 
     
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
     const { Estado: empState, Cidade: empCity, Endereco: empAddress, Cep: empZipCcode, Idioma: country } = await db("Empresa").first();
 
     console.log(empZipCcode, empState, empCity, empAddress, params.zipcode, toState)

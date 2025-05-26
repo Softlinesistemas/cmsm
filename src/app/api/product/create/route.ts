@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     uploadedPath = result.fileContents[0];
   }
 
-  const db = getDBConnection(dbConfig(String(token.email)));
+  const db = getDBConnection(dbConfig());
 
   const result = await db("Produto").max("CodPro as maxCodPro").first();
   const nextCodPro = result?.maxCodPro + 1;

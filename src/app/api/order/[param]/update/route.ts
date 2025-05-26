@@ -40,7 +40,7 @@ export async function PUT(request: NextRequest, { params }: { params: { param: s
       complement,
     } = body;
 
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
 
     const result = await db.transaction(async trx => {
       

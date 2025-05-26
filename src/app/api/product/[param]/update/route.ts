@@ -36,7 +36,7 @@ export async function PUT(request: NextRequest, { params }: { params: { param: s
     const {products } = body;
     const produtosList = Array.isArray(products) ? products : [];
 
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
 
     await db("Requisi1").where("Lanc", Lanc).update(resetPayload);
 

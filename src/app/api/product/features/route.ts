@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   let db = null; 
   try { 
 
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
 
     const features = await db("Cor").select("Cor", "Chave", "Componente", "CodCor");      
 

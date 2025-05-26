@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       products: produtosList
     } = body;
 
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
 
     const result = await db.transaction(async trx => {
       const shippingAddress = await trx("Cliente_Entrega").where({Endereco: address, Numero: number}).select("Lanc").first();

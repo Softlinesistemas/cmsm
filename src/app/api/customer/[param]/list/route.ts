@@ -40,7 +40,7 @@ export async function GET(
     const searchParam = decodeURIComponent(params.param);
     const isNumeric = /^\d+$/.test(searchParam);
 
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
 
     // --- tipos ---
     interface Cliente {

@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const allowedSortFields = ["CodCli", "Cliente", "Sobrenome", "Cpf", "Cep"];
     const validatedSortBy = allowedSortFields.includes(sortBy) ? sortBy : "CodCli";
 
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
 
     // Filtro para busca
     const baseQuery = db("Clientes")

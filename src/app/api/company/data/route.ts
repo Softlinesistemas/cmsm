@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 
   let db = null;
   try {
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
 
     const company = await db("Empresa")
       .select(

@@ -16,7 +16,7 @@ export async function GET(request: NextRequest, { params }: { params: { param: s
     const searchParam = decodeURIComponent(params.param);
     const isNumeric = /^\d+$/.test(searchParam);
 
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
 
     const query = db("Clientes").select("Cliente", "CodCli", "Sobrenome", "Cpf", "Cep", "Mes_Nasc", "Dia_Nasc", "Ano_Nasc", "Endereco", "Estado", "Cidade", "ComplementoEndereco", "Telefone", "Tel", "Tel2", "EMail", "EMail2", "CodSeg", "RedeSocial", "Cargo", "Departamento", "Complemento");
 

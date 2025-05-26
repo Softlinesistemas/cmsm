@@ -16,7 +16,7 @@ export async function GET(
   }
 
   let db = null;
-  db = getDBConnection(dbConfig(String(token.email)));
+  db = getDBConnection(dbConfig());
   try {
     const id = params.param;
 

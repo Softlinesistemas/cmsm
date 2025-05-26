@@ -64,7 +64,7 @@ export async function PUT(request: NextRequest, { params }: { params: { param: s
   };
 
   const CodPro = Number(decodeURIComponent(params.param));
-  const db = getDBConnection(dbConfig(String(token.email)));
+  const db = getDBConnection(dbConfig());
   const updated = await db("Produto")
     .where({ CodPro })
     .update(updatePayload);

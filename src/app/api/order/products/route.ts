@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
 
   let db = null;
   try {
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
 
     // 1) requisição principal
     const requisi = await db("Requisi as rq")

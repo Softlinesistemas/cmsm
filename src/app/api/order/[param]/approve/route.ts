@@ -21,7 +21,7 @@ export async function PUT(request: NextRequest, { params }: { params: { param: s
       return NextResponse.json({ message: "Invalid order ID." }, { status: 400 });
     }
 
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
     console.log(orderId)
     await db("Requisi")
         .where({ Pedido: orderId })

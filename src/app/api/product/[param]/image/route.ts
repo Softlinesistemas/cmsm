@@ -18,7 +18,7 @@ export async function PUT(request: NextRequest, { params }: { params: { param: s
     return NextResponse.json({ message: "No valid image file provided." }, { status: 400 });
   }
 
-  const db = getDBConnection(dbConfig(String(token.email)));
+  const db = getDBConnection(dbConfig());
 
   try {
     const result = await uploadImagesEdge([file]);

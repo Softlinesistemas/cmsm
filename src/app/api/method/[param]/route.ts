@@ -21,7 +21,7 @@ export async function PUT(request: NextRequest, { params }: { params: { param: s
       return NextResponse.json({ message: "Invalid method ID." }, { status: 400 });
     }
 
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
 
     const method = await db("Forma")
       .select("CodForma", "Forma", "Indice")

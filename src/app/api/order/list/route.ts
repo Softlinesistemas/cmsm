@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     
     const validatedSortBy = allowedSortFields.includes(sortBy) ? sortBy : "Pedido";
 
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
     console.log(searchQuery)
     const baseQuery = db("Requisi as r")
       .leftJoin("Clientes as c", "r.CodInd", "c.CodCli")

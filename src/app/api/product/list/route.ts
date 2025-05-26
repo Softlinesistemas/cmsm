@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const allowedSortFields = ["CodPro", "Produto", "Categoria", "Unidade", "Preco1", "Referencia", "Estoque1", "Data"];
     const validatedSortBy = allowedSortFields.includes(sortBy) ? sortBy : "CodPro";
 
-    db = getDBConnection(dbConfig(String(token.email)));
+    db = getDBConnection(dbConfig());
 
     const baseQuery = db("Produto")
       .where(function () {
