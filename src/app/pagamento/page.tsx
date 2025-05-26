@@ -1,8 +1,8 @@
 'use client'
 
-import Header from '../../../components/Header'
-import Footer from '../../../components/Footer'
-import StepsNavbar from '../../../components/StepsNavbar'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import StepsNavbar from '@/components/StepsNavbar'
 import { useState } from 'react'
 
 export default function PagamentoPage() {
@@ -70,7 +70,7 @@ export default function PagamentoPage() {
       </main>
       <Footer />
     </div>
-)
+)};
 
 // --- Helpers usados acima ---
 function LabelField({ label, value, full=false }:{label:string;value:string;full?:boolean}) {
