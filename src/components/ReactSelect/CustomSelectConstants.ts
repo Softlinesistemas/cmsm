@@ -55,4 +55,4 @@ export const colorStyles: StylesConfig = {
     ...base,
     border: '1px dotted #F9AAAA', // Borda pontilhada para remoção
   }),
-};
+}; 
