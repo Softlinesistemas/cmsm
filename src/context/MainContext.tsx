@@ -24,7 +24,7 @@ interface Props {
   setReorderedStates: (value: boolean) => void;
 }
 
-const LOCAL_STORAGE_KEY = "appSettings";
+const LOCAL_STORAGE_KEY = "appSettings"; 
 
 export const MainContext = createContext({} as Props);
 
