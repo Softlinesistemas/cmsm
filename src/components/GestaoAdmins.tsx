@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { FaEdit, FaTrash, FaPlus, FaUserSlash } from 'react-icons/fa';
 
-const modulosDisponiveis = ['Admin', 'Financeiro', 'Dashboard'];
+const modulosDisponiveis: string[] = ['Admin', 'Financeiro', 'Dashboard'];
 
 const usuariosIniciais = [
   {
@@ -42,14 +42,14 @@ export default function GestaoUsuarios() {
   const [novoUsuario, setNovoUsuario] = useState({
     nome: '',
     cpf: '',
-    modulos: [],
+    modulos: [] as string[],
   });
 
   const toggleModulo = (modulo: string) => {
     setNovoUsuario((prev: any) => ({
       ...prev,
       modulos: prev.modulos.includes(modulo)
-        ? prev.modulos.filter((m) => m !== modulo)
+        ? prev.modulos.filter((m: any) => m !== modulo)
         : [...prev.modulos, modulo],
     }));
   };
@@ -188,12 +188,12 @@ export default function GestaoUsuarios() {
             <div>
               <h4 className="font-semibold text-gray-700">Módulos</h4>
               <div className="flex flex-wrap gap-2">
-                {modulosDisponiveis.map((m) => (
+                {modulosDisponiveis?.map((m: string) => (
                   <button
                     key={m}
                     onClick={() => toggleModulo(m)}
                     className={`px-3 py-1 rounded border ${
-                      novoUsuario.modulos.includes(m)
+                      novoUsuario?.modulos?.includes(m)
                         ? 'bg-blue-600 text-white'
                         : 'bg-white text-gray-700'
                     }`}
