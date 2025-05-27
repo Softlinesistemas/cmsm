@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { EditalProvider } from "../context/EditalContext";
 
 const geistSans = Inter({
   variable: "--font-geist-sans",
@@ -27,8 +28,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <EditalProvider>
+          {children}
+        </EditalProvider>
       </body>
+
     </html>
   );
 }

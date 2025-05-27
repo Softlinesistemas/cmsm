@@ -150,11 +150,11 @@ export default function Formulario() {
             </div>
             <div className="col-span-12 md:col-span-7">
               <label className="text-blue-800 font-medium mb-1 block">Nome do Candidato</label>
-              <input name="nome" value={formData.nome} onChange={handleChange} required className={baseInput} />
+              <input name="nome" value={formData.nome} onChange={handleChange} required className={baseInput}  readOnly/>
             </div>
             <div className="col-span-12 md:col-span-3">
               <label className="text-blue-800 font-medium mb-1 block">Nº Inscrição</label>
-              <input name="numeroInscricao" value={formData.numeroInscricao} onChange={handleChange} className={baseInput} />
+              <input name="numeroInscricao" value={formData.numeroInscricao} onChange={handleChange} className={baseInput}  readOnly/>
             </div>
           </div>
 
@@ -165,11 +165,11 @@ export default function Formulario() {
               {/* Linha 1 */}
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">CPF</label>
-                <input name="cpf" value={formData.cpf} onChange={handleChange} required className={baseInput} />
+                <input name="cpf" value={formData.cpf} onChange={handleChange} required className={baseInput}  readOnly/>
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Data de Nasc.</label>
-                <input type="date" name="dataNascimento" value={formData.dataNascimento} onChange={handleChange} className={baseInput} />
+                <input type="date" name="dataNascimento" value={formData.dataNascimento} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Sexo</label>
@@ -182,28 +182,28 @@ export default function Formulario() {
               {/* Linha 2 */}
               <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">CEP</label>
-                <input name="cep" value={formData.cep} onChange={handleChange} onBlur={() => fetchAddress(formData.cep)} className={baseInput} />
+                <input name="cep" value={formData.cep} onChange={handleChange} onBlur={() => fetchAddress(formData.cep)} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">UF</label>
-                <input name="uf" value={formData.uf} onChange={handleChange} className={baseInput} />
+                <input name="uf" value={formData.uf} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-12 md:col-span-6">
                 <label className="block text-blue-800 font-medium mb-1">Cidade</label>
-                <input name="cidade" value={formData.cidade} onChange={handleChange} className={baseInput} />
+                <input name="cidade" value={formData.cidade} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               {/* Linha 3 */}
               <div className="col-span-12 md:col-span-8">
                 <label className="block text-blue-800 font-medium mb-1">Endereço</label>
-                <input name="endereco" value={formData.endereco} onChange={handleChange} className={baseInput} />
+                <input name="endereco" value={formData.endereco} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-6 md:col-span-2">
                 <label className="block text-blue-800 font-medium mb-1">Número</label>
-                <input name="numero" value={formData.numero} onChange={handleChange} className={baseInput} />
+                <input name="numero" value={formData.numero} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-6 md:col-span-2">
                 <label className="block text-blue-800 font-medium mb-1">Complemento</label>
-                <input name="complemento" value={formData.complemento} onChange={handleChange} className={baseInput} />
+                <input name="complemento" value={formData.complemento} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
             </div>
           </div>
@@ -341,15 +341,15 @@ export default function Formulario() {
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-12 md:col-span-6">
                 <label className="block text-blue-800 font-medium mb-1">Nome</label>
-                <input name="nomeResponsavel" value={formData.nomeResponsavel} onChange={handleChange} className={baseInput} />
+                <input name="nomeResponsavel" value={formData.nomeResponsavel} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-12 md:col-span-6">
                 <label className="block text-blue-800 font-medium mb-1">CPF</label>
-                <input name="cpfResponsavel" value={formData.cpfResponsavel} onChange={handleChange} className={baseInput} />
+                <input name="cpfResponsavel" value={formData.cpfResponsavel} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Data de Nasc.</label>
-                <input type="date" name="dataNascimentoResponsavel" value={formData.dataNascimentoResponsavel} onChange={handleChange} className={baseInput} />
+                <input type="date" name="dataNascimentoResponsavel" value={formData.dataNascimentoResponsavel} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Sexo</label>
@@ -361,38 +361,38 @@ export default function Formulario() {
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Profissão</label>
-                <input name="profissao" value={formData.profissao} onChange={handleChange} className={baseInput} />
+                <input name="profissao" value={formData.profissao} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
 
               {/* Endereço Responsável */}
               <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">CEP</label>
-                <input name="cep_Resp" value={formData.cep_Resp} onChange={handleChange} onBlur={() => fetchAddress(formData.cep_Resp, true)} className={baseInput} />
+                <input name="cep_Resp" value={formData.cep_Resp} onChange={handleChange} onBlur={() => fetchAddress(formData.cep_Resp, true)} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">UF</label>
-                <input name="uf_Resp" value={formData.uf_Resp} onChange={handleChange} className={baseInput} />
+                <input name="uf_Resp" value={formData.uf_Resp} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-12 md:col-span-6">
                 <label className="block text-blue-800 font-medium mb-1">Cidade</label>
-                <input name="cidade_Resp" value={formData.cidade_Resp} onChange={handleChange} className={baseInput} />
+                <input name="cidade_Resp" value={formData.cidade_Resp} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-12 md:col-span-8">
                 <label className="block text-blue-800 font-medium mb-1">Endereço</label>
-                <input name="endereco_Resp" value={formData.endereco_Resp} onChange={handleChange} className={baseInput} />
+                <input name="endereco_Resp" value={formData.endereco_Resp} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-6 md:col-span-2">
                 <label className="block text-blue-800 font-medium mb-1">Número</label>
-                <input name="numero_Resp" value={formData.numero_Resp} onChange={handleChange} className={baseInput} />
+                <input name="numero_Resp" value={formData.numero_Resp} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-6 md:col-span-2">
                 <label className="block text-blue-800 font-medium mb-1">Complemento</label>
-                <input name="complemento_Resp" value={formData.complemento_Resp} onChange={handleChange} className={baseInput} />
+                <input name="complemento_Resp" value={formData.complemento_Resp} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
 
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Celular</label>
-                <input type="tel" name="celular" value={formData.celular} onChange={handleChange} className={baseInput} />
+                <input type="tel" name="celular" value={formData.celular} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Parentesco</label>
@@ -406,7 +406,7 @@ export default function Formulario() {
               {/* Forças Armadas */}
               <div className="col-span-12 md:col-span-4">
                 <label className="text-blue-800 font-medium mb-1 block">Forças Armadas?</label>
-                <select name="forcas" value={formData.forcas} onChange={handleChange} className={baseInput}>
+                <select name="forcas" value={formData.forcas} onChange={handleChange} className={baseInput} >
                   <option value="">Selecione</option>
                   <option value="não">Não</option>
                   <option value="sim">Sim</option>
@@ -423,12 +423,12 @@ export default function Formulario() {
 
 
               <div className="col-span-12 md:col-span-4">
-                <label className="block text-blue-800 font-medium mb-1">Email Resp.</label>
-                <input type="email" name="emailResponsavel" value={formData.emailResponsavel} onChange={handleChange} className={baseInput} />
+                <label className="block text-blue-800 font-medium mb-1">Email Responsavel</label>
+                <input type="email" name="emailResponsavel" value={formData.emailResponsavel} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Email Candidato</label>
-                <input type="email" name="emailCandidato" value={formData.emailCandidato} onChange={handleChange} className={baseInput} />
+                <input type="email" name="emailCandidato" value={formData.emailCandidato} onChange={handleChange} className={baseInput}  readOnly/>
               </div>
             </div>
           </div>

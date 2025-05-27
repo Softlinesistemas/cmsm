@@ -17,7 +17,7 @@ export default function Sidebar() {
       <nav className="flex flex-col mt-2">
         {/* Sessão 1 */}
         <button
-          onClick={() => router.push('/admin')}
+          onClick={() => router.push('/dashboardAdmin')}
           className="text-left py-2 px-4 hover:bg-blue-700"
         >
           ADMINISTRAÇÃO

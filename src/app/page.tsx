@@ -3,9 +3,11 @@
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { useRouter } from 'next/navigation'
+import { useEditais } from "@/context/EditalContext"; 
 
 export default function Home() {
-  const router = useRouter()
+  const router = useRouter();
+  const { editais } = useEditais(); 
 
   const handleGovLogin = () => {
     const clientId = process.env.NEXT_PUBLIC_GOV_BR_CLIENT_ID;
@@ -13,26 +15,21 @@ export default function Home() {
     const state = encodeURIComponent(window.location.pathname);
     const scope = encodeURIComponent('openid profile email');
 
-    // Corrigindo a URL de autorização
     const authUrl = `https://sso.acesso.gov.br/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
 
     window.location.href = authUrl;
   };
-
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <Header />
 
       <main className="flex-grow px-4 py-12">
-        {/* Título principal */}
         <h2 className="text-center text-blue-900 font-semibold uppercase text-md sm:text-md mb-12">
           PROCESSO SELETIVO DE ADMISSÃO AO CMSM 2025/2026
         </h2>
 
-        {/* Três colunas com separadores */}
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-300">
-          {/* COLUNA 1 — VAGAS */}
           <div className="px-6 py-4 flex flex-col items-center">
             <h3 className="font-bold text-lg text-red-900 mb-4">Vagas</h3>
             <div className="space-y-3 w-full">
@@ -47,7 +44,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* COLUNA 2 — PERÍODO DE INSCRIÇÃO */}
           <div className="px-6 py-4 flex flex-col items-center">
             <h3 className="font-bold text-lg text-red-900 mb-4">Período de inscrição</h3>
             <p className="text-green-900 font-semibold text-lg">
@@ -55,7 +51,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* COLUNA 3 — INSCRIÇÕES */}
           <div className="px-6 py-4 flex flex-col items-center">
             <h3 className="font-bold text-lg text-red-900 mb-4">Inscrições</h3>
             <p className="mb-3 text-sm">Fazer inscrição</p>
@@ -72,27 +67,31 @@ export default function Home() {
             </button>
           </div>
         </div>
-        {/* Editais e Documentos */}
+
         <section className="max-w-4xl mx-auto px-4 p-10">
           <h2 className="text-center text-blue-900 font-semibold uppercase text-md sm:text-md mb-6">
             Editais e Documentos
           </h2>
-          <div className="space-y-4">
-            {/* Item 1 - Edital */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow">
-              <a
-                href="/arquivos/edital-01.pdf"
-                download
-                className="bg-blue-900 text-white font-semibold px-4 py-2 rounded hover:bg-blue-800 transition-colors"
-              >
-                Edital 01
-              </a>
-              <p className="mt-2 md:mt-0 md:ml-4 text-sm text-gray-800">
-                Contém todas as regras, critérios e informações oficiais do processo seletivo.
-              </p>
-            </div>
 
-            {/* Item 2 - Cronograma */}
+          <div className="space-y-4">
+            {editais.map(edital => (
+              <div
+                key={edital.id}
+                className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow mb-2"
+              >
+                <a
+                  href={`/arquivos/${edital.titulo.toLowerCase().replace(/ /g, "-")}.pdf`}
+                  download
+                  className="bg-blue-900 text-white font-semibold px-4 py-2 rounded hover:bg-blue-800 transition-colors"
+                >
+                  {edital.titulo}
+                </a>
+                <p className="mt-2 md:mt-0 md:ml-4 text-sm text-gray-800">
+                  {edital.descricao}
+                </p>
+              </div>
+            ))}
+
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow">
               <a
                 href="/arquivos/cronograma.pdf"
@@ -106,7 +105,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Item 3 - Documentos Requeridos */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow">
               <a
                 href="/arquivos/documentos-necessarios.pdf"
@@ -122,7 +120,8 @@ export default function Home() {
           </div>
         </section>
       </main>
+
       <Footer />
     </div>
-  )
+  );
 }

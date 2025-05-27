@@ -1,7 +1,7 @@
 'use client';
 
-import Sidebar from '../../components/Sidebar';
-import Header from '../../components/HeaderAdm';
+import Sidebar from '@/components/Sidebar';
+import Header from '@/components/HeaderAdm';
 import { CalendarDays, Clock, Save } from 'lucide-react';
 import Footer from '@/components/FooterAdm';
 
