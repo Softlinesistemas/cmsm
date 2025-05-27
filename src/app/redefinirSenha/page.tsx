@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Footer from '../../components/Footer';
 import Header from '../../components/HeaderAdm';
@@ -49,46 +49,48 @@ const RedefinirSenha: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-between">
-      <Header />
+    <Suspense fallback={<div>Carregando...</div>}>
+      <div className="min-h-screen bg-white flex flex-col items-center justify-between">
+        <Header />
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-blue-900 rounded-3xl p-8 w-96 flex flex-col space-y-4 mt-12 shadow-xl"
-      >
-        <h2 className="text-white text-xl font-bold text-center">Redefinir Senha</h2>
-
-        <input
-          type="password"
-          placeholder="Nova Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          className="bg-white rounded px-4 py-2 text-sm"
-          required
-        />
-
-        <input
-          type="password"
-          placeholder="Confirmar Senha"
-          value={confirmarSenha}
-          onChange={(e) => setConfirmarSenha(e.target.value)}
-          className="bg-white rounded px-4 py-2 text-sm"
-          required
-        />
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-yellow-400 text-black font-bold py-2 rounded hover:bg-yellow-500 transition disabled:opacity-50"
+        <form
+          onSubmit={handleSubmit}
+          className="bg-blue-900 rounded-3xl p-8 w-96 flex flex-col space-y-4 mt-12 shadow-xl"
         >
-          {loading ? 'Redefinindo...' : 'Redefinir Senha'}
-        </button>
+          <h2 className="text-white text-xl font-bold text-center">Redefinir Senha</h2>
 
-        {mensagem && <p className="text-sm text-center text-white">{mensagem}</p>}
-      </form>
+          <input
+            type="password"
+            placeholder="Nova Senha"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            className="bg-white rounded px-4 py-2 text-sm"
+            required
+          />
 
-      <Footer />
-    </div>
+          <input
+            type="password"
+            placeholder="Confirmar Senha"
+            value={confirmarSenha}
+            onChange={(e) => setConfirmarSenha(e.target.value)}
+            className="bg-white rounded px-4 py-2 text-sm"
+            required
+          />
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-yellow-400 text-black font-bold py-2 rounded hover:bg-yellow-500 transition disabled:opacity-50"
+          >
+            {loading ? 'Redefinindo...' : 'Redefinir Senha'}
+          </button>
+
+          {mensagem && <p className="text-sm text-center text-white">{mensagem}</p>}
+        </form>
+
+        <Footer />
+      </div>
+    </Suspense>
   );
 };
 
