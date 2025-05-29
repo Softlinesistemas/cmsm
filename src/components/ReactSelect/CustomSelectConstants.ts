@@ -3,7 +3,7 @@ import { StylesConfig } from 'react-select';
 export const colorStyles: StylesConfig = {
   option: (provided, state) => ({
     ...provided,
-    borderBottom: '1px solid #E5E7EB', // Borda entre as opções
+    borderBottom: '1px solid #E5E7EB',
     cursor: 'pointer',
     padding: '0.5rem 1rem',
     backgroundColor: state.isSelected
