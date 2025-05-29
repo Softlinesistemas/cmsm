@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Footer from '../../components/FooterAdm';
 import Header from '../../components/HeaderAdm';
@@ -33,7 +33,6 @@ const CadColaborador = () => {
   };
 
  return (
-  <Suspense fallback={<div>Carregando...</div>}>
     <div className="flex flex-col min-h-screen items-center bg-gray-50 justify-between">
       <Header />
 
@@ -122,7 +121,6 @@ const CadColaborador = () => {
 
       <Footer />
     </div>
-  </Suspense>
 );
 }
 export default CadColaborador;

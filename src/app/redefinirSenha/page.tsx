@@ -48,8 +48,7 @@ const RedefinirSenha: React.FC = () => {
     }
   };
 
-  return (
-    <Suspense fallback={<div>Carregando...</div>}>
+  return (    
       <div className="min-h-screen bg-white flex flex-col items-center justify-between">
         <Header />
 
@@ -90,7 +89,6 @@ const RedefinirSenha: React.FC = () => {
 
         <Footer />
       </div>
-    </Suspense>
   );
 };
 
