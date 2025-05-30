@@ -8,7 +8,7 @@ export default function Header() {
   return (
     <div className="w-full">
       {/* Faixa camuflada */}
-      <div className="w-full h-10 bg-blue-900 bg-cover rounded-b-2xl shadow-md" />
+      <div className="w-full h-10 bg-blue-900 bg-cover  shadow-md" />
 
       {/* Conteúdo abaixo da faixa */}
       <header className="w-full z-10 relative px-4 py-4 rounded-2xl   max-w-7xl mx-auto">

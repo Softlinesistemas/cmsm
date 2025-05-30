@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { EditalProvider } from "../context/EditalContext";
+import { MainProvider } from "@/context/MainContext";
 import { Suspense } from 'react';
+import Spinner from "../components/spiner";
 
 const geistSans = Inter({
   variable: "--font-geist-sans",
@@ -30,9 +32,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <EditalProvider>
-          <Suspense fallback={<div>Carregando...</div>}>
-            {children}
-          </Suspense>
+          <MainProvider>
+            <Suspense fallback={<Spinner />}>
+              {children}
+            </Suspense>
+          </MainProvider>
         </EditalProvider>
       </body>
 

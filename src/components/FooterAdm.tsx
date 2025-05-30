@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 const Footer: React.FC = () => {
   const router = useRouter()
   return (
-    <footer className="w-full bg-blue-900 text-white flex flex-col">
+    <footer className="w-full bg-blue-900 text-white flex flex-col mt-8">
       {/* Container principal com flex e espaçamento interno
       <div className="flex flex-col md:flex-row justify-between items-start px-6 py-4">
         {/* Bloco do Mapa e endereço */}

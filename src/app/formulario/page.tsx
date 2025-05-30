@@ -115,7 +115,7 @@ export default function Formulario() {
       <Header />
       <main className="flex-grow px-4 py-8">
         <h2 className="text-2xl font-bold text-center text-blue-800 mb-8">
-          FORMULÁRIO DE INSCRIÇÃO
+          REQUERIMENTO DE INSCRIÇÃO
         </h2>
         <form onSubmit={handleSubmit} className="max-w-4xl mx-auto bg-white shadow rounded-lg p-6 space-y-8">
 

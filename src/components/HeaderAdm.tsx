@@ -3,7 +3,7 @@
 export default function Header() {
   return (
     <div className="w-full flex flex-col items-center justify-center">
-      <div className="w-full h-10 bg-blue-900 bg-cover rounded-b-2xl shadow-md" />
+      <div className="w-full h-10 bg-blue-900 bg-cover shadow-md" />
 
       <header className="w-full z-10 relative px-4 py-6 max-w-7xl mx-auto text-center">
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
