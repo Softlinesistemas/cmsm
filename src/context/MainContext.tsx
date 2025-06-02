@@ -1,6 +1,22 @@
 "use client"
 import React, { createContext, useState, useEffect, useMemo, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import Processo from '@/components/Processo'
+import Inscricoes from '@/components/Inscricoes'
+// import Pagamentos from "@/components/Pagamentos";
+import BaixaPagamentos from '@/components/BaixaPagamentos'
+import UploadArquivos from '@/components/UploadArquivos'
+import Relatorios from '@/components/Relatorios'
+import AvaliacaoRecursos from '@/components/AvaliacaoRecursos'
+import Resultados from '@/components/Resultados'
+import Gabarito from '@/components/Gabarito'
+import CadastroEditais from '@/components/CadastroEditais'
+import Comunicados from '@/components/Comunicados'
+import EmailMassa from '@/components/EmailMassa'
+import GestaoAdmins from '@/components/GestaoAdmins'
+import LogsAcesso from '@/components/LogsAcesso'
+import Backup from '@/components/Backup'
+import Configuracoes from '@/components/Configuracoes'
 
 const LOCAL_STORAGE_KEY = "appSettings"; 
 
@@ -30,13 +46,70 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
 
   const [selectedComponent, setSelectedComponent] = useState('Inscrição');
   const [showSidebar, setShowSidebar] = useState(true);
+  const [Component, setComponent] = useState<ReactNode | undefined>(undefined);
+
+    useEffect(() => {
+    switch (selectedComponent) {
+      case 'Processo':
+        setComponent(<Processo />);
+        break;
+      case 'Inscricoes':
+        setComponent(<Inscricoes />);
+        break;
+      // case 'Pagamentos':
+      //   setComponent(<Pagamentos />);
+      //   break;
+      case 'BaixaPagamentos':
+        setComponent(<BaixaPagamentos />);
+        break;
+      case 'UploadArquivos':
+        setComponent(<UploadArquivos />);
+        break;
+      case 'Relatorios':
+        setComponent(<Relatorios />);
+        break;
+      case 'AvaliacaoRecursos':
+        setComponent(<AvaliacaoRecursos />);
+        break;
+      case 'Resultados':
+        setComponent(<Resultados />);
+        break;
+      case 'Certificados':
+        setComponent(<Gabarito />);
+        break;
+      case 'CadastroEditais':
+        setComponent(<CadastroEditais />);
+        break;
+      case 'Comunicados':
+        setComponent(<Comunicados />);
+        break;
+      case 'EmailMassa':
+        setComponent(<EmailMassa />);
+        break;
+      case 'GestaoAdmins':
+        setComponent(<GestaoAdmins />);
+        break;
+      case 'LogsAcesso':
+        setComponent(<LogsAcesso />);
+        break;
+      case 'Backup':
+        setComponent(<Backup />);
+        break;
+      case 'Configuracoes':
+        setComponent(<Configuracoes />);
+        break;
+      default:
+        setComponent(<div>Selecione um item no menu</div>);
+    }
+  }, [selectedComponent]);
 
   const value = useMemo(
     () => ({
       selectedComponent, setSelectedComponent,
-      showSidebar, setShowSidebar
+      showSidebar, setShowSidebar,
+      Component, setComponent
     }),
-    [selectedComponent, showSidebar]
+    [Component, selectedComponent, showSidebar]
   );
 
   return <MainContext.Provider value={value}>{children}</MainContext.Provider>;

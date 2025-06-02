@@ -73,7 +73,7 @@ export default function PagamentoPage() {
       <StepsNavbar activeStep={2} />
       <main className="flex-grow px-4 py-12">
         <h1 className="text-center text-2xl font-bold text-green-900 mb-2">Pagamento</h1>
-        <h2 className="text-center text-lg text-gray-800 mb-8">Inscrição realizada com sucesso</h2>
+        <h2 className="text-center text-lg text-gray-800 mb-8">Requerimento realizado com sucesso</h2>
 
         <div className="max-w-3xl mx-auto space-y-6 mb-8">
           <LabelField label="Nome do Candidato" value="Raimundo Nonato ... Costa" full />

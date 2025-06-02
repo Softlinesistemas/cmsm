@@ -23,7 +23,7 @@ const Configuracoes = () => {
     <div>
       <h2 className="text-2xl font-bold mb-4">Configurações</h2>
       <div className="mb-4">
-        <label className="inline-flex items-center space-x-2">
+        <label className="inline-flex items-center space-x-2 text-black">
           <input
             type="checkbox"
             checked={config.temaEscuro}
@@ -34,7 +34,7 @@ const Configuracoes = () => {
         </label>
       </div>
       <div>
-        <label className="inline-flex items-center space-x-2">
+        <label className="inline-flex items-center space-x-2 text-black">
           <input
             type="checkbox"
             checked={config.notificacoes}

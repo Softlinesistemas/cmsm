@@ -19,7 +19,7 @@ const LogsAcesso = () => {
     <div className="relative">
       <h2 className="text-2xl font-bold mb-4">Logs de Acesso</h2>
       <table className="w-full table-auto border">
-        <thead className="bg-gray-100">
+        <thead className="bg-gray-100 text-blue-800">
           <tr>
             <th className="border px-4 py-2">ID</th>
             <th className="border px-4 py-2">Usuário</th>
@@ -29,7 +29,7 @@ const LogsAcesso = () => {
         </thead>
         <tbody>
           {logs.map(log => (
-            <tr key={log.id} className="hover:bg-gray-50">
+            <tr key={log.id} className="hover:bg-gray-50 text-black">
               <td className="border px-4 py-2">{log.id}</td>
               <td className="border px-4 py-2">{log.usuario}</td>
               <td className="border px-4 py-2">{log.data}</td>

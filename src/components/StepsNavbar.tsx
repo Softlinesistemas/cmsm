@@ -1,11 +1,10 @@
-// components/StepsNavbar.tsx
 'use client'
 
 import React from 'react'
 import { useRouter } from 'next/navigation'
 
 interface StepsNavbarProps {
-  activeStep: number // 0-based index of the active step
+  activeStep: number 
 }
 
 const steps = [

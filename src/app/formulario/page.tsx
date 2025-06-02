@@ -4,6 +4,7 @@ import Header from '../../components/HeaderAdm'
 import Footer from '../../components/FooterAdm'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { Check } from 'lucide-react'
 
 export default function Formulario() {
   const router = useRouter()
@@ -70,11 +71,26 @@ export default function Formulario() {
     }
   }
 
+  const [checkboxMarcado, setCheckboxMarcado] = useState(false);
+
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log(formData)
-    router.push('/confirmacao')
-  }
+    e.preventDefault();
+
+    // Verifica se o checkbox está marcado
+    if (!checkboxMarcado) {
+      alert(
+        "Por favor, marque a declaração de que não foi excluído por motivo disciplinar."
+      );
+      return; // Impede o envio
+    }
+
+    // Lógica do envio real (já estava no handleSubmit)
+    console.log(formData);
+    router.push('/confirmacao');
+  };
+
+
+
 
   const fetchAddress = async (cep: string, resp = false) => {
     const num = cep.replace(/\D/g, '')
@@ -328,7 +344,7 @@ export default function Formulario() {
             <input
               type="text"
               name="dadosVaga"
-              placeholder="Candidato capacitado para concorrer à vaga do 6º ano"
+              placeholder="Candidato capacitado para realizar o exame intelectual"
               value={formData.dadosVaga}
               onChange={handleChange}
               className="w-full bg-red-800 rounded px-8 py-5 shadown text-md text-center placeholder:text-white text-xl"
@@ -432,14 +448,26 @@ export default function Formulario() {
               </div>
             </div>
           </div>
+          <div className='flex flex-col justify-center items-center'>
+            {/* Checkbox de declaração */}
+            <label className="flex items-center justify-center mb-4 text-red-700">
+              <input
+                type="checkbox"
+                checked={checkboxMarcado}
+                onChange={(e) => setCheckboxMarcado(e.target.checked)}
+                className="mr-2"
+              />
+              Não ter sido excluído, por motivo disciplinar, por qualquer CM
+            </label>
 
-          {/* BOTÃO */}
-          <div className="text-center">
-            <button type="submit" className="bg-blue-800 hover:bg-blue-900 text-white font-semibold py-3 px-8 rounded">
+            {/* Botão de envio */}
+            <button
+              type="submit"
+              className=" bg-blue-800 hover:bg-blue-900 text-white font-semibold py-3 px-8 rounded"
+            >
               ENVIAR
             </button>
           </div>
-
         </form>
       </main>
       <Footer />

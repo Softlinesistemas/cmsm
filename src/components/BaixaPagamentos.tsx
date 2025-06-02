@@ -9,7 +9,7 @@ interface Candidato {
   nome: string;
   cpf: string;
   numeroInscricao?: string; // Só para deferidos
-  status: "Em Análise" | "Deferido" | "Indeferido";
+  status: "Em Análise" | "Deferido" | "Indeferido" | "Isento";
 }
 
 const BaixaPagamentos = () => {
@@ -21,7 +21,7 @@ const BaixaPagamentos = () => {
   ]);
 
   // Estado para filtro
-  const [filtro, setFiltro] = useState<"Todos" | "Deferido" | "Indeferido" | "Em Análise">("Todos");
+  const [filtro, setFiltro] = useState<"Todos" | "Deferido" | "Indeferido" | "Em Análise" | "Isento">("Todos");
 
   // Função para deferir um candidato individualmente
   const deferir = (id: number) => {
@@ -38,6 +38,16 @@ const BaixaPagamentos = () => {
     setCandidatos(candidatos.map(c => {
       if (c.id === id) {
         return { ...c, status: "Indeferido", numeroInscricao: undefined };
+      }
+      return c;
+    }));
+  };
+
+    // Função para indeferir um candidato individualmente
+  const isento = (id: number) => {
+    setCandidatos(candidatos.map(c => {
+      if (c.id === id) {
+        return { ...c, status: "Isento", numeroInscricao: undefined };
       }
       return c;
     }));
@@ -73,6 +83,7 @@ const BaixaPagamentos = () => {
   const totalDeferido = candidatos.filter(c => c.status === "Deferido").length;
   const totalIndeferido = candidatos.filter(c => c.status === "Indeferido").length;
   const totalEmAnalise = candidatos.filter(c => c.status === "Em Análise").length;
+  const totalIsentos = candidatos.filter(c => c.status === "Isento").length;
 
   return (
     <div className="p-4 bg-blue-50 rounded-xl text-black">
@@ -84,13 +95,13 @@ const BaixaPagamentos = () => {
           onClick={deferirTodos}
           className="flex items-center gap-1 bg-blue-800 text-white px-3 py-1 rounded hover:bg-blue-700"
         >
-          <FaCheck /> Deferir Todos
+          <FaCheck /> Deferir 100
         </button>
         <button
           onClick={indeferirTodos}
           className="flex items-center gap-1 bg-red-800 text-white px-3 py-1 rounded hover:bg-red-700"
         >
-          <FaTimes /> Indeferir Todos
+          <FaTimes /> Indeferir 100
         </button>
       </div>
 
@@ -160,6 +171,12 @@ const BaixaPagamentos = () => {
                   className="flex items-center gap-1 bg-red-800 text-white px-2 py-1 rounded hover:bg-red-700"
                 >
                   <FaTimes /> Indeferir
+                </button>
+                                <button
+                  onClick={() => indeferir(c.id)}
+                  className="flex items-center gap-1 bg-yellow-800 text-white px-2 py-1 rounded hover:bg-yellow-700"
+                >
+                  <FaTimes /> Isento
                 </button>
               </td>
             </tr>
