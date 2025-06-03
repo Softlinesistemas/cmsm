@@ -50,7 +50,8 @@ export default function Formulario() {
     parentesco: '',
     emailResponsavel: '',
     emailCandidato: '',
-    fotoPreview: ''
+    fotoPreview: '',
+    isencao: ''
   })
 
   useEffect(() => {
@@ -336,7 +337,7 @@ export default function Formulario() {
             </div>
           </div>
 
-          {/* DADOS DA VAGA - status automático */}
+          {/* DADOS DA VAGA - status automático - SERVIRA COMO CAMPO DE STATUS */}
           <div>
             <h3 className="font-semibold border-b border-gray-200 pb-1 mb-4">
               Dados da Vaga
@@ -446,6 +447,16 @@ export default function Formulario() {
                 <label className="block text-blue-800 font-medium mb-1">Email Candidato</label>
                 <input type="email" name="emailCandidato" value={formData.emailCandidato} onChange={handleChange} className={baseInput} />
               </div>
+             
+                {/* Isenção */}
+              <div className="col-span-12 md:col-span-4">
+                <label className="text-red-800 font-medium mb-1 block">Solicitar Isenção</label>
+                <select name='isencao' value={formData.isencao} onChange={handleChange} className={baseInput}>
+                  <option value="">Selecione</option>
+                  <option value="não">Não</option>
+                  <option value="sim">Sim</option>
+                </select>
+              </div>
             </div>
           </div>
           <div className='flex flex-col justify-center items-center'>
@@ -457,7 +468,7 @@ export default function Formulario() {
                 onChange={(e) => setCheckboxMarcado(e.target.checked)}
                 className="mr-2"
               />
-              Não ter sido excluído, por motivo disciplinar, por qualquer CM
+              Candidato declara não ter sido excluído, por motivo disciplinar, por qualquer CM
             </label>
 
             {/* Botão de envio */}

@@ -32,7 +32,7 @@ export default function CotasPage() {
   // Função para salvar alterações da cota
   const salvarEdicao = () => {
     setCotas(cotas.map((c) =>
-      c.id === cotaEditando.id ? { ...c, descricao: descricaoEdit, status: statusEdit } : c
+      c.id === cotaEditando.id ? { ...c, descricao: descricaoEdit, status: statusEdit } : c 
     ));
     setCotaEditando(null); // Fecha o modal
   };
@@ -135,10 +135,9 @@ export default function CotasPage() {
               </tbody>
             </table>
           </div>
-
-          <FooterAdm />
         </main>
       </div>
+      <FooterAdm />
 
       {/* Modal de edição */}
       {cotaEditando && (

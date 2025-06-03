@@ -1,220 +1,180 @@
 'use client'
 
-import React, { useState, useContext, useEffect, useCallback, memo } from 'react'
+import React, { useState, useContext, useCallback, memo } from 'react'
 import { useRouter } from 'next/navigation'
 import { MainContext } from '@/context/MainContext'
-import { ChevronDown, ChevronUp, Menu, X } from 'lucide-react'
+import {
+  ChevronDown, ChevronUp, Menu, X, Home, Settings, Users, FileText, Archive, User, Building2,
+  ClipboardList, UploadCloud, FileBarChart, ShieldCheck, BadgeCheck, Megaphone, Mail, Server, Database
+} from 'lucide-react'
 
-type MenuItem = { label: string; key: string }
+type MenuItem = {
+  label: string
+  key: string
+  icon: JSX.Element
+  path?: string
+}
 
+// Caminhos adicionados
 const adminMenuItems: MenuItem[] = [
-  { label: 'Processo', key: 'Processo' },
-  { label: 'Inscrições', key: 'Inscricoes' },
-  { label: 'Baixa Pagamentos', key: 'BaixaPagamentos' },
-  { label: 'Upload Arquivos', key: 'UploadArquivos' },
-  { label: 'Relatórios', key: 'Relatorios' },
-  { label: 'Avaliação Recursos', key: 'AvaliacaoRecursos' },
-  { label: 'Resultados', key: 'Resultados' },
-  { label: 'Gabarito', key: 'Gabarito' },
-  { label: 'Cadastro Editais', key: 'CadastroEditais' },
-  { label: 'Comunicados', key: 'Comunicados' },
-  { label: 'Email em Massa', key: 'EmailMassa' },
-  { label: 'Gestão Admins', key: 'GestaoAdmins' },
-  { label: 'Logs de Acesso', key: 'LogsAcesso' },
-  { label: 'Backup', key: 'Backup' },
-  { label: 'Configurações', key: 'Configuracoes' },
+  { label: 'Processo', key: 'Processo', icon: <ClipboardList size={18} />, path: '/dashboardAdmin'},
+  { label: 'Inscrições', key: 'Inscricoes', icon: <FileText size={18} />, path: '/dashboardAdmin'},
+  { label: 'Baixa Pagamentos', key: 'BaixaPagamentos', icon: <Archive size={18} />, path: '/dashboardAdmin'},
+  { label: 'Upload Arquivos', key: 'UploadArquivos', icon: <UploadCloud size={18} />, path: '/dashboardAdmin'},
+  { label: 'Relatórios', key: 'Relatorios', icon: <FileBarChart size={18} />, path: '/dashboardAdmin'},
+  { label: 'Avaliação Recursos', key: 'AvaliacaoRecursos', icon: <ShieldCheck size={18} />, path: '/dashboardAdmin' },
+  { label: 'Resultados', key: 'Resultados', icon: <BadgeCheck size={18} />, path: '/dashboardAdmin'},
+  { label: 'Gabarito', key: 'Gabarito', icon: <FileText size={18} />, path: '/dashboardAdmin'},
+  { label: 'Cadastro Editais', key: 'CadastroEditais', icon: <ClipboardList size={18} />, path: '/dashboardAdmin',},
+  { label: 'Comunicados', key: 'Comunicados', icon: <Megaphone size={18} />, path: '/dashboardAdmin'},
+  { label: 'Email em Massa', key: 'EmailMassa', icon: <Mail size={18} />, path: '/dashboardAdmin'},
+  { label: 'Gestão Admins', key: 'GestaoAdmins', icon: <Users size={18} />, path: '/dashboardAdmin'},
+  { label: 'Logs de Acesso', key: 'LogsAcesso', icon: <Server size={18} />, path: '/dashboardAdmin' },
+  { label: 'Backup', key: 'Backup', icon: <Database size={18} />, path: '/dashboardAdmin'},
+  { label: 'Configurações', key: 'Configuracoes', icon: <Settings size={18} />, path: '/dashboardAdmin'}
 ]
 
-// Componente memoizado para os itens do submenu Admin
-const AdminSubMenu = memo(
-  ({
-    isOpen,
-    selectedKey,
-    onNavigate,
-  }: {
-    isOpen: boolean
-    selectedKey: string
-    onNavigate: (item: MenuItem) => void
-  }) => {
-    if (!isOpen) return null
-    return (
-      <div className="ml-6 flex flex-col space-y-1 mt-1 border-l-2 border-blue-700 pl-2">
-        {adminMenuItems.map((item) => (
-          <button
-            key={item.key}
-            onClick={() => onNavigate(item)}
-            className={`text-sm text-left px-3 py-1 rounded-md hover:bg-blue-700 transition
-              ${
-                selectedKey === item.key
-                  ? 'bg-yellow-400 text-blue-900 font-bold'
-                  : ''
-              }
-            `}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-    )
-  }
-)
+// Submenu Administração corrigido
+const AdminSubMenu = memo(({ isOpen, selectedKey, onNavigate, isCollapsed }: {
+  isOpen: boolean
+  selectedKey: string
+  onNavigate: (item: MenuItem) => void
+  isCollapsed: boolean
+}) => {
+  if (!isOpen) return null
+  return (
+    <div className="pl-3 mt-1 bg-blue-800 rounded-lg py-2">
+      {adminMenuItems.map((item) => (
+        <button
+          key={item.key}
+          onClick={() => onNavigate(item)}
+          className={`w-full flex items-center gap-2 text-sm text-left px-3 py-1 rounded-md hover:bg-blue-700 transition
+            ${selectedKey === item.key ? 'bg-yellow-400 text-blue-900 font-bold' : ''}
+          `}
+        >
+          {item.icon}
+          {!isCollapsed && <span>{item.label}</span>}
+        </button>
+      ))}
+    </div>
+  )
+})
 
 const Sidebar: React.FC = () => {
   const router = useRouter()
   const { selectedComponent, setSelectedComponent } = useContext(MainContext)
 
   const [isAdminOpen, setIsAdminOpen] = useState(false)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
-  // Memoiza o callback pra evitar recriação em cada render
-  const toggleAdminMenu = useCallback(() => {
-    setIsAdminOpen((v) => !v)
-  }, [])
+  const toggleAdminMenu = () => setIsAdminOpen(prev => !prev)
+  const toggleSidebar = () => setIsSidebarOpen(prev => !prev)
 
-  const toggleSidebar = useCallback(() => {
-    setIsSidebarOpen((v) => !v)
-  }, [])
+  const handleNavigate = (item: MenuItem) => {
+    setSelectedComponent(item.key)
+    if (item.path) router.push(item.path)
+    setIsSidebarOpen(false) // fecha no mobile
+  }
 
-  // Memoiza handler de navegação
-  const handleNavigate = useCallback(
-    (item: MenuItem) => {
-      setSelectedComponent(item.key)
-      setIsSidebarOpen(false)
-    },
-    [setSelectedComponent]
-  )
-
-  // Navega para rotas simples (sem alterar contexto)
-  const handleRoute = useCallback(
-    (path: string, key: string) => {
-      router.push(path)
-      setSelectedComponent(key)
-      setIsSidebarOpen(false)
-    },
-    [router, setSelectedComponent]
-  )
+  const handleRoute = (path: string, key: string) => {
+    router.push(path)
+    setSelectedComponent(key)
+    setIsSidebarOpen(false)
+  }
 
   return (
-    <div>
-      {/* Toggle botão para mobile */}
-      <div className="md:hidden flex justify-between items-center bg-blue-900 p-3 text-white shadow-md">
-        <span className="font-bold text-lg select-none">MENU</span>
-        <button
-          onClick={toggleSidebar}
-          aria-label="Toggle menu"
-          className="text-yellow-400 focus:outline-none"
-        >
+    <div className="flex">
+      {/* Topbar Mobile */}
+      <div className="md:hidden fixed top-0 left-0 w-full bg-blue-900 text-white flex justify-between items-center p-3 shadow-md z-50">
+        <span className="font-bold text-lg">MENU</span>
+        <button onClick={toggleSidebar} className="text-yellow-400">
           {isSidebarOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
       {/* Sidebar */}
-      <aside
-        className={`
-          fixed inset-y-0 left-0 w-64 bg-blue-900 text-white p-4 z-50
-          transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-          transition-transform duration-300 ease-in-out
-          md:relative md:translate-x-0 md:flex md:flex-col
-          shadow-lg md:shadow-none
-          overflow-y-auto
-          scrollbar-thin scrollbar-thumb-blue-700 scrollbar-track-blue-900
-        `}
-      >
-        {/* Cabeçalho no desktop */}
-        <div className="hidden md:flex justify-between items-center mb-6 px-2 border-b border-blue-700 pb-2">
-          <span className="font-bold text-xl select-none">MENU</span>
-          <button
-            onClick={toggleAdminMenu}
-            aria-label="Toggle administração"
-            className="text-yellow-400 hover:text-yellow-300 transition"
-          >
-            {isAdminOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-          </button>
+      <aside className={`
+        fixed top-0 left-0 h-screen z-40 p-4 bg-blue-900 text-white
+        transition-all duration-300 ease-in-out
+        ${isSidebarOpen ? 'w-64' : 'w-16'}
+        md:relative md:translate-x-0 flex flex-col shadow-2xl ring-1 ring-blue-950/10 rounded-r-2xl
+        pt-16 md:pt-4
+      `}>
+        {/* ADMIN MENU */}
+        <button
+          onClick={toggleAdminMenu}
+          className={`flex items-center justify-between gap-2 px-3 py-2 font-semibold text-sm
+            rounded-xl hover:bg-blue-800 transition-all duration-300
+            ${isAdminOpen ? 'bg-blue-800' : ''}
+          `}
+        >
+          <div className="flex items-center gap-3">
+            <Settings size={18} />
+            {!isSidebarOpen ? null : <span>ADMINISTRAÇÃO</span>}
+          </div>
+          {!isSidebarOpen ? null : (isAdminOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+        </button>
+
+        {/* SUBMENU ADMIN */}
+        <AdminSubMenu
+          isOpen={isAdminOpen}
+          selectedKey={selectedComponent}
+          onNavigate={handleNavigate}
+          isCollapsed={!isSidebarOpen}
+        />
+
+        {/* DASHBOARD */}
+        <button
+          onClick={() => handleRoute('/dashboard', 'Dashboard')}
+          className={`mt-4 flex items-center gap-3 px-3 py-2 rounded-lg text-sm
+            hover:bg-blue-800 transition-all duration-300
+            ${selectedComponent === 'Dashboard' ? 'bg-yellow-400 text-blue-900 font-bold' : ''}
+          `}
+        >
+          <Home size={18} />
+          {!isSidebarOpen ? null : <span>DASHBOARD</span>}
+        </button>
+
+        {/* SEÇÃO CADASTRO */}
+        <div className="mt-6 mb-1 px-4 py-2 bg-yellow-400 text-blue-900 font-bold text-xs rounded-xl shadow-inner">
+          {!isSidebarOpen ? 'C' : 'CADASTRO'}
         </div>
 
-        <nav className="flex flex-col space-y-1">
-          {/* Botão do menu ADMINISTRAÇÃO */}
+        {[
+          { label: 'CANDIDATOS', path: '/candidatos', key: 'Candidatos', icon: <User size={18} /> },
+          { label: 'USUÁRIOS', path: '/usuarios', key: 'Usuarios', icon: <Users size={18} /> },
+          { label: 'SALAS', path: '/salas', key: 'Salas', icon: <Building2 size={18} /> },
+          { label: 'COTAS', path: '/cotas', key: 'Cotas', icon: <ClipboardList size={18} /> },
+        ].map(({ label, path, key, icon }) => (
           <button
-            onClick={toggleAdminMenu}
-            className={`
-              flex justify-between items-center w-full px-4 py-2 font-semibold
-              rounded-md hover:bg-blue-800 transition
-              ${isAdminOpen ? 'bg-blue-800' : ''}
+            key={key}
+            onClick={() => handleRoute(path, key)}
+            className={`flex items-center gap-3 px-3 py-2 text-sm rounded-lg
+              hover:bg-blue-800 transition-all duration-300
+              ${selectedComponent === key ? 'bg-yellow-400 text-blue-900 font-bold' : ''}
             `}
           >
-            ADMINISTRAÇÃO
-            {isAdminOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            {icon}
+            {!isSidebarOpen ? null : <span>{label}</span>}
           </button>
+        ))}
 
-          {/* Itens submenu ADMIN memoizados */}
-          <AdminSubMenu
-            isOpen={isAdminOpen}
-            selectedKey={selectedComponent}
-            onNavigate={handleNavigate}
-          />
+        {/* SEÇÃO PROCESSO */}
+        <div className="mt-6 mb-1 px-4 py-2 bg-yellow-400 text-blue-900 font-bold text-xs rounded-xl shadow-inner">
+          {!isSidebarOpen ? 'P' : 'PROCESSO SELETIVO'}
+        </div>
 
-          {/* Botão Dashboard */}
-          <button
-            onClick={() => handleRoute('/dashboard', 'Dashboard')}
-            className={`
-              px-4 py-2 rounded-md hover:bg-blue-700 transition font-semibold
-              ${
-                selectedComponent === 'Dashboard'
-                  ? 'bg-yellow-400 text-blue-900 font-bold'
-                  : ''
-              }
-            `}
-          >
-            DASHBOARD
-          </button>
-
-          {/* Seção Cadastro */}
-          <div className="mt-6 mb-1 bg-yellow-400 text-blue-900 font-bold px-4 py-2 rounded">
-            CADASTRO
-          </div>
-          {[
-            { label: 'CANDIDATOS', path: '/candidatos', key: 'Candidatos' },
-            { label: 'USUÁRIOS', path: '/usuarios', key: 'Usuarios' },
-            { label: 'SALAS', path: '/salas', key: 'Salas' },
-            { label: 'COTAS', path: '/cotas', key: 'Cotas' },
-          ].map(({ label, path, key }) => (
-            <button
-              key={key}
-              onClick={() => handleRoute(path, key)}
-              className={`
-                text-left px-4 py-2 rounded-md hover:bg-blue-700 transition
-                ${
-                  selectedComponent === key
-                    ? 'bg-yellow-400 text-blue-900 font-bold'
-                    : ''
-                }
-              `}
-            >
-              {label}
-            </button>
-          ))}
-
-          {/* Seção Processo Seletivo */}
-          <div className="mt-6 mb-1 bg-yellow-400 text-blue-900 font-bold px-4 py-2 rounded">
-            PROCESSO SELETIVO
-          </div>
-          <button
-            onClick={() => {
-              setSelectedComponent('Configuracoes')
-              setIsSidebarOpen(false)
-            }}
-            className={`
-              px-4 py-2 rounded-md hover:bg-blue-700 transition font-semibold
-              ${
-                selectedComponent === 'Configuracoes'
-                  ? 'bg-yellow-400 text-blue-900 font-bold'
-                  : ''
-              }
-            `}
-          >
-            CONFIGURAÇÕES
-          </button>
-        </nav>
+        {/* Link direto para Configurações */}
+        <button
+          onClick={() => handleNavigate({ key: 'Configuracoes', label: 'CONFIGURAÇÕES', icon: <Settings />, path: '/admin/config' })}
+          className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm
+            hover:bg-blue-800 transition-all duration-300
+            ${selectedComponent === 'Configuracoes' ? 'bg-yellow-400 text-blue-900 font-bold' : ''}
+          `}
+        >
+          <Settings size={18} />
+          {!isSidebarOpen ? null : <span>CONFIGURAÇÕES</span>}
+        </button>
       </aside>
     </div>
   )

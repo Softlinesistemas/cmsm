@@ -4,6 +4,7 @@ import Header from '../../components/HeaderAdm'
 import Footer from '../../components/FooterAdm'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import StepsNavbar from '@/components/StepsNavbar'
 
 export default function Formulario() {
   const router = useRouter()
@@ -113,7 +114,10 @@ export default function Formulario() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
+      <StepsNavbar activeStep={1}/>
       <main className="flex-grow px-4 py-8">
+        
+
         <h2 className="text-2xl font-bold text-center text-blue-800 mb-8">
           FORMULÁRIO DE INSCRIÇÃO
         </h2>

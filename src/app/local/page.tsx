@@ -1,68 +1,26 @@
 'use client'
 
 import Header from '../../components/Header'
-import Footer from '../../components/Footer'
+import Footer from '../../components/FooterAdm'
 import StepsNavbar from '../../components/StepsNavbar'
-import { useEffect, useState } from 'react'
 
-interface CandidatoInfo {
-  nome: string
-  numeroInscricao: string
-  dataNascimento: string
-  sexo: string
-  docId: string
-  vaga: string
-}
-
-interface LocalInfo {
-  local: string
-  data: string
-  sala: string
-  aberturaPortoes: string
-}
+// import { QRCode } from 'react-qrcode-logo'
 
 export default function LocalHorarioPage() {
-  const [candidato, setCandidato] = useState<CandidatoInfo | null>(null)
-  const [localInfo, setLocalInfo]     = useState<LocalInfo | null>(null)
-  const [loading, setLoading]         = useState(true)
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        // Exemplo de endpoints, ajuste conforme seu back-end
-        const inscricaoId = '10001'  // ou obtenha via rota, contexto ou parâmetro
-        const [cRes, lRes] = await Promise.all([
-          fetch(`/api/inscricoes/${inscricaoId}`),
-          fetch(`/api/inscricoes/${inscricaoId}/local`)
-        ])
-        const cData: CandidatoInfo = await cRes.json()
-        const lData: LocalInfo     = await lRes.json()
-
-        setCandidato(cData)
-        setLocalInfo(lData)
-      } catch (err) {
-        console.error('Erro ao carregar dados:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <span className="text-gray-500">Carregando...</span>
-      </div>
-    )
+  const candidato = {
+    nome: 'Ramon Silva dos Santos',
+    numeroInscricao: '10001',
+    dataNascimento: '10/01/1995',
+    sexo: 'Masculino',
+    docId: '123456789',
+    vaga: '6º ano'
   }
 
-  if (!candidato || !localInfo) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <span className="text-red-500">Erro ao carregar informações.</span>
-      </div>
-    )
+  const localInfo = {
+    local: 'Escola Municipal João Paulo II',
+    data: '15/06/2025',
+    sala: 'Sala 05',
+    aberturaPortoes: '07:30'
   }
 
   return (
@@ -77,44 +35,31 @@ export default function LocalHorarioPage() {
             Cartão de Confirmação de Inscrição – CCI
           </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <strong>Nome do Candidato:</strong> {candidato.nome}
-            </div>
-            <div>
-              <strong>Número de Inscrição:</strong> {candidato.numeroInscricao}
-            </div>
-            <div>
-              <strong>Data de Nascimento:</strong> {candidato.dataNascimento}
-            </div>
-            <div>
-              <strong>Sexo:</strong> {candidato.sexo}
-            </div>
-            <div>
-              <strong>Doc. ID:</strong> {candidato.docId}
-            </div>
-            <div className="md:col-span-2">
-              <strong>Candidato ao:</strong> {candidato.vaga}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm  text-black">
+            <div><strong>Nome do Candidato:</strong> {candidato.nome}</div>
+            <div><strong>Número de Inscrição:</strong> {candidato.numeroInscricao}</div>
+            <div><strong>Data de Nascimento:</strong> {candidato.dataNascimento}</div>
+            <div><strong>Sexo:</strong> {candidato.sexo}</div>
+            <div><strong>Doc. ID:</strong> {candidato.docId}</div>
+            <div className="md:col-span-2"><strong>Candidato ao:</strong> {candidato.vaga}</div>
           </div>
         </div>
 
-        {/* Cards de Local, Data e Sala */}
+        {/* Informações de Local, Data, Sala */}
         <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 text-center gap-6 mb-8">
-          {/** Local **/}
           <div className="bg-white rounded-lg shadow p-4">
             <div className="text-xs text-gray-500 mb-1 uppercase">Local</div>
-            <div className="font-bold text-base">{localInfo.local}</div>
+            <div className="font-bold text-base  text-blue-800">{localInfo.local}</div>
           </div>
-          {/** Data **/}
+
           <div className="bg-white rounded-lg shadow p-4">
             <div className="text-xs text-gray-500 mb-1 uppercase">Data</div>
-            <div className="font-bold text-base">{localInfo.data}</div>
+            <div className="font-bold text-base  text-blue-800">{localInfo.data}</div>
           </div>
-          {/** Sala **/}
+
           <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-xs text-gray-500 mb-1 uppercase">Sala</div>
-            <div className="font-bold text-base">{localInfo.sala}</div>
+            <div className="text-xs text-black mb-1 uppercase">Sala</div>
+            <div className="font-bold text-base text-blue-800">{localInfo.sala}</div>
           </div>
         </div>
 
@@ -123,7 +68,16 @@ export default function LocalHorarioPage() {
           <h2 className="text-lg font-semibold text-gray-700 uppercase mb-2">
             Abertura dos Portões
           </h2>
-          <div className="text-green-900 font-bold">{localInfo.aberturaPortoes}</div>
+          <div className="text-green-900 font-bold text-[36px]">{localInfo.aberturaPortoes}</div>
+        </div>
+
+        {/* Espaço para QR Code */}
+        <div className="mt-6 flex justify-center">
+          <div className="border border-dashed border-gray-400 rounded-lg p-4 w-40 h-40 flex items-center justify-center text-xs text-gray-500">
+            QR CODE<br />
+            {/* <QRCode value={JSON.stringify(candidato)} /> */}
+            (dados do candidato)
+          </div>
         </div>
       </main>
 
