@@ -74,7 +74,7 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
       case 'Resultados':
         setComponent(<Resultados />);
         break;
-      case 'Certificados':
+      case 'Gabarito':
         setComponent(<Gabarito />);
         break;
       case 'CadastroEditais':

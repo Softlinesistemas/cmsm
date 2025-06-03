@@ -1,12 +1,9 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 
-/**
- * Componente Gabaritos com envio unitário e estilo mais clean
- * Preparado para envio em lote no futuro
- */
-const Gabaritos = () => {
+
+const Gabarito = () => {
   const [inscritos, setInscritos] = useState([
     { id: 1, nome: 'João Silva', cpf: '000.000.000-00', numeroInscricao: '123456', serie: '6º Ano', gabaritoRecebido: false },
     { id: 2, nome: 'Maria Souza', cpf: '111.111.111-11', numeroInscricao: '654321', serie: '1º Ano', gabaritoRecebido: true },
@@ -164,4 +161,4 @@ const Gabaritos = () => {
   );
 };
 
-export default Gabaritos;
+export default Gabarito;

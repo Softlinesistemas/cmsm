@@ -1,7 +1,11 @@
+'use client'
+
 import Footer from '@/components/Footer';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/HeaderAdm';
 import { Pencil, CheckCircle, XCircle, Trash2 } from 'lucide-react';
+import { MainContext } from "@/context/MainContext";
+import { useState, useEffect, useContext } from "react";
 
 
 export default function SalasPage() {
@@ -16,6 +20,11 @@ export default function SalasPage() {
     { cod: '002', sala: 'Sala 102', participantes: ['Daniel', 'Elisa', 'Fernanda'] },
   ];
 
+     const { selectedComponent, setSelectedComponent, Component } = useContext(MainContext);
+   
+     useEffect(() => {
+       console.log('PainelAdm selectedComponent:', selectedComponent);
+     }, [selectedComponent]);
  
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
