@@ -18,7 +18,7 @@ export default function CotasPage() {
   ]);
 
   // Estado para controlar a edição
-  const [cotaEditando, setCotaEditando] = useState(null);
+  const [cotaEditando, setCotaEditando] = useState<any | null>(null);
   const [descricaoEdit, setDescricaoEdit] = useState('');
   const [statusEdit, setStatusEdit] = useState('Ativo');
 
@@ -31,19 +31,19 @@ export default function CotasPage() {
 
   // Função para salvar alterações da cota
   const salvarEdicao = () => {
-    setCotas(cotas.map((c) =>
-      c.id === cotaEditando.id ? { ...c, descricao: descricaoEdit, status: statusEdit } : c 
+    setCotas(cotas.map((c: any) =>
+      c?.id === cotaEditando?.id ? { ...c, descricao: descricaoEdit, status: statusEdit } : c 
     ));
     setCotaEditando(null); // Fecha o modal
   };
 
   // Função para remover uma cota
-  const removerCota = (id) => {
+  const removerCota = (id: number) => {
     setCotas(cotas.filter((c) => c.id !== id));
   };
 
   // Função para alterar o status rapidamente
-  const alterarStatus = (id, novoStatus) => {
+  const alterarStatus = (id: number, novoStatus: string) => {
     setCotas(cotas.map((c) =>
       c.id === id ? { ...c, status: novoStatus } : c
     ));
