@@ -5,7 +5,7 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
 // Componente reutilizável para campo de texto
-const CampoTexto = ({ label, value, onChange, placeholder, textarea = false }) => (
+const CampoTexto = ({ label, value, onChange, placeholder, textarea = false } : any) => (
   <div className="mb-2">
     <label className="block font-semibold mb-1">{label}</label>
     {textarea ? (
@@ -28,7 +28,7 @@ const CampoTexto = ({ label, value, onChange, placeholder, textarea = false }) =
 );
 
 // Componente para exibir o relatório final
-const RelatorioEnvio = ({ relatorio }) => {
+const RelatorioEnvio = ({ relatorio }: any) => {
   if (!relatorio) return null;
 
   return (
@@ -43,7 +43,7 @@ const RelatorioEnvio = ({ relatorio }) => {
         <div className="mt-2">
           <p className="text-red-600 font-medium">❌ Emails inválidos:</p>
           <ul className="list-disc ml-6 text-sm">
-            {relatorio.invalidos.map((email, i) => (
+            {relatorio.invalidos.map((email: string, i: number) => (
               <li key={i}>{email}</li>
             ))}
           </ul>
@@ -54,7 +54,7 @@ const RelatorioEnvio = ({ relatorio }) => {
         <div className="mt-2">
           <p className="text-yellow-600 font-medium">⚠️ Erros de envio:</p>
           <ul className="list-disc ml-6 text-sm">
-            {relatorio.erros.map((item, i) => (
+            {relatorio.erros.map((item: any, i: number) => (
               <li key={i}>{item.email}: {item.erro}</li>
             ))}
           </ul>
@@ -107,13 +107,13 @@ const EmailMassa = () => {
       <CampoTexto
         label="Assunto:"
         value={assunto}
-        onChange={(e) => setAssunto(e.target.value)}
+        onChange={(e: any) => setAssunto(e.target.value)}
         placeholder="Digite o assunto"
       />
       <CampoTexto
         label="Mensagem:"
         value={mensagem}
-        onChange={(e) => setMensagem(e.target.value)}
+        onChange={(e: any) => setMensagem(e.target.value)}
         placeholder="Digite a mensagem"
         textarea
       />
