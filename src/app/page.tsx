@@ -4,20 +4,14 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { useRouter } from 'next/navigation'
 import { useEditais } from "@/context/EditalContext"; 
+import { signIn } from 'next-auth/react';
 
 export default function Home() {
   const router = useRouter();
   const { editais } = useEditais(); 
 
   const handleGovLogin = () => {
-    const clientId = process.env.NEXT_PUBLIC_GOV_BR_CLIENT_ID;
-    const redirectUri = encodeURIComponent(process.env.NEXT_PUBLIC_GOV_BR_REDIRECT_URI!);
-    const state = encodeURIComponent(window.location.pathname);
-    const scope = encodeURIComponent('openid profile email');
-
-    const authUrl = `https://sso.acesso.gov.br/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
-
-    window.location.href = authUrl;
+    signIn();
   };
 
   return (
