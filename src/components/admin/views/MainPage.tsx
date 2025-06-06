@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { logo } from "../../../../public";
- 
+
 export default function MainPage() {
   return (
     <div className="relative h-full w-full">
