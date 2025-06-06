@@ -38,7 +38,7 @@ const saveSettings = (settings: Partial<Record<string, unknown>>) => {
     );
   }
 };
-
+ 
 export const MainProvider = ({ children }: { children: ReactNode }) => {
   const stored = getStoredSettings();
   const { i18n } = useTranslation();
