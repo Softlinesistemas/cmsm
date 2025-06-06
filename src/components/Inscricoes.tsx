@@ -2,21 +2,22 @@
 
 import { useState } from "react";
 
-// Definição da interface dos dados de inscrição
 interface Inscricao {
   id: number;
   nome: string;
   cpf: string;
-  numeroInscricao: string; // Novo campo: número de inscrição
+  numeroInscricao: string;
   status: 'Pendente' | 'Aprovado' | 'Rejeitado';
   sexo: 'Masculino' | 'Feminino';
   forca: 'Exército' | 'Marinha' | 'Aeronáutica';
   sala: string;
   turno: string;
+  responsavel: string;
+  telefone: string;
+  fotoUrl: string; // Novo campo
 }
 
 export default function Inscricoes() {
-  // Dados iniciais de exemplo
   const [inscricoes] = useState<Inscricao[]>([
     {
       id: 1,
@@ -28,6 +29,9 @@ export default function Inscricoes() {
       forca: 'Exército',
       sala: '101',
       turno: 'Manhã',
+      responsavel: 'Cap. Oliveira',
+      telefone: '(11) 91234-5678',
+      fotoUrl: 'https://randomuser.me/api/portraits/men/1.jpg'
     },
     {
       id: 2,
@@ -39,6 +43,9 @@ export default function Inscricoes() {
       forca: 'Marinha',
       sala: '102',
       turno: 'Tarde',
+      responsavel: 'Ten. Barbosa',
+      telefone: '(21) 99876-5432',
+      fotoUrl: 'https://randomuser.me/api/portraits/women/2.jpg'
     },
     {
       id: 3,
@@ -50,45 +57,45 @@ export default function Inscricoes() {
       forca: 'Aeronáutica',
       sala: '103',
       turno: 'Noite',
-    },
+      responsavel: 'Sgt. Pereira',
+      telefone: '(31) 98765-4321',
+      fotoUrl: 'https://randomuser.me/api/portraits/men/3.jpg'
+    }
   ]);
 
-  // Estado para pesquisa por nome/número de inscrição
-  const [pesquisa, setPesquisa] = useState<string>('');
-
-  // Estado para filtros múltiplos
-  const [filtroStatus, setFiltroStatus] = useState<string>('Todos');
+  const [pesquisa, setPesquisa] = useState('');
+  const [filtroStatus, setFiltroStatus] = useState('Todos');
   const [filtroSexo, setFiltroSexo] = useState<string[]>([]);
   const [filtroForca, setFiltroForca] = useState<string[]>([]);
+  const [cardAberto, setCardAberto] = useState<number | null>(null);
 
-  // Função para atualizar filtros múltiplos
   const toggleFiltro = (filtro: string, valor: string) => {
     if (filtro === 'sexo') {
-      setFiltroSexo(prev =>
-        prev.includes(valor) ? prev.filter(v => v !== valor) : [...prev, valor]
-      );
+      setFiltroSexo(prev => prev.includes(valor) ? prev.filter(v => v !== valor) : [...prev, valor]);
     } else if (filtro === 'forca') {
-      setFiltroForca(prev =>
-        prev.includes(valor) ? prev.filter(v => v !== valor) : [...prev, valor]
-      );
+      setFiltroForca(prev => prev.includes(valor) ? prev.filter(v => v !== valor) : [...prev, valor]);
     }
   };
 
-  // Filtragem dos dados
   const filtradas = inscricoes.filter(i => {
     const pesquisaLower = pesquisa.toLowerCase();
-    const correspondePesquisa =
-      i.nome.toLowerCase().includes(pesquisaLower) ||
-      i.numeroInscricao.includes(pesquisa);
-
+    const correspondePesquisa = i.nome.toLowerCase().includes(pesquisaLower) || i.numeroInscricao.includes(pesquisa);
     const correspondeStatus = filtroStatus === 'Todos' || i.status === filtroStatus;
     const correspondeSexo = filtroSexo.length === 0 || filtroSexo.includes(i.sexo);
     const correspondeForca = filtroForca.length === 0 || filtroForca.includes(i.forca);
-
     return correspondePesquisa && correspondeStatus && correspondeSexo && correspondeForca;
   });
 
-  // Função para exportar CSV
+  const getCorTextoStatus = (status: string) => {
+    switch (status) {
+      case 'Aprovado': return 'text-green-600 font-semibold';
+      case 'Rejeitado': return 'text-red-600 font-semibold';
+      case 'Pendente': return 'text-yellow-600 font-semibold';
+      default: return '';
+    }
+  };
+
+
   const exportarCSV = () => {
     const rows = [
       ['ID', 'Nome', 'CPF', 'Nº Inscrição', 'Status', 'Sexo', 'Força', 'Sala', 'Turno'],
@@ -101,8 +108,8 @@ export default function Inscricoes() {
         i.sexo,
         i.forca,
         i.sala,
-        i.turno,
-      ]),
+        i.turno
+      ])
     ];
     const csv = rows.map(r => r.join(';')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -111,14 +118,13 @@ export default function Inscricoes() {
     link.href = url;
     link.download = 'inscricoes.csv';
     link.click();
-    URL.revokeObjectURL(url); // Libera a memória
+    URL.revokeObjectURL(url);
   };
 
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Controle de Inscrições</h2>
 
-      {/* Barra de pesquisa */}
       <div className="flex flex-col sm:flex-row gap-2 mb-4">
         <input
           type="text"
@@ -127,8 +133,6 @@ export default function Inscricoes() {
           onChange={e => setPesquisa(e.target.value)}
           className="border rounded p-2 flex-1"
         />
-
-        {/* Filtro de status */}
         <select
           className="border rounded p-2"
           value={filtroStatus}
@@ -139,8 +143,6 @@ export default function Inscricoes() {
           <option>Aprovado</option>
           <option>Rejeitado</option>
         </select>
-
-        {/* Botão para exportar */}
         <button
           onClick={exportarCSV}
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
@@ -149,101 +151,92 @@ export default function Inscricoes() {
         </button>
       </div>
 
-      {/* Filtros múltiplos: Sexo e Força */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-4">
-        {/* Filtro por sexo */}
+      <div className="flex flex-wrap gap-4 mb-4 justify-center">
+        {/* Filtro Sexo */}
         <div>
-          <h4 className="font-semibold">Sexo:</h4>
-          <div className="flex gap-2 text-black">
-            <label>
-              <input
-                type="checkbox"
-                value="Masculino"
-                checked={filtroSexo.includes('Masculino')}
-                onChange={() => toggleFiltro('sexo', 'Masculino')}
-              />
-              Masculino
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                value="Feminino"
-                checked={filtroSexo.includes('Feminino')}
-                onChange={() => toggleFiltro('sexo', 'Feminino')}
-              />
-              Feminino
-            </label>
-          </div>
-        </div>
-
-        {/* Filtro por força */}
-        <div>
-          <h4 className="font-semibold">Força Armada:</h4>
-          <div className="flex gap-2 text-black">
-            <label>
-              <input
-                type="checkbox"
-                value="Exército"
-                checked={filtroForca.includes('Exército')}
-                onChange={() => toggleFiltro('forca', 'Exército')}
-              />
-               Exército
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                value="Marinha"
-                checked={filtroForca.includes('Marinha')}
-                onChange={() => toggleFiltro('forca', 'Marinha')}
-              />
-              Marinha
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                value="Aeronáutica"
-                checked={filtroForca.includes('Aeronáutica')}
-                onChange={() => toggleFiltro('forca', 'Aeronáutica')}
-              />
-              Aeronáutica
-            </label>
-          </div>
-        </div>
-      </div>
-
-      {/* Tabela responsiva */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full border text-blue-800 text-sm sm:text-base">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border px-2 py-1">ID</th>
-              <th className="border px-2 py-1">Nome</th>
-              <th className="border px-2 py-1">CPF</th>
-              <th className="border px-2 py-1">Nº Inscrição</th>
-              <th className="border px-2 py-1">Status</th>
-              <th className="border px-2 py-1">Sexo</th>
-              <th className="border px-2 py-1">Força</th>
-              <th className="border px-2 py-1">Sala</th>
-              <th className="border px-2 py-1">Turno</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtradas.map(i => (
-              <tr key={i.id} className="hover:bg-gray-50 text-black">
-                <td className="border px-2 py-1">{i.id}</td>
-                <td className="border px-2 py-1">{i.nome}</td>
-                <td className="border px-2 py-1">{i.cpf}</td>
-                <td className="border px-2 py-1">{i.numeroInscricao}</td>
-                <td className="border px-2 py-1">{i.status}</td>
-                <td className="border px-2 py-1">{i.sexo}</td>
-                <td className="border px-2 py-1">{i.forca}</td>
-                <td className="border px-2 py-1">{i.sala}</td>
-                <td className="border px-2 py-1">{i.turno}</td>
-              </tr>
+          <h4 className="font-semibold mb-1">Sexo:</h4>
+          <div className="flex gap-2">
+            {['Masculino', 'Feminino'].map(sexo => (
+              <button
+                key={sexo}
+                onClick={() => toggleFiltro('sexo', sexo)}
+                className={`px-3 py-1 rounded-full border ${filtroSexo.includes(sexo)
+                  ? 'bg-blue-500 text-white border-blue-500'
+                  : 'bg-white text-gray-700 border-gray-300'
+                  } transition`}
+              >
+                {sexo}
+              </button>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
+
+        {/* Filtro Força Armada */}
+        <div>
+          <h4 className="font-semibold mb-1">Força Armada:</h4>
+          <div className="flex gap-2">
+            {['Exército', 'Marinha', 'Aeronáutica'].map(forca => (
+              <button
+                key={forca}
+                onClick={() => toggleFiltro('forca', forca)}
+                className={`px-3 py-1 rounded-full border ${filtroForca.includes(forca)
+                  ? 'bg-purple-600 text-white border-purple-600'
+                  : 'bg-white text-gray-700 border-gray-300'
+                  } transition`}
+              >
+                {forca}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Cards com foto e cor de status */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filtradas.map(i => (
+          <div
+            key={i.id}
+            onClick={() => setCardAberto(cardAberto === i.id ? null : i.id)}
+            className="relative p-4 rounded-xl cursor-pointer shadow-md border hover:shadow-lg transition-all bg-white"
+          >
+            {/* Tooltip ao passar o mouse */}
+            <div className="text-sm opacity-70 absolute top-2 right-2 hidden sm:block">
+              <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                Clique para mais informações
+              </span>
+            </div>
+            <div className="text-blue-800">
+              {/* Dados principais */}
+              <p><strong>Nome:</strong> {i.nome}</p>
+              <p><strong>CPF:</strong> {i.cpf}</p>
+              <p><strong>Inscrição:</strong> {i.numeroInscricao}</p>
+              <p>
+                <strong>Status:</strong>{' '}
+                <span className={getCorTextoStatus(i.status)}>{i.status}</span>
+              </p>
+              <p><strong>Sexo:</strong> {i.sexo}</p>
+              <p><strong>Força:</strong> {i.forca}</p>
+              <p><strong>Sala:</strong> {i.sala}</p>
+              <p><strong>Turno:</strong> {i.turno}</p>
+            </div>
+            {/* Dados do responsável (expandido) */}
+            {cardAberto === i.id && (
+              <div className="mt-4 pt-2 border-t text-sm text-gray-700">
+                <p><strong>Responsável:</strong> {i.responsavel}</p>
+                <p><strong>Telefone:</strong> {i.telefone}</p>
+              </div>
+            )}
+
+            {/* Foto no canto inferior direito */}
+            <img
+              src={i.fotoUrl}
+              alt={i.nome}
+              className="absolute bottom-2 right-2 w-12 h-12 rounded-full border border-white shadow-md object-cover"
+            />
+          </div>
+        ))}
+      </div>
+
     </div>
   );
 }
