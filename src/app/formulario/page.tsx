@@ -34,7 +34,7 @@ export default function Formulario() {
     tipoAtendimentoProva: '',
     forcas: '',
     ramoForcas: '',
-    dadosVaga: 'Candidato Apto para realizar a prova do 6° ano',
+    dadosVaga: '',
     nomeResponsavel: '',
     cpfResponsavel: '',
     dataNascimentoResponsavel: '',

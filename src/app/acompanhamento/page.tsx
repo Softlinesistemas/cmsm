@@ -34,7 +34,7 @@ export default function Formulario() {
     tipoAtendimentoProva: '',
     forcas: '',
     ramoForcas: '',
-    dadosVaga: 'Candidato Apto para realizar a prova do 6° ano',
+    dadosVaga: '',
     nomeResponsavel: '',
     cpfResponsavel: '',
     dataNascimentoResponsavel: '',
@@ -335,7 +335,7 @@ export default function Formulario() {
               placeholder="Candidato capacitado para realizar o exame intelectual"
               value={formData.dadosVaga}
               onChange={handleChange}
-              className="w-full bg-red-800 rounded px-8 py-5 shadown text-md text-center !placeholder:text-white text-xl"
+              className="w-full bg-red-800 rounded px-8 py-5 shadown text-md text-center placeholder:text-white text-xl"
             />
           </div>
 
