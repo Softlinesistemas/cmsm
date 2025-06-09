@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useContext, useCallback, memo } from 'react'
+import React, { useState, useContext, memo } from 'react'
 import { useRouter } from 'next/navigation'
 import { MainContext } from '@/context/MainContext'
 import {
@@ -15,26 +15,24 @@ type MenuItem = {
   path?: string
 }
 
-// Caminhos adicionados
 const adminMenuItems: MenuItem[] = [
-  { label: 'Processo', key: 'Processo', icon: <ClipboardList size={18} />, path: '/dashboardAdmin'},
-  { label: 'Inscrições', key: 'Inscricoes', icon: <FileText size={18} />, path: '/dashboardAdmin'},
-  { label: 'Baixa Pagamentos', key: 'BaixaPagamentos', icon: <Archive size={18} />, path: '/dashboardAdmin'},
-  { label: 'Upload Arquivos', key: 'UploadArquivos', icon: <UploadCloud size={18} />, path: '/dashboardAdmin'},
-  { label: 'Relatórios', key: 'Relatorios', icon: <FileBarChart size={18} />, path: '/dashboardAdmin'},
+  { label: 'Processo', key: 'Processo', icon: <ClipboardList size={18} />, path: '/dashboardAdmin' },
+  { label: 'Inscrições', key: 'Inscricoes', icon: <FileText size={18} />, path: '/dashboardAdmin' },
+  { label: 'Baixa Pagamentos', key: 'BaixaPagamentos', icon: <Archive size={18} />, path: '/dashboardAdmin' },
+  { label: 'Upload Arquivos', key: 'UploadArquivos', icon: <UploadCloud size={18} />, path: '/dashboardAdmin' },
+  { label: 'Relatórios', key: 'Relatorios', icon: <FileBarChart size={18} />, path: '/dashboardAdmin' },
   { label: 'Avaliação Recursos', key: 'AvaliacaoRecursos', icon: <ShieldCheck size={18} />, path: '/dashboardAdmin' },
-  { label: 'Resultados', key: 'Resultados', icon: <BadgeCheck size={18} />, path: '/dashboardAdmin'},
-  { label: 'Gabarito', key: 'Gabarito', icon: <FileText size={18} />, path: '/dashboardAdmin'},
-  { label: 'Cadastro Editais', key: 'CadastroEditais', icon: <ClipboardList size={18} />, path: '/dashboardAdmin',},
-  { label: 'Comunicados', key: 'Comunicados', icon: <Megaphone size={18} />, path: '/dashboardAdmin'},
-  { label: 'Email em Massa', key: 'EmailMassa', icon: <Mail size={18} />, path: '/dashboardAdmin'},
-  { label: 'Gestão Admins', key: 'GestaoAdmins', icon: <Users size={18} />, path: '/dashboardAdmin'},
+  { label: 'Resultados', key: 'Resultados', icon: <BadgeCheck size={18} />, path: '/dashboardAdmin' },
+  { label: 'Gabarito', key: 'Gabarito', icon: <FileText size={18} />, path: '/dashboardAdmin' },
+  { label: 'Cadastro Editais', key: 'CadastroEditais', icon: <ClipboardList size={18} />, path: '/dashboardAdmin', },
+  { label: 'Comunicados', key: 'Comunicados', icon: <Megaphone size={18} />, path: '/dashboardAdmin' },
+  { label: 'Email em Massa', key: 'EmailMassa', icon: <Mail size={18} />, path: '/dashboardAdmin' },
+  { label: 'Gestão Admins', key: 'GestaoAdmins', icon: <Users size={18} />, path: '/dashboardAdmin' },
   { label: 'Logs de Acesso', key: 'LogsAcesso', icon: <Server size={18} />, path: '/dashboardAdmin' },
-  { label: 'Backup', key: 'Backup', icon: <Database size={18} />, path: '/dashboardAdmin'},
-  { label: 'Configurações', key: 'Configuracoes', icon: <Settings size={18} />, path: '/dashboardAdmin'}
+  { label: 'Backup', key: 'Backup', icon: <Database size={18} />, path: '/dashboardAdmin' },
+  { label: 'Configurações', key: 'Configuracoes', icon: <Settings size={18} />, path: '/dashboardAdmin' }
 ]
 
-// Submenu Administração corrigido
 const AdminSubMenu = memo(({ isOpen, selectedKey, onNavigate, isCollapsed }: {
   isOpen: boolean
   selectedKey: string
@@ -73,24 +71,33 @@ const Sidebar: React.FC = () => {
   const handleNavigate = (item: MenuItem) => {
     setSelectedComponent(item.key)
     if (item.path) router.push(item.path)
-    setIsSidebarOpen(false) // fecha no mobile
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setIsSidebarOpen(false)
+    }
   }
 
   const handleRoute = (path: string, key: string) => {
     router.push(path)
     setSelectedComponent(key)
-    setIsSidebarOpen(false)
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setIsSidebarOpen(false)
+    }
   }
 
   return (
     <div className="flex">
       {/* Topbar Mobile */}
-      <div className="md:hidden fixed top-0 left-0 w-full bg-blue-900 text-white flex justify-between items-center p-3 shadow-md z-50">
-        <span className="font-bold text-lg">MENU</span>
-        <button onClick={toggleSidebar} className="text-yellow-400">
-          {isSidebarOpen ? <X size={28} /> : <Menu size={28} />}
-        </button>
-      </div>
+      {typeof window !== 'undefined' && window.innerWidth < 768 && (
+        <div className="md:hidden fixed top-0 left-0 w-full bg-blue-900 text-white flex items-center p-3 shadow-md z-50">
+          <button
+            onClick={toggleSidebar}
+            className="flex items-center gap-2 text-white font-bold text-lg"
+          >
+            {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            <span>MENU</span>
+          </button>
+        </div>
+      )}
 
       {/* Sidebar */}
       <aside className={`
@@ -166,7 +173,7 @@ const Sidebar: React.FC = () => {
 
         {/* Link direto para Configurações */}
         <button
-          onClick={() => handleNavigate({ key: 'Configuracoes', label: 'CONFIGURAÇÕES', icon: <Settings />, path: '/admin/config' })}
+          onClick={() => handleNavigate({ key: 'Configuracoes', label: 'CONFIGURAÇÕES', icon: <Settings />, path: '/configuracoes' })}
           className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm
             hover:bg-blue-800 transition-all duration-300
             ${selectedComponent === 'Configuracoes' ? 'bg-yellow-400 text-blue-900 font-bold' : ''}

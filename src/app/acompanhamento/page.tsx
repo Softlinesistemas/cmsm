@@ -332,10 +332,10 @@ export default function Formulario() {
             <input
               type="text"
               name="dadosVaga"
-              placeholder="Candidato capacitado para concorrer à vaga do 6º ano"
+              placeholder="Candidato capacitado para realizar o exame intelectual"
               value={formData.dadosVaga}
               onChange={handleChange}
-              className="w-full bg-red-800 rounded px-8 py-5 shadown text-md text-center placeholder:text-white text-xl"
+              className="w-full bg-red-800 rounded px-8 py-5 shadown text-md text-center !placeholder:text-white text-xl"
             />
           </div>
 
