@@ -13,7 +13,7 @@ interface ProcessoSolicitacao {
 }
 
 export default function Processo() {
-  // Dados iniciais
+  
   const [solicitacoes] = useState<ProcessoSolicitacao[]>([
     {
       id: 1,
@@ -64,21 +64,21 @@ export default function Processo() {
     },
   ]);
 
-  // Estados para filtro
+ 
   const [filtroTipo, setFiltroTipo] = useState<string>('Todos');
   const [filtroStatus, setFiltroStatus] = useState<string>('Todos');
 
-  // Estado para modal
+  
   const [modalAberto, setModalAberto] = useState(false);
   const [solicitacaoSelecionada, setSolicitacaoSelecionada] = useState<ProcessoSolicitacao | null>(null);
 
-  // Função para abrir modal
+  
   function abrirModal(solicitacao: ProcessoSolicitacao) {
     setSolicitacaoSelecionada(solicitacao);
     setModalAberto(true);
   }
 
-  // Função para fechar modal
+  
   function fecharModal() {
     setModalAberto(false);
     setSolicitacaoSelecionada(null);
