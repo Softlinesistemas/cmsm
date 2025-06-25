@@ -7,18 +7,23 @@ export async function GET(request: NextRequest) {
   let db: any;
   try {
     db = getDBConnection(dbConfig());
-    // Buscar todas as salas ativas
-    const salas = await db("Sala").select("CodSala", "Sala").where("Status", "Ativo");
 
-    // Para cada sala, buscar nomes dos participantes alocados
+    // Buscar todas as salas ativas
+    const salas = await db("Sala")
+      .select("CodSala", "Sala")
+      .where("Status", "Ativo");
+
+    // Para cada sala, buscar todos os participantes alocados (com todos os campos)
     const resultado = await Promise.all(
       salas.map(async (sala: any) => {
-        const registros = await db("Candidato").select("Nome").where("CodSala", sala.CodSala);
-        const participantes = registros.map((r: any) => r.Nome);
+        const participantes = await db("Candidato")
+          .select("*")
+          .where("CodSala", sala.CodSala);
+
         return {
           cod: sala.CodSala,
           sala: sala.Sala,
-          participantes
+          participantes // ← contém objetos completos da tabela Candidato
         };
       })
     );

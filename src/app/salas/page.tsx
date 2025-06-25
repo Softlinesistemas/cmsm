@@ -8,7 +8,9 @@ import { useState, useEffect, useContext } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import api from '@/utils/api';
 import toast from 'react-hot-toast';
-import { ripplesLoading } from '../../../public';
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { unparse as jsonToCSV } from "papaparse";
 
 export default function SalasPage() {
   const queryClient = useQueryClient();
@@ -119,6 +121,127 @@ export default function SalasPage() {
     setForm({ CodSala: '', Sala: '', QtdCadeiras: '', Predio: '', Andar: '', PortadorNec: 'N', Turma: '' });
     setEditingId(null);
   };
+
+  function exportToPDF(sala: string, participantes: any[], codSala: number) {
+    const doc = new jsPDF({ unit: "pt", format: "A4" });
+
+    doc.setFontSize(16);
+    doc.text(`Ensalamento - Sala ${sala} (Cód: ${codSala})`, 40, 40);
+
+    const columns = [
+      { header: "Nome", dataKey: "Nome" },
+      { header: "CPF", dataKey: "CPF" },
+      { header: "Sexo", dataKey: "Sexo" },
+      { header: "Email", dataKey: "Email" },
+      { header: "Cidade", dataKey: "Cidade" },
+      { header: "UF", dataKey: "UF" },
+    ];
+
+    const rows = participantes.map((p: any) => ({
+      Nome: p.Nome,
+      CPF: p.CPF,
+      Sexo: p.Sexo,
+      Email: p.Email,
+      Cidade: p.Cidade,
+      UF: p.UF,
+    }));
+
+    autoTable(doc, {
+      startY: 60,
+      columns,
+      body: rows,
+      headStyles: { fillColor: [0, 102, 204] },
+    });
+
+    doc.save(`sala_${codSala}_participantes.pdf`);
+  }
+
+  function exportToCSV(sala: string, participantes: any[], codSala: number) {
+    const rows = participantes.map((p: any) => ({
+      CodIns: p.CodIns,
+      Nome: p.Nome,
+      Seletivo: p.Seletivo,
+      DataCad: p.DataCad,
+      HoraCad: p.HoraCad,
+      CPF: p.CPF,
+      Nasc: p.Nasc,
+      Sexo: p.Sexo,
+      Email: p.Email,
+      Cep: p.Cep,
+      Endereco: p.Endereco,
+      Complemento: p.Complemento,
+      Bairro: p.Bairro,
+      Cidade: p.Cidade,
+      UF: p.UF,
+      CodCot1: p.CodCot1,
+      CodCot2: p.CodCot2,
+      CodCot3: p.CodCot3,
+      CodCot4: p.CodCot4,
+      CodCot5: p.CodCot5,
+      CodCot6: p.CodCot6,
+      CodCot7: p.CodCot7,
+      CodCot8: p.CodCot8,
+      CodCot9: p.CodCot9,
+      CodCot10: p.CodCot10,
+      PortadorNec: p.PortadorNec,
+      AtendimentoEsp: p.AtendimentoEsp,
+      Responsavel: p.Responsavel,
+      CPFResp: p.CPFResp,
+      NascResp: p.NascResp,
+      SexoResp: p.SexoResp,
+      CepResp: p.CepResp,
+      EnderecoResp: p.EnderecoResp,
+      ComplementoResp: p.ComplementoResp,
+      BairroResp: p.BairroResp,
+      CidadeResp: p.CidadeResp,
+      UFResp: p.UFResp,
+      ProfissaoResp: p.ProfissaoResp,
+      EmailResp: p.EmailResp,
+      TelResp: p.TelResp,
+      Parentesco: p.Parentesco,
+      PertenceFA: p.PertenceFA,
+      CaminhoFoto: p.CaminhoFoto,
+      CaminhoDoc1: p.CaminhoDoc1,
+      CaminhoDoc2: p.CaminhoDoc2,
+      RegistroGRU: p.RegistroGRU,
+      GRUData: p.GRUData,
+      GRUValor: p.GRUValor,
+      GRUHora: p.GRUHora,
+      CodSala: p.CodSala,
+      DataEnsalamento: p.DataEnsalamento,
+      HoraEnsalamento: p.HoraEnsalamento,
+      CodUsuEnsalamento: p.CodUsuEnsalamento,
+      Status: p.Status,
+      CaminhoResposta: p.CaminhoResposta,
+      CaminhoRedacao: p.CaminhoRedacao,
+      RevisaoGabarito: p.RevisaoGabarito,
+      DataImportacao: p.DataImportacao,
+      HoraImportacao: p.HoraImportacao,
+      CodUsuImportacao: p.CodUsuImportacao,
+      NotaMatematica: p.NotaMatematica,
+      NotaPortugues: p.NotaPortugues,
+      NotaRedacao: p.NotaRedacao,
+      DataRevisao: p.DataRevisao,
+      CodUsuRev: p.CodUsuRev
+    }));
+
+    const csv = jsonToCSV(rows, {
+      delimiter: ";",
+      header: true,
+      skipEmptyLines: true
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `sala_${codSala}_participantes.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
@@ -316,14 +439,22 @@ export default function SalasPage() {
                   <tr key={idx} className="hover:bg-gray-50 text-black">
                     <td className="p-3 border text-center">{item.cod}</td>
                     <td className="p-3 border">{item.sala}</td>
-                    <td className="p-3 border">{item.participantes.join(', ')}</td>
+                    <td className="p-3 border">
+                      {item.participantes.map((p: any) => p.Nome).join(', ')}
+                    </td>
                     <td className="p-3 border text-center space-x-2">
-                      <button className="bg-red-700 text-white px-4 py-1 rounded hover:bg-red-600 transition">
+                      <button
+                        className="bg-red-700 text-white px-4 py-1 rounded hover:bg-red-600 transition"
+                        onClick={() => exportToPDF(item.sala, item.participantes, item.cod)}
+                      >
                         Exportar PDF
                       </button>
-                      <button className="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-400 transition ml-2">
+                      <button
+                        className="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-400 transition ml-2"
+                        onClick={() => exportToCSV(item.sala, item.participantes, item.cod)}
+                      >
                         Exportar CSV
-                      </button>
+                      </button>              
                     </td>
                   </tr>
                 ))}

@@ -12,8 +12,8 @@ export const authOptions: AuthOptions = {
       name: "Gov.br",
       type: "oauth",
       wellKnown: "https://sso.acesso.gov.br/.well-known/openid-configuration",
-      clientId: process.env.GOVBR_CLIENT_ID!,
-      clientSecret: process.env.GOVBR_CLIENT_SECRET!,
+      clientId: process.env.NEXT_PUBLIC_GOVBR_CLIENT_ID!,
+      clientSecret: process.env.NEXT_PUBLIC_GOVBR_CLIENT_SECRET!,
       authorization: { params: { scope: "openid email profile" } },
       checks: ["pkce", "state"],
       profile(profile: any) {
