@@ -1,4 +1,4 @@
-'use client'
+'use client' 
 import LoadingIcon from '@/components/common/LoadingIcon'
 import api from '@/utils/api'
 import { useQuery } from 'react-query'
