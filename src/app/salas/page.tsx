@@ -8,6 +8,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import api from '@/utils/api';
 import toast from 'react-hot-toast';
+import { ripplesLoading } from '../../../public';
 
 export default function SalasPage() {
   const queryClient = useQueryClient();
@@ -27,6 +28,14 @@ export default function SalasPage() {
     const res = await api.get('api/sala');
     return res.data.salas;
   });
+
+  const { data: ensalamento = [], isLoading: loadingEnsalamento } = useQuery(
+    'ensalamento',
+    async () => {
+      const res = await api.get('api/sala/ensalamento');
+      return res.data;
+    }
+  );
 
   const saveMut = useMutation(
     async () => {
@@ -51,6 +60,15 @@ export default function SalasPage() {
         toast.success("Lista de salas atualizada.");
         resetForm();
       },
+    }
+  );
+
+  const gerarMut = useMutation(
+    () => api.post('api/sala/ensalamento'),
+    { onSuccess: () => {
+        queryClient.invalidateQueries('ensalamento');
+        toast.success('Ensalamento gerado com sucesso.');
+      }
     }
   );
 
@@ -101,9 +119,6 @@ export default function SalasPage() {
     setForm({ CodSala: '', Sala: '', QtdCadeiras: '', Predio: '', Andar: '', PortadorNec: 'N', Turma: '' });
     setEditingId(null);
   };
-
-  // Static ensalamento
-  const ensalamento: any = [];
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
@@ -211,13 +226,6 @@ export default function SalasPage() {
             </button>
           </section>
 
-          {/* Botão de Geração de Ensalamento */}
-          <div className="flex justify-center mb-10">
-            <button className="bg-blue-900 text-white px-8 py-3 rounded-md hover:bg-blue-800 transition">
-              Gerar Ensalamento
-            </button>
-          </div>
-
           {/* Grid de Salas Cadastradas */}
           <section className="bg-white p-6 rounded-2xl shadow-md border border-gray-200 max-w-full mx-auto mb-10 overflow-x-auto">
             <h2 className="text-xl font-semibold text-blue-900 mb-6">Salas Cadastradas</h2>
@@ -244,7 +252,7 @@ export default function SalasPage() {
                       <td className="p-3 border">{s.Sala}</td>
                       <td className="p-3 border text-center">{s.Andar}</td>
                       <td className="p-3 border text-center">{s.QtdCadeiras}</td>
-                      <td className="p-3 border text-center">{s.Andar === '6' ? '6º' : s.Andar === '1' ? '1º' : ''}</td>
+                      <td className="p-3 border text-center">{s.Turma}</td>
                       <td className="p-3 border text-center">
                         <span className={`inline-block px-2 py-1 text-xs rounded-full ${
                           s.PortadorNec === 'X' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
@@ -279,6 +287,17 @@ export default function SalasPage() {
               </tbody>
             </table>
           </section>
+
+          {/* Botão de Geração de Ensalamento */}
+          <div className="flex justify-center mb-10">
+            <button
+              onClick={() => gerarMut.mutate()}
+              disabled={gerarMut.isLoading}
+              className="bg-blue-900 text-white px-8 py-3 rounded-md hover:bg-blue-800 transition disabled:opacity-50"
+            >
+              {gerarMut.isLoading ? 'Gerando...' : 'Gerar Ensalamento'}
+            </button>
+          </div>
 
           {/* Grid do Ensalamento */}
           <section className="bg-white p-6 rounded-2xl shadow-md border border-gray-200 max-w-full mx-auto overflow-x-auto">

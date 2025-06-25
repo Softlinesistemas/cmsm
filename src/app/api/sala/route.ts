@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
       "QtdCadeiras",
       "Predio",
       "Andar",
+      "Turma",
       "Status",
       "PortadorNec"
     );
