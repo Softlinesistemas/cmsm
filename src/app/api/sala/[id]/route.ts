@@ -1,12 +1,11 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import getDBConnection from "@/db/conn";
 import dbConfig from "@/db/dbConfig";
 
-export async function GET(request: NextRequest, context: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   let db;
   try {
-    const { id } = context.params;
+    const { id } = params;
     db = getDBConnection(dbConfig());
     const sala = await db("Sala")
       .select(
@@ -40,10 +39,10 @@ export async function GET(request: NextRequest, context: { params: { id: string 
   }
 }
 
-export async function PUT(request: NextRequest, context: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   let db;
   try {
-    const { id } = context.params;
+    const { id } = params;
     const body = await request.json();
     db = getDBConnection(dbConfig());
 
@@ -72,10 +71,10 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
   }
 }
 
-export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   let db;
   try {
-    const { id } = context.params;
+    const { id } = params;
     db = getDBConnection(dbConfig());
 
     const deleted = await db("Sala")

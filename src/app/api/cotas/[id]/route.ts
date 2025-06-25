@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import getDBConnection from "@/db/conn";
 import dbConfig from "@/db/dbConfig";
 
-export async function PUT(request: NextRequest, context: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   let db;
 
   try {
-    const { id } = context.params;
+    const { id } = params;
     const body = await request.json();
     const { Status, Descricao } = body;
 
@@ -29,11 +29,11 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
   }
 }
 
-export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   let db;
 
   try {
-    const { id } = context.params;
+    const { id } = params;
 
     db = getDBConnection(dbConfig());
 
