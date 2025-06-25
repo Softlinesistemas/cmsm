@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useRouter } from 'next/navigation'
+import { signOut } from 'next-auth/react'
 
 interface StepsNavbarProps {
   activeStep: number 
@@ -17,7 +18,7 @@ const steps = [
 export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
   const router = useRouter()
 
-  const handleClick = (index: number) => {
+  const handleClick = async (index: number) => {
     switch (index) {
       case 0:
         router.push('/acompanhamento')
@@ -29,7 +30,7 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
         router.push('/pagamento')
         break
       case 3:
-        router.push('/')
+        await signOut({ callbackUrl: "/", redirect: true });
         break
       default:
         break
@@ -57,8 +58,3 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
     </nav>
   )
 }
-
-// Usage in pages/inscricao/pagamento.tsx or Confirmacao.tsx: 
-// import StepsNavbar from '../../../components/StepsNavbar'
-//
-// <StepsNavbar activeStep={2} /> // for Pagamento page

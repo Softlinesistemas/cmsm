@@ -9,10 +9,12 @@ import api from '@/utils/api';
 import moment from 'moment-timezone';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react'
 
 export default function Home() {
   const router = useRouter();
   const { editais } = useEditais(); 
+  const { data: session, status } = useSession();
 
   const handleGovLogin = async () => {
     await signIn("govbr");
@@ -86,7 +88,7 @@ export default function Home() {
               <span className="text-gray-700 font-medium">Entrar com gov.br</span>
             </button>
             <div className='w-full'>            
-              <Link href="/acompanhamento" className='mt-1 text-sm text-blue-500 hover:underline hover:text-blue-700 cursor-pointer'>Pular etapa (provisório)</Link>
+              <Link href={status !== "authenticated" ? "/formulario" : session?.user?.admin ? "/dashboard" :"/acompanhamento"} className='mt-1 text-sm text-blue-500 hover:underline hover:text-blue-700 cursor-pointer'>Pular etapa (provisório)</Link>
             </div>
           </div>
         </div>

@@ -34,7 +34,7 @@ const login = () => {
     }
 
     const session = await getSession();
-    console.log(session)
+
     if (session?.user?.admin) {
       router.push("/dashboard");
     } else {

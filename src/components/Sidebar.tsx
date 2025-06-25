@@ -24,13 +24,13 @@ const adminMenuItems: MenuItem[] = [
   { label: 'Avaliação Recursos', key: 'AvaliacaoRecursos', icon: <ShieldCheck size={18} />, path: '/dashboardAdmin' },
   { label: 'Resultados', key: 'Resultados', icon: <BadgeCheck size={18} />, path: '/dashboardAdmin' },
   { label: 'Gabarito', key: 'Gabarito', icon: <FileText size={18} />, path: '/dashboardAdmin' },
-  { label: 'Cadastro Editais', key: 'CadastroEditais', icon: <ClipboardList size={18} />, path: '/dashboardAdmin', },
+  // { label: 'Cadastro Editais', key: 'CadastroEditais', icon: <ClipboardList size={18} />, path: '/dashboardAdmin', },
   { label: 'Comunicados', key: 'Comunicados', icon: <Megaphone size={18} />, path: '/dashboardAdmin' },
   { label: 'Email em Massa', key: 'EmailMassa', icon: <Mail size={18} />, path: '/dashboardAdmin' },
   { label: 'Gestão Admins', key: 'GestaoAdmins', icon: <Users size={18} />, path: '/dashboardAdmin' },
   { label: 'Logs de Acesso', key: 'LogsAcesso', icon: <Server size={18} />, path: '/dashboardAdmin' },
   { label: 'Backup', key: 'Backup', icon: <Database size={18} />, path: '/dashboardAdmin' },
-  { label: 'Configurações', key: 'Configuracoes', icon: <Settings size={18} />, path: '/dashboardAdmin' }
+  // { label: 'Configurações', key: 'Configuracoes', icon: <Settings size={18} />, path: '/dashboardAdmin' }
 ]
 
 const AdminSubMenu = memo(({ isOpen, selectedKey, onNavigate, isCollapsed }: {
