@@ -6,22 +6,21 @@ export async function POST(request: Request) {
   let db;
 
   try {
-    const { email, password } = await request.json();
+    const { user: userName, password } = await request.json();
 
     db = getDBConnection(dbConfig());
 
     const user = await db("Senha as S")
-      .leftJoin("Clientes as C", "S.CodUsu", "C.CodCli")
+      .leftJoin("Candidato as C", "S.CodUsu", "C.CodUsu")
       .select(
         "S.CodUsu as id",
-        db.raw("COALESCE(S.Email, C.Email) as email"),
-        "S.Usuario as name",
+        "S.Usuario as user",
         "S.Senha as password",
-        "S.Op91 as admin",
+        "S.ADM as admin",
       )
       .where("S.Senha", password)
       .andWhere((builder) => {
-        builder.where("S.Email", email).orWhere("C.Email", email);
+        builder.where("S.Usuario", userName).orWhere("C.CPF", userName);
       })
       .first();
   
@@ -31,8 +30,8 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
-
-    return NextResponse.json({ user });
+    console.log(user)
+    return NextResponse.json({ user: user.user, id: user.id, admin: user.admin });
 
   } catch (error: any) {
     console.log(error)

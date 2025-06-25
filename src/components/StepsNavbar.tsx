@@ -44,10 +44,10 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
             key={label}
             onClick={() => handleClick(idx)}
             className={
-              `flex-1 py-3 text-center cursor-pointer hover:text-green-900 ` +
+              `flex-1 py-3 text-center cursor-pointer ${
               (idx === activeStep
                 ? 'text-green-900 font-semibold border-b-2 border-green-900'
-                : '')
+                : '')} ${label === "Sair" ? "text-red-600 hover:text-red-800" : ""} `
             }
           >
             {label}
@@ -58,7 +58,7 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
   )
 }
 
-// Usage in pages/inscricao/pagamento.tsx or Confirmacao.tsx:
+// Usage in pages/inscricao/pagamento.tsx or Confirmacao.tsx: 
 // import StepsNavbar from '../../../components/StepsNavbar'
 //
 // <StepsNavbar activeStep={2} /> // for Pagamento page

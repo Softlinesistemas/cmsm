@@ -4,32 +4,56 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Footer from '../../components/FooterAdm'
 import Header from '../../components/HeaderAdm'
+import api from '@/utils/api'
+import { signIn, getSession } from "next-auth/react";
 
-const LoginAdm = () => {
+const login = () => {
   const [primeiroAcesso, setPrimeiroAcesso] = useState(false)
   const [cpf, setCpf] = useState('')
+  const [user, setUser] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
   const router = useRouter()
 
   const handlePrimeiroAcesso = () => {
-    // Redireciona para a rota de cadastro com CPF como query param
     router.push(`/cadColaborador/?cpf=${cpf}`)
   }
+
+  const handleLogin = async () => {
+    setError("");
+
+    const res = await signIn("credentials", {
+      redirect: false,
+      user,
+      password,
+    });
+
+    if (res?.error) {
+      setError(res.error);
+      return;
+    }
+
+    const session = await getSession();
+    console.log(session)
+    if (session?.user?.admin) {
+      router.push("/dashboard");
+    } else {
+      router.push("/acompanhamento");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-between">
       <Header />
 
-      {/* Conteúdo centralizado e responsivo */}
       <main className="flex flex-col items-center px-4 py-8">
-         <div className="bg-blue-900 rounded-[60px] p-6 pt-10 pb-6 w-full max-w-xs flex flex-col items-center shadow-xl relative border-2 border-blue-300">
-          {/* Ícone no topo */}
+        <div className="bg-blue-900 rounded-[60px] p-6 pt-10 pb-6 w-full max-w-xs flex flex-col items-center shadow-xl relative border-2 border-blue-300">
           <div className="w-[100px] h-[100px] bg-blue-900 border-4 border-blue-700 rounded-full absolute -top-10 flex items-center justify-center">
-            <svg className="w-[60px] h-[60px] text-white shadow-xl"  fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 24">
+            <svg className="w-[60px] h-[60px] text-white shadow-xl" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 14c4.418 0 8 1.79 8 4v2H4v-2c0-2.21 3.582-4 8-4zm0-2a4 4 0 100-8 4 4 0 000 8z" />
             </svg>
           </div>
 
-          {/* Formulários */}
           <div className="mt-12 w-full space-y-4">
             {!primeiroAcesso ? (
               <>
@@ -41,7 +65,9 @@ const LoginAdm = () => {
                   </span>
                   <input
                     type="text"
-                    placeholder="USUARIO"
+                    placeholder="USUÁRIO"
+                    value={user}
+                    onChange={(e) => setUser(e.target.value)}
                     className="bg-transparent placeholder-gray-300 text-white text-sm w-full focus:outline-none"
                   />
                 </div>
@@ -54,6 +80,8 @@ const LoginAdm = () => {
                   <input
                     type="password"
                     placeholder="SENHA"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="bg-transparent placeholder-gray-300 text-white text-sm w-full focus:outline-none"
                   />
                 </div>
@@ -76,10 +104,15 @@ const LoginAdm = () => {
             )}
           </div>
 
-          {/* Container fixo para o botão - largura fixa para evitar movimento */}
+          {error && (
+            <div className="mt-4 text-sm text-red-300 text-center">
+              {error}
+            </div>
+          )}
+
           <div className="mt-6 w-44">
             <button
-              onClick={primeiroAcesso ? handlePrimeiroAcesso : () => {}}
+              onClick={primeiroAcesso ? handlePrimeiroAcesso : handleLogin}
               className="bg-yellow-400 text-black font-bold py-2 px-6 rounded-full hover:bg-yellow-500 transition w-full text-center"
             >
               {primeiroAcesso ? 'CONTINUAR' : 'ENTRAR'}
@@ -104,4 +137,4 @@ const LoginAdm = () => {
   )
 }
 
-export default LoginAdm
+export default login

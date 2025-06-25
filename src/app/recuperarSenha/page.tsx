@@ -87,7 +87,7 @@ const RecuperarSenha: React.FC = () => {
 
         <button
           type="button"
-          onClick={() => router.push('/LoginAdm')}
+          onClick={() => router.push('/login')}
           className="text-xs text-gray-300 mt-4 hover:underline self-center"
         >
           Voltar ao Login

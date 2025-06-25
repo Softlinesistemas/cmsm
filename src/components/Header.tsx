@@ -1,6 +1,6 @@
 'use client'
 
-import LoginAdm from '@/app/LoginAdm/page';
+import LoginAdm from '@/app/login/page';
 import { useRouter } from 'next/navigation';
 
 export default function Header() {
@@ -21,10 +21,9 @@ export default function Header() {
           </div>
 
           
-            <button className="bg-blue-900 text-white px-6 py-2 rounded-full hover:bg-yellow-600 transition" onClick={() => router.push("/LoginAdm")}>
+            <button className="bg-blue-900 text-white px-6 py-2 rounded-full hover:bg-yellow-600 transition" onClick={() => router.push("/acompanhamento")}>
               ACOMPANHAMENTO
             </button>
-          
         </div>
       </header>
     </div>

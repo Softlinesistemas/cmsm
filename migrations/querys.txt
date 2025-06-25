@@ -1,8 +1,10 @@
 CREATE TABLE Sala (
     CodSala         INT           NOT NULL PRIMARY KEY,
-    Sala            VARCHAR(5)    NOT NULL,
+    Sala            VARCHAR(20)    NOT NULL,
     QtdCadeiras     INT           NOT NULL,
     Predio          VARCHAR(10)   NULL,
+    Turma           VARCHAR(20)   NULL,
+    Status          VARCHAR(6)   NULL,
     Andar           VARCHAR(10)   NULL,
     PortadorNec     CHAR(1)       NULL  -- 'X' se necessário
 );
@@ -83,14 +85,14 @@ CREATE TABLE Senha (
     ADM        CHAR(1)      NOT NULL,              -- flag admin
     DataCad    DATETIME     NOT NULL,
     HoraCad    CHAR(5)      NOT NULL,
-    CONSTRAINT FK_Senha_Candidato FOREIGN KEY (CodUsu)
-        REFERENCES Candidato(CodIns)
+    Senha      VARCHAR(255), 
 );
 
 CREATE TABLE Funcao (
-    ProcessoSel    VARCHAR(20)    NOT NULL PRIMARY KEY,   -- chave natural (identifica o processo seletivo)
+    ProcessoSel    VARCHAR(255)    NOT NULL PRIMARY KEY,   -- chave natural (identifica o processo seletivo)
     NascIniEF      DATE           NULL,
     NascFimEF      DATE           NULL,
+    DataIniEF      DATE           NULL,
     HoraIniEF      CHAR(5)        NULL,                   -- formato 'HH:MM'
     HoraFimEF      CHAR(5)        NULL,
     NascIniEM      DATE           NULL,
@@ -102,5 +104,11 @@ CREATE TABLE Funcao (
     GRUHoraFim     CHAR(5)        NULL,
     NotaMinMat     DECIMAL(5,2)   NULL,
     NotaMinPor     DECIMAL(5,2)   NULL
+);
+
+CREATE TABLE Cota (
+    id          INT           NOT NULL PRIMARY KEY IDENTITY(1,1),  -- chave primária com auto incremento
+    Status      VARCHAR(20)   NOT NULL,                            -- Ex: 'Ativa', 'Inativa'
+    Descricao   VARCHAR(100)  NOT NULL                             -- Descrição da cota
 );
 

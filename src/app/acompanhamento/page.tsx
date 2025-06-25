@@ -5,12 +5,28 @@ import Footer from '../../components/FooterAdm'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import StepsNavbar from '@/components/StepsNavbar'
+import { useQuery } from 'react-query'
+import api from '@/utils/api'
+import bcrypt from 'bcryptjs';
+import { signIn } from 'next-auth/react'
+import toast from 'react-hot-toast'
+import { useSession } from 'next-auth/react'
+import LoadingIcon from '@/components/common/LoadingIcon'
 
 export default function Formulario() {
-  const router = useRouter()
-  const dataLimiteEdicao = new Date('2025-06-01')
-  const [podeEditarExtras, setPodeEditarExtras] = useState(true)
-
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const dataLimiteEdicao = new Date('2025-06-01');
+  const [podeEditarExtras, setPodeEditarExtras] = useState(true);
+  const [provisoryKey, setProvisoryKey] = useState("");
+  const [provisoryUser, setProvisoryUser] = useState("");
+  const [paymentButton, setPaymentButton] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { data: cotas, isLoading, refetch } = useQuery('cotas', async () => {
+    const response = await api.get('api/cotas')
+    return response.data
+  })
+  
   const [formData, setFormData] = useState({
     nome: '',
     numeroInscricao: '',
@@ -50,11 +66,13 @@ export default function Formulario() {
     parentesco: '',
     emailResponsavel: '',
     emailCandidato: '',
-    fotoPreview: ''
+    fotoPreview: '',
+    Seletivo: ''
   })
 
   useEffect(() => {
-    setPodeEditarExtras(new Date() <= dataLimiteEdicao)
+    // setPodeEditarExtras(new Date() <= dataLimiteEdicao)
+    setPodeEditarExtras(true)
   }, [])
 
   const handleChange = (e: React.ChangeEvent<any>) => {
@@ -71,11 +89,143 @@ export default function Formulario() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log(formData)
-    router.push('/confirmacao')
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
+    setLoading(true);
+    // Mapeando formData para o objeto esperado pela API
+    const payload = {
+      CodIns: Number(formData.numeroInscricao), // supondo que seja number
+      Nome: formData.nome,
+      CPF: formData.cpf,
+      Nasc: formData.dataNascimento || null,
+      Sexo: formData.sexo || null,
+      Cep: formData.cep || null,
+      Endereco: formData.endereco || null,
+      Complemento: formData.complemento || null,
+      Bairro: null,      // Se você tiver, pode preencher
+      Cidade: formData.cidade || null,
+      UF: formData.uf || null,
+      // Campos que não tem no seu formData, podem ficar nulos
+      CodCot1: formData?.tipoCota || null,
+      CodCot2: null,
+      CodCot3: null,
+      CodCot4: null,
+      CodCot5: null,
+      CodCot6: null,
+      CodCot7: null,
+      CodCot8: null,
+      CodCot9: null,
+      CodCot10: null,
+      PortadorNec: formData.necessidades || null,
+      AtendimentoEsp: formData.atendimentoEspecial || null,
+      Responsavel: formData.nomeResponsavel || null,
+      CPFResp: formData.cpfResponsavel || null,
+      NascResp: formData.dataNascimentoResponsavel || null,
+      SexoResp: formData.sexoResponsavel || null,
+      CepResp: formData.cep_Resp || null,
+      EnderecoResp: formData.endereco_Resp || null,
+      ComplementoResp: formData.complemento_Resp || null,
+      BairroResp: null,
+      CidadeResp: formData.cidade_Resp || null,
+      UFResp: formData.uf_Resp || null,
+      ProfissaoResp: formData.profissao || null,
+      EmailResp: formData.emailResponsavel || null,
+      TelResp: formData.celular || null,
+      Parentesco: formData.parentesco || null,
+      Email: formData.emailCandidato || null,
+      CaminhoFoto: formData.fotoPreview || null,
+      Seletivo: formData.Seletivo,
+
+      // Campos nulos:
+      DataCad: null, // backend
+      HoraCad: null, // backend
+      RegistroGRU: null,
+      GRUData: null,
+      GRUValor: null,
+      GRUHora: null,
+      CodSala: null,
+      DataEnsalamento: null,
+      HoraEnsalamento: null,
+      CodUsuEnsalamento: null,
+      Status: null,
+      CaminhoResposta: null,
+      CaminhoRedacao: null,
+      RevisaoGabarito: null,
+      DataImportacao: null,
+      HoraImportacao: null,
+      CodUsuImportacao: null,
+      NotaMatematica: null,
+      NotaPortugues: null,
+      NotaRedacao: null,
+      DataRevisao: null,
+      CodUsuRev: null,
+    };
+
+    try {
+      const nomeCompleto = formData.nome.trim().split(/\s+/);
+      
+      const primeiroNome = nomeCompleto[0];
+      const ultimoNome = nomeCompleto.length > 1 ? nomeCompleto[nomeCompleto.length - 1] : "";
+      
+      const user = `${primeiroNome.toLowerCase()}_${ultimoNome.toLowerCase()}`.replace(/[^\w]/g, '');
+      
+      const password = await bcrypt.hash(user, 10);
+      let userId = null;
+      if (!session?.user?.id) {
+        const response = await api.post("api/candidato/cadastro", {
+          user,
+          password,
+          email: formData.emailCandidato
+        }); 
+        userId = response.data.id
+      }
+      await api.post("api/candidato", {...payload, CodUsu: session?.user?.id || userId });
+
+      if (userId) {
+        const res = await signIn("credentials", {
+          redirect: false,
+          user: formData.cpf?.replace(/\D/g, ""),
+          password,
+        });
+        setProvisoryKey(password);
+        setProvisoryUser(formData.cpf?.replace(/\D/g, ""));
+      }
+      toast.success("Inscrição realizada!");
+      setPaymentButton(true);
+    } catch (error: any) {
+      toast.error(error.response.data.error || error.response.data.message)
+      console.error("Erro ao enviar dados:", error);
+    }
+    setLoading(false);
+  };
+
+  const einCpfMask = (value: string) => {
+    let cleaned = value.replace(/\D/g, "");
+
+    if (cleaned.length <= 3) return cleaned;
+    if (cleaned.length <= 6) return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
+    if (cleaned.length <= 9) return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
+    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`;
+  };
+
+  const phoneMask = (value: string) => {
+    let cleaned = value.replace(/\D/g, "");
+    
+    if (cleaned.length === 0) return "";
+    if (cleaned.length <= 2) return cleaned;
+    if (cleaned.length <= 6) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+    if (cleaned.length <= 10) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
+    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7, 11)}`;
+  };
+
+   const cepMask = (value: string) => {
+    let cleaned = value.replace(/\D/g, "");
+
+    if (cleaned.length <= 5) return cleaned;
+    return `${cleaned.slice(0, 5)}-${cleaned.slice(5, 8)}`; 
+   };
+    
 
   const fetchAddress = async (cep: string, resp = false) => {
     const num = cep.replace(/\D/g, '')
@@ -114,7 +264,7 @@ export default function Formulario() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
-      <StepsNavbar activeStep={1}/>
+      <StepsNavbar activeStep={0}/>
       <main className="flex-grow px-4 py-8">
         
 
@@ -152,13 +302,27 @@ export default function Formulario() {
                 )}
               </div>
             </div>
-            <div className="col-span-12 md:col-span-7">
+            <div className="col-span-12 md:col-span-4">
               <label className="text-blue-800 font-medium mb-1 block">Nome do Candidato</label>
-              <input name="nome" value={formData.nome} onChange={handleChange} required className={baseInput}  readOnly/>
+              <input name="nome" value={formData.nome} onChange={handleChange} required className={baseInput}  />
             </div>
+             <div className="col-span-12 md:col-span-3">
+                <label className="block text-blue-800 font-medium mb-1">Vaga</label>
+                <select
+                  name="Seletivo"
+                  value={formData.Seletivo}
+                  onChange={handleChange}
+                  required
+                  className={`${baseInput}`}
+                >
+                  <option value="">Selecione a vaga</option>
+                  <option value="6° ano">6° ano</option>
+                  <option value="1° ano">1° ano</option>
+                </select>
+              </div>
             <div className="col-span-12 md:col-span-3">
               <label className="text-blue-800 font-medium mb-1 block">Nº Inscrição</label>
-              <input name="numeroInscricao" value={formData.numeroInscricao} onChange={handleChange} className={baseInput}  readOnly/>
+              <input name="numeroInscricao" value={formData.numeroInscricao} onChange={handleChange} className={baseInput} readOnly disabled/>
             </div>
           </div>
 
@@ -169,11 +333,11 @@ export default function Formulario() {
               {/* Linha 1 */}
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">CPF</label>
-                <input name="cpf" value={formData.cpf} onChange={handleChange} required className={baseInput}  readOnly/>
+                <input maxLength={14} value={einCpfMask(formData.cpf || "")} name="cpf" onChange={handleChange} required className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Data de Nasc.</label>
-                <input type="date" name="dataNascimento" value={formData.dataNascimento} onChange={handleChange} className={baseInput}  readOnly/>
+                <input type="date" name="dataNascimento" value={formData.dataNascimento} onChange={handleChange} className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Sexo</label>
@@ -186,28 +350,63 @@ export default function Formulario() {
               {/* Linha 2 */}
               <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">CEP</label>
-                <input name="cep" value={formData.cep} onChange={handleChange} onBlur={() => fetchAddress(formData.cep)} className={baseInput}  readOnly/>
+                <input name="cep" value={cepMask(formData.cep)} onChange={handleChange} onBlur={() => fetchAddress(formData.cep)} className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">UF</label>
-                <input name="uf" value={formData.uf} onChange={handleChange} className={baseInput}  readOnly/>
+                <select
+                  name="uf"
+                  value={formData.uf}
+                  onChange={handleChange}
+                  required
+                  className={`${baseInput}`}
+                >
+                  <option value="">Selecione o estado</option>
+                  <option value="AC">Acre</option>
+                  <option value="AL">Alagoas</option>
+                  <option value="AP">Amapá</option>
+                  <option value="AM">Amazonas</option>
+                  <option value="BA">Bahia</option>
+                  <option value="CE">Ceará</option>
+                  <option value="DF">Distrito Federal</option>
+                  <option value="ES">Espírito Santo</option>
+                  <option value="GO">Goiás</option>
+                  <option value="MA">Maranhão</option>
+                  <option value="MT">Mato Grosso</option>
+                  <option value="MS">Mato Grosso do Sul</option>
+                  <option value="MG">Minas Gerais</option>
+                  <option value="PA">Pará</option>
+                  <option value="PB">Paraíba</option>
+                  <option value="PR">Paraná</option>
+                  <option value="PE">Pernambuco</option>
+                  <option value="PI">Piauí</option>
+                  <option value="RJ">Rio de Janeiro</option>
+                  <option value="RN">Rio Grande do Norte</option>
+                  <option value="RS">Rio Grande do Sul</option>
+                  <option value="RO">Rondônia</option>
+                  <option value="RR">Roraima</option>
+                  <option value="SC">Santa Catarina</option>
+                  <option value="SP">São Paulo</option>
+                  <option value="SE">Sergipe</option>
+                  <option value="TO">Tocantins</option>
+                </select>
               </div>
               <div className="col-span-12 md:col-span-6">
                 <label className="block text-blue-800 font-medium mb-1">Cidade</label>
-                <input name="cidade" value={formData.cidade} onChange={handleChange} className={baseInput}  readOnly/>
+                <input name="cidade" value={formData.cidade} onChange={handleChange} className={baseInput}  />
               </div>
               {/* Linha 3 */}
               <div className="col-span-12 md:col-span-8">
                 <label className="block text-blue-800 font-medium mb-1">Endereço</label>
-                <input name="endereco" value={formData.endereco} onChange={handleChange} className={baseInput}  readOnly/>
+                <input name="endereco" value={formData.endereco} onChange={handleChange} className={baseInput}  />
               </div>
               <div className="col-span-6 md:col-span-2">
                 <label className="block text-blue-800 font-medium mb-1">Número</label>
-                <input name="numero" value={formData.numero} onChange={handleChange} className={baseInput}  readOnly/>
+                <input name="numero" value={formData.numero} onChange={handleChange} className={baseInput} maxLength={6} />
               </div>
               <div className="col-span-6 md:col-span-2">
                 <label className="block text-blue-800 font-medium mb-1">Complemento</label>
-                <input name="complemento" value={formData.complemento} onChange={handleChange} className={baseInput}  readOnly/>
+                <input name="complemento" value={formData.complemento} onChange={handleChange} className={baseInput}  />
               </div>
             </div>
           </div>
@@ -220,10 +419,10 @@ export default function Formulario() {
                 <label className="text-blue-800 font-medium mb-1 block">Necessidades Especiais?</label>
                 <select name="necessidades" value={formData.necessidades} onChange={handleChange} className={baseInput}>
                   <option value="">Selecione</option>
-                  <option value="não">Não</option>
-                  <option value="sim">Sim</option>
+                  <option value="">Não</option>
+                  <option value="X">Sim</option>
                 </select>
-                {formData.necessidades === 'sim' && (
+                {formData.necessidades === 'X' && (
                   <select name="tipoNecessidade" value={formData.tipoNecessidade} onChange={handleChange} required className={`${baseInput} mt-2`}>
                     <option value="">Tipo de Necessidade</option>
                     <option value="visual">Visual</option>
@@ -240,10 +439,10 @@ export default function Formulario() {
                 <label className="text-blue-800 font-medium mb-1 block">Transtorno Funcional?</label>
                 <select name="transtornoFuncional" value={formData.transtornoFuncional} onChange={handleChange} className={baseInput}>
                   <option value="">Selecione</option>
-                  <option value="não">Não</option>
-                  <option value="sim">Sim</option>
+                  <option value="">Não</option>
+                  <option value="X">Sim</option>
                 </select>
-                {formData.transtornoFuncional === 'sim' && (
+                {formData.transtornoFuncional === 'X' && (
                   <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                     {['TDA', 'TDAH', 'TOD', 'DISLEXIA', 'DISCALCULIA', 'OUTROS'].map(tipo => (
                       <label key={tipo} className="inline-flex items-center">
@@ -266,10 +465,10 @@ export default function Formulario() {
                 <label className="text-blue-800 font-medium mb-1 block">Atendimento Especial?</label>
                 <select name="atendimentoEspecial" value={formData.atendimentoEspecial} onChange={handleChange} className={baseInput}>
                   <option value="">Selecione</option>
-                  <option value="não">Não</option>
-                  <option value="sim">Sim</option>
+                  <option value="">Não</option>
+                  <option value="X">Sim</option>
                 </select>
-                {formData.atendimentoEspecial === 'sim' && (
+                {formData.atendimentoEspecial === 'X' && (
                   <select name="tipoAtendimento" value={formData.tipoAtendimento} onChange={handleChange} required className={`${baseInput} mt-2`}>
                     <option value="">Tipo de Atendimento</option>
                     <option value="leitura">Leitura em voz alta</option>
@@ -292,9 +491,14 @@ export default function Formulario() {
                   className={`${baseInput} ${!podeEditarExtras ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
                   <option value="">Selecione</option>
-                  <option value="negra">Negra</option>
-                  <option value="deficiência">Deficiência</option>
-                  <option value="publica">Escola Pública</option>
+
+                  {cotas
+                    ?.filter((cota: any) => cota.Status === 'Ativo')
+                    .map((cota: any) => (
+                      <option key={cota.id} value={cota.id}>
+                        {cota.Descricao}
+                      </option>
+                  ))}
                 </select>
               </div>
 
@@ -309,15 +513,15 @@ export default function Formulario() {
                   className={`${baseInput} ${!podeEditarExtras ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
                   <option value="">Selecione</option>
-                  <option value="não">Não</option>
-                  <option value="sim">Sim</option>
+                  <option value="">Não</option>
+                  <option value="X">Sim</option>
                 </select>
-                {formData.necessitaCondicoes === 'sim' && (
+                {formData.necessitaCondicoes === 'X' && (
                   <select name="tipoAtendimentoProva" value={formData.tipoAtendimentoProva} onChange={handleChange} required className={`${baseInput} mt-2`}>
                     <option value="">Tipo de Condição</option>
                     <option value="tempoExtra">Tempo Extra</option>
                     <option value="localAcessivel">Local Acessível</option>
-                    <option value="acompanhante">Acompanhante</option>
+                    <option value="acompanhante">Acompanhante</option>  
                   </select>
                 )}
               </div>
@@ -345,15 +549,15 @@ export default function Formulario() {
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-12 md:col-span-6">
                 <label className="block text-blue-800 font-medium mb-1">Nome</label>
-                <input name="nomeResponsavel" value={formData.nomeResponsavel} onChange={handleChange} className={baseInput}  readOnly/>
+                <input name="nomeResponsavel" value={formData.nomeResponsavel} onChange={handleChange} className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-6">
                 <label className="block text-blue-800 font-medium mb-1">CPF</label>
-                <input name="cpfResponsavel" value={formData.cpfResponsavel} onChange={handleChange} className={baseInput}  readOnly/>
+                <input maxLength={14} name="cpfResponsavel" value={einCpfMask(formData.cpfResponsavel || "")} onChange={handleChange} className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Data de Nasc.</label>
-                <input type="date" name="dataNascimentoResponsavel" value={formData.dataNascimentoResponsavel} onChange={handleChange} className={baseInput}  readOnly/>
+                <input type="date" name="dataNascimentoResponsavel" value={formData.dataNascimentoResponsavel} onChange={handleChange} className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Sexo</label>
@@ -365,38 +569,73 @@ export default function Formulario() {
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Profissão</label>
-                <input name="profissao" value={formData.profissao} onChange={handleChange} className={baseInput}  readOnly/>
+                <input name="profissao" value={formData.profissao} onChange={handleChange} className={baseInput}  />
               </div>
 
               {/* Endereço Responsável */}
               <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">CEP</label>
-                <input name="cep_Resp" value={formData.cep_Resp} onChange={handleChange} onBlur={() => fetchAddress(formData.cep_Resp, true)} className={baseInput}  readOnly/>
+                <input name="cep_Resp" value={formData.cep_Resp} onChange={handleChange} onBlur={() => fetchAddress(formData.cep_Resp, true)} className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">UF</label>
-                <input name="uf_Resp" value={formData.uf_Resp} onChange={handleChange} className={baseInput}  readOnly/>
+                <select
+                  name="uf_Resp"
+                  value={formData.uf_Resp}
+                  onChange={handleChange}
+                  required
+                  className={`${baseInput}`}
+                >
+                  <option value="">Selecione o estado</option>
+                  <option value="AC">Acre</option>
+                  <option value="AL">Alagoas</option>
+                  <option value="AP">Amapá</option>
+                  <option value="AM">Amazonas</option>
+                  <option value="BA">Bahia</option>
+                  <option value="CE">Ceará</option>
+                  <option value="DF">Distrito Federal</option>
+                  <option value="ES">Espírito Santo</option>
+                  <option value="GO">Goiás</option>
+                  <option value="MA">Maranhão</option>
+                  <option value="MT">Mato Grosso</option>
+                  <option value="MS">Mato Grosso do Sul</option>
+                  <option value="MG">Minas Gerais</option>
+                  <option value="PA">Pará</option>
+                  <option value="PB">Paraíba</option>
+                  <option value="PR">Paraná</option>
+                  <option value="PE">Pernambuco</option>
+                  <option value="PI">Piauí</option>
+                  <option value="RJ">Rio de Janeiro</option>
+                  <option value="RN">Rio Grande do Norte</option>
+                  <option value="RS">Rio Grande do Sul</option>
+                  <option value="RO">Rondônia</option>
+                  <option value="RR">Roraima</option>
+                  <option value="SC">Santa Catarina</option>
+                  <option value="SP">São Paulo</option>
+                  <option value="SE">Sergipe</option>
+                  <option value="TO">Tocantins</option>
+                </select>
               </div>
               <div className="col-span-12 md:col-span-6">
                 <label className="block text-blue-800 font-medium mb-1">Cidade</label>
-                <input name="cidade_Resp" value={formData.cidade_Resp} onChange={handleChange} className={baseInput}  readOnly/>
+                <input name="cidade_Resp" value={formData.cidade_Resp} onChange={handleChange} className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-8">
                 <label className="block text-blue-800 font-medium mb-1">Endereço</label>
-                <input name="endereco_Resp" value={formData.endereco_Resp} onChange={handleChange} className={baseInput}  readOnly/>
+                <input name="endereco_Resp" value={formData.endereco_Resp} onChange={handleChange} className={baseInput}  />
               </div>
               <div className="col-span-6 md:col-span-2">
                 <label className="block text-blue-800 font-medium mb-1">Número</label>
-                <input name="numero_Resp" value={formData.numero_Resp} onChange={handleChange} className={baseInput}  readOnly/>
+                <input name="numero_Resp" value={formData.numero_Resp} onChange={handleChange} className={baseInput}  />
               </div>
               <div className="col-span-6 md:col-span-2">
                 <label className="block text-blue-800 font-medium mb-1">Complemento</label>
-                <input name="complemento_Resp" value={formData.complemento_Resp} onChange={handleChange} className={baseInput}  readOnly/>
+                <input name="complemento_Resp" value={formData.complemento_Resp} onChange={handleChange} className={baseInput}  />
               </div>
 
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Celular</label>
-                <input type="tel" name="celular" value={formData.celular} onChange={handleChange} className={baseInput}  readOnly/>
+                <input type="tel" name="celular"  placeholder="(99) 99999-9999" value={phoneMask(formData.celular)} onChange={handleChange} className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Parentesco</label>
@@ -412,10 +651,10 @@ export default function Formulario() {
                 <label className="text-blue-800 font-medium mb-1 block">Forças Armadas?</label>
                 <select name="forcas" value={formData.forcas} onChange={handleChange} className={baseInput} >
                   <option value="">Selecione</option>
-                  <option value="não">Não</option>
-                  <option value="sim">Sim</option>
+                  <option value="">Não</option>
+                  <option value="X">Sim</option>
                 </select>
-                {formData.forcas === 'sim' && (
+                {formData.forcas === 'X' && (
                   <select name="ramoForcas" value={formData.ramoForcas} onChange={handleChange} required className={`${baseInput} mt-2`}>
                     <option value="">Ramo das Forças</option>
                     <option value="exercito">Exército</option>
@@ -428,20 +667,31 @@ export default function Formulario() {
 
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Email Responsavel</label>
-                <input type="email" name="emailResponsavel" value={formData.emailResponsavel} onChange={handleChange} className={baseInput}  readOnly/>
+                <input type="email" name="emailResponsavel" value={formData.emailResponsavel} onChange={handleChange} className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Email Candidato</label>
-                <input type="email" name="emailCandidato" value={formData.emailCandidato} onChange={handleChange} className={baseInput}  readOnly/>
+                <input type="email" name="emailCandidato" value={formData.emailCandidato} onChange={handleChange} className={baseInput}  />
               </div>
             </div>
           </div>
 
           {/* BOTÃO */}
           <div className="text-center">
-            <button type="submit" className="bg-blue-800 hover:bg-blue-900 text-white font-semibold py-3 px-8 rounded">
-              ENVIAR
+            <button disabled={loading} type="submit" className="bg-blue-800 hover:bg-blue-900 text-white font-semibold py-3 px-8 rounded">
+              {loading ? <LoadingIcon /> :"ENVIAR"}
             </button>
+            {provisoryUser && provisoryKey && (
+              <>              
+                <p className='text-red-800'>Dados provisórios de acesso, Login: <span className='font-bold'>{provisoryUser}</span> Senha: <span className='font-bold'>{provisoryKey}</span></p>
+                <p className='text-red-800 text-sm'>Não compartilhe essa informação com ninguém.</p>
+              </>
+            )}
+            {paymentButton && (
+              <button onClick={() => router.push("/confirmacao")} className="bg-green-800 hover:bg-green-950 text-white font-semibold py-3 px-8 rounded mt-2">
+                Ir para pagamento
+              </button>
+            )}
           </div>
 
         </form>

@@ -1,6 +1,6 @@
 'use client'
 
-import Header from '../../components/Header'
+import Header from '../../components/HeaderAdm'
 import Footer from '../../components/FooterAdm'
 import StepsNavbar from '../../components/StepsNavbar'
 

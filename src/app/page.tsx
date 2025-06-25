@@ -4,21 +4,41 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { useRouter } from 'next/navigation'
 import { useEditais } from "@/context/EditalContext"; 
+import { useQuery } from 'react-query';
+import api from '@/utils/api';
+import moment from 'moment-timezone';
+import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function Home() {
   const router = useRouter();
   const { editais } = useEditais(); 
 
-  const handleGovLogin = () => {
-    const clientId = process.env.NEXT_PUBLIC_GOV_BR_CLIENT_ID;
-    const redirectUri = encodeURIComponent(process.env.NEXT_PUBLIC_GOV_BR_REDIRECT_URI!);
-    const state = encodeURIComponent(window.location.pathname);
-    const scope = encodeURIComponent('openid profile email');
-
-    const authUrl = `https://sso.acesso.gov.br/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
-
-    window.location.href = authUrl;
+  const handleGovLogin = async () => {
+    await signIn("govbr");
   };
+
+  const fetchConfig = async () => {
+    try {
+      const response = await api.get('api/configuracao');
+      const configuracao = response?.data;
+      return configuracao;
+    } catch (error) {
+      // Não retorna nada pois é um fetch
+    }
+  }
+
+  const {
+    data: dataConfiguracao,
+    isLoading: configLoading
+  } = useQuery(
+    ['configuracao'],
+      fetchConfig,
+    {
+      retry: 5,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -47,7 +67,7 @@ export default function Home() {
           <div className="px-6 py-4 flex flex-col items-center">
             <h3 className="font-bold text-lg text-red-900 mb-4">Período de inscrição</h3>
             <p className="text-green-900 font-semibold text-lg">
-              01/06/2025 <span className="mx-2">à</span> 31/06/2025
+              {moment(dataConfiguracao?.DataIniEF).tz("America/Sao_Paulo").format("DD/MM/YYYY")} <span className="mx-2">à</span> {moment(dataConfiguracao?.GRUDataFim).tz("America/Sao_Paulo").format("DD/MM/YYYY")}
             </p>
           </div>
 
@@ -65,6 +85,9 @@ export default function Home() {
               />
               <span className="text-gray-700 font-medium">Entrar com gov.br</span>
             </button>
+            <div className='w-full'>            
+              <Link href="/acompanhamento" className='mt-1 text-sm text-blue-500 hover:underline hover:text-blue-700 cursor-pointer'>Pular etapa (provisório)</Link>
+            </div>
           </div>
         </div>
 

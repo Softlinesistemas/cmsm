@@ -36,7 +36,7 @@ const RedefinirSenha: React.FC = () => {
 
       if (response.ok) {
         setMensagem('Senha redefinida com sucesso!');
-        setTimeout(() => router.push('/adm/LoginAdm'), 2000);
+        setTimeout(() => router.push('/adm/login'), 2000);
       } else {
         setMensagem(data.message || 'Erro ao redefinir senha.');
       }

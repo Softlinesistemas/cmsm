@@ -1,142 +1,188 @@
 'use client'
 
-import { useState } from 'react';
-import FooterAdm from '@/components/FooterAdm';
-import Header from '@/components/HeaderAdm';
-import Sidebar from '@/components/Sidebar';
-import {
-  Pencil,
-  CheckCircle,
-  XCircle,
-  Trash2
-} from 'lucide-react';
+import { useState } from 'react'
+import FooterAdm from '@/components/FooterAdm'
+import Header from '@/components/HeaderAdm'
+import Sidebar from '@/components/Sidebar'
+import { Pencil, CheckCircle, XCircle, Trash2 } from 'lucide-react'
+import api from '@/utils/api'
+import { useQuery, useQueryClient } from 'react-query'
+import toast from 'react-hot-toast'
 
 export default function CotasPage() {
-  // Estado para armazenar as cotas
-  const [cotas, setCotas] = useState([
-    { id: 1, descricao: 'Cota Exemplo', status: 'Ativo' }
-  ]);
+  const queryClient = useQueryClient()
 
-  // Estado para controlar a edição
-  const [cotaEditando, setCotaEditando] = useState<any | null>(null);
-  const [descricaoEdit, setDescricaoEdit] = useState('');
-  const [statusEdit, setStatusEdit] = useState('Ativo');
+  const [novaDescricao, setNovaDescricao] = useState('')
+  const [cotaEditando, setCotaEditando] = useState<any | null>(null)
+  const [descricaoEdit, setDescricaoEdit] = useState('')
+  const [statusEdit, setStatusEdit] = useState('Ativo')
 
-  // Função para abrir o modal e carregar dados da cota
+  const { data: cotas, isLoading, refetch } = useQuery('cotas', async () => {
+    const response = await api.get('api/cotas')
+    return response.data
+  })
+
+  const inserirCota = async () => {
+    if (!novaDescricao.trim()) return
+    try {    
+      const response = await api.post('api/cotas', {
+        Descricao: novaDescricao,
+        Status: 'Ativo',
+      })
+      toast.success(response.data.message)
+      refetch();
+    } catch (error: any) {
+      toast.error(error.response.data.error || error.response.data.message)
+    }
+    setNovaDescricao('')
+    queryClient.invalidateQueries('cotas')
+  }
+
+  // Função para abrir modal de edição
   const abrirModalEdicao = (cota: any) => {
-    setCotaEditando(cota);
-    setDescricaoEdit(cota.descricao);
-    setStatusEdit(cota.status);
-  };
+    setCotaEditando(cota)
+    setDescricaoEdit(cota.Descricao)
+    setStatusEdit(cota.Status)
+  }
 
-  // Função para salvar alterações da cota
-  const salvarEdicao = () => {
-    setCotas(cotas.map((c: any) =>
-      c?.id === cotaEditando?.id ? { ...c, descricao: descricaoEdit, status: statusEdit } : c 
-    ));
-    setCotaEditando(null); // Fecha o modal
-  };
+  const salvarEdicao = async () => {
+    if (!descricaoEdit.trim()) return
+    try {      
+      const response = await api.put(`api/cotas/${cotaEditando.id}`, {
+        Descricao: descricaoEdit,
+        Status: statusEdit,
+      })
+      toast.success(response.data.message)
+      refetch();
+    } catch (error: any) {
+      toast.error(error.response.data.error || error.response.data.message)    
+    }
+    setCotaEditando(null)
+    queryClient.invalidateQueries('cotas')
+  }
 
-  // Função para remover uma cota
-  const removerCota = (id: number) => {
-    setCotas(cotas.filter((c) => c.id !== id));
-  };
+  const alterarStatus = async (id: number, novoStatus: string) => {
+    try {    
+      const response = await api.put(`api/cotas/${id}`, { Status: novoStatus })
+      toast.success(response.data.message);
+      refetch();
+    } catch (error: any) {
+      toast.error(error.response.data.error || error.response.data.message)
+    }
+    queryClient.invalidateQueries('cotas')
+  }
 
-  // Função para alterar o status rapidamente
-  const alterarStatus = (id: number, novoStatus: string) => {
-    setCotas(cotas.map((c) =>
-      c.id === id ? { ...c, status: novoStatus } : c
-    ));
-  };
+  const removerCota = async (id: number) => {
+    try {
+      const response = await api.delete(`api/cotas/${id}`);
+      toast.success(response.data.message);
+      refetch();
+    } catch (error: any) {
+      toast.error(error.response.data.error || error.response.data.message);
+    }
+    queryClient.invalidateQueries('cotas')
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-100">
-      {/* Header no topo da estrutura flex-col */}
       <Header />
 
-      {/* Conteúdo principal com sidebar + conteúdo */}
       <div className="flex flex-1">
         <Sidebar />
 
         <main className="flex-1 p-8">
           <h1 className="text-3xl font-bold text-blue-900 text-center mb-6">COTAS</h1>
 
-          {/* Inserir nova cota (pode adicionar implementação depois) */}
+          {/* Formulário nova cota */}
           <div className="max-w-4xl mx-auto flex gap-4 mb-6">
             <input
               type="text"
               placeholder="Insira o nome da cota"
               className="flex-1 border rounded px-3 py-2"
+              value={novaDescricao}
+              onChange={(e) => setNovaDescricao(e.target.value)}
             />
-            <button className="bg-green-900 text-white px-4 py-2 rounded">INSERIR</button>
+            <button
+              className="bg-green-900 text-white px-4 py-2 rounded"
+              onClick={inserirCota}
+            >
+              INSERIR
+            </button>
           </div>
 
-          {/* Tabela de cotas */}
+          {/* Lista de cotas */}
           <div className="bg-white p-6 rounded shadow-md max-w-4xl mx-auto">
-            <table className="w-full table-auto text-sm text-black">
-              <thead className="bg-gray-200">
-                <tr>
-                  <th className="p-2 border">COD.</th>
-                  <th className="p-2 border">DESCRIÇÃO</th>
-                  <th className="p-2 border">STATUS</th>
-                  <th className="p-2 border">AÇÕES</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cotas.map((cota) => (
-                  <tr key={cota.id}>
-                    <td className="p-2 border text-center">{cota.id}</td>
-                    <td className="p-2 border">{cota.descricao}</td>
-                    <td className="p-2 border text-center">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs ${
-                          cota.status === 'Ativo'
-                            ? 'bg-green-200 text-green-800'
-                            : 'bg-red-200 text-red-800'
-                        }`}
-                      >
-                        {cota.status}
-                      </span>
-                    </td>
-                    <td className="p-2 border text-center">
-                      <div className="flex justify-center gap-2">
-                        <button
-                          title="Editar cota"
-                          className="text-yellow-500 hover:text-yellow-600 hover:scale-110 transition-transform"
-                          onClick={() => abrirModalEdicao(cota)}
-                        >
-                          <Pencil size={18} />
-                        </button>
-                        <button
-                          title="Ativar"
-                          className="text-green-500 hover:text-green-600 hover:scale-110 transition-transform"
-                          onClick={() => alterarStatus(cota.id, 'Ativo')}
-                        >
-                          <CheckCircle size={18} />
-                        </button>
-                        <button
-                          title="Desativar"
-                          className="text-red-500 hover:text-red-600 hover:scale-110 transition-transform"
-                          onClick={() => alterarStatus(cota.id, 'Inativo')}
-                        >
-                          <XCircle size={18} />
-                        </button>
-                        <button
-                          title="Remover"
-                          className="text-gray-500 hover:text-gray-700 hover:scale-110 transition-transform"
-                          onClick={() => removerCota(cota.id)}
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
+            {isLoading ? (
+              <p>Carregando cotas...</p>
+            ) : !isLoading && !cotas.length ?
+              <p>Não foi encontrado cotas.</p>
+            : (
+              <table className="w-full table-auto text-sm text-black">
+                <thead className="bg-gray-200">
+                  <tr>
+                    <th className="p-2 border">COD.</th>
+                    <th className="p-2 border">DESCRIÇÃO</th>
+                    <th className="p-2 border">STATUS</th>
+                    <th className="p-2 border">AÇÕES</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {cotas?.map((cota: any) => (
+                    <tr key={cota.id}>
+                      <td className="p-2 border text-center">{cota.id}</td>
+                      <td className="p-2 border">{cota.Descricao}</td>
+                      <td className="p-2 border text-center">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            cota.Status === 'Ativo'
+                              ? 'bg-green-200 text-green-800'
+                              : 'bg-red-200 text-red-800'
+                          }`}
+                        >
+                          {cota.Status}
+                        </span>
+                      </td>
+                      <td className="p-2 border text-center">
+                        <div className="flex justify-center gap-2">
+                          <button
+                            title="Editar cota"
+                            className="text-yellow-500 hover:text-yellow-600 hover:scale-110 transition-transform"
+                            onClick={() => abrirModalEdicao(cota)}
+                          >
+                            <Pencil size={18} />
+                          </button>
+                          <button
+                            title="Ativar"
+                            className="text-green-500 hover:text-green-600 hover:scale-110 transition-transform"
+                            onClick={() => alterarStatus(cota.id, 'Ativo')}
+                          >
+                            <CheckCircle size={18} />
+                          </button>
+                          <button
+                            title="Desativar"
+                            className="text-red-500 hover:text-red-600 hover:scale-110 transition-transform"
+                            onClick={() => alterarStatus(cota.id, 'Inativo')}
+                          >
+                            <XCircle size={18} />
+                          </button>
+                          <button
+                            title="Remover"
+                            className="text-gray-500 hover:text-gray-700 hover:scale-110 transition-transform"
+                            onClick={() => removerCota(cota.id)}
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </main>
       </div>
+
       <FooterAdm />
 
       {/* Modal de edição */}
@@ -185,5 +231,5 @@ export default function CotasPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import LoginPage from '@/app/LoginAdm/page';
+import LoginPage from '@/app/login/page';
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -54,7 +54,7 @@ const Footer: React.FC = () => {
           <p className="font-bold mb-2">INSTITUCIONAL</p>
           <button
             className="bg-yellow-400 text-black font-semibold px-6 py-2 rounded-full hover:bg-yellow-500 transition"
-            onClick={() => router.push("/LoginAdm")}
+            onClick={() => router.push("/login")}
           >
             ENTRAR
           </button>

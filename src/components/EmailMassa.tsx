@@ -99,7 +99,7 @@ const EmailMassa = () => {
   return (
     <div className="max-w-2xl mx-auto p-4">
       {/* Notificações visuais */}
-      <Toaster position="top-right" />
+
 
       <h2 className="text-2xl font-bold mb-4">Envio de Email em Massa</h2>
 
