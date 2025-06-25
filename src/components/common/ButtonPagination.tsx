@@ -17,7 +17,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
       onPageChange(currentPage + 1);
     }
   };
-
+ 
   const handleSelectedPage = (page: number) => {
     onPageChange(page);
   };
