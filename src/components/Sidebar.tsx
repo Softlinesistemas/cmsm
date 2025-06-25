@@ -149,7 +149,7 @@ const Sidebar: React.FC = () => {
 
         {[
           { label: 'CANDIDATOS', path: '/candidatos', key: 'Candidatos', icon: <User size={18} /> },
-          { label: 'USUÁRIOS', path: '/usuarios', key: 'Usuarios', icon: <Users size={18} /> },
+          // { label: 'USUÁRIOS', path: '/usuarios', key: 'Usuarios', icon: <Users size={18} /> },
           { label: 'SALAS', path: '/salas', key: 'Salas', icon: <Building2 size={18} /> },
           { label: 'COTAS', path: '/cotas', key: 'Cotas', icon: <ClipboardList size={18} /> },
         ].map(({ label, path, key, icon }) => (

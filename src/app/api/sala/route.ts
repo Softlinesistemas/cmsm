@@ -6,16 +6,31 @@ export async function GET(request: NextRequest) {
   let db;
   try {
     db = getDBConnection(dbConfig());
-    const salas = await db("Sala").select(
-      "CodSala",
-      "Sala",
-      "QtdCadeiras",
-      "Predio",
-      "Andar",
-      "Turma",
-      "Status",
-      "PortadorNec"
-    );
+
+    const salas = await db("Sala")
+      .leftJoin("Candidato", "Sala.CodSala", "Candidato.CodSala")
+      .select(
+        "Sala.CodSala",
+        "Sala.Sala",
+        "Sala.QtdCadeiras",
+        "Sala.Predio",
+        "Sala.Andar",
+        "Sala.Turma",
+        "Sala.Status",
+        "Sala.PortadorNec"
+      )
+      .count("Candidato.CodIns as cadeirasOcupadas")
+      .groupBy(
+        "Sala.CodSala",
+        "Sala.Sala",
+        "Sala.QtdCadeiras",
+        "Sala.Predio",
+        "Sala.Andar",
+        "Sala.Turma",
+        "Sala.Status",
+        "Sala.PortadorNec"
+      );
+
     return NextResponse.json({ success: true, salas });
   } catch (error) {
     console.error("Erro ao buscar salas:", error);

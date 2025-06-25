@@ -374,7 +374,7 @@ export default function SalasPage() {
                       {/* <td className="p-3 border text-center">{s.CodSala}</td> */}
                       <td className="p-3 border">{s.Sala}</td>
                       <td className="p-3 border text-center">{s.Andar}</td>
-                      <td className="p-3 border text-center">{s.QtdCadeiras}</td>
+                      <td className={`p-3 border text-center ${s.cadeirasOcupadas >= s.QtdCadeiras ? "text-red-600" : ""}`}>{s.cadeirasOcupadas}/{s.QtdCadeiras}</td>
                       <td className="p-3 border text-center">{s.Turma}</td>
                       <td className="p-3 border text-center">
                         <span className={`inline-block px-2 py-1 text-xs rounded-full ${
