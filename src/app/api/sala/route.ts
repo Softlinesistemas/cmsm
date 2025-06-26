@@ -17,7 +17,8 @@ export async function GET(request: NextRequest) {
         "Sala.Andar",
         "Sala.Turma",
         "Sala.Status",
-        "Sala.PortadorNec"
+        "Sala.PortadorNec",
+        "Sala.QtdPortNec"
       )
       .count("Candidato.CodIns as cadeirasOcupadas")
       .groupBy(
@@ -28,7 +29,8 @@ export async function GET(request: NextRequest) {
         "Sala.Andar",
         "Sala.Turma",
         "Sala.Status",
-        "Sala.PortadorNec"
+        "Sala.PortadorNec",
+        "Sala.QtdPortNec"
       );
 
     return NextResponse.json({ success: true, salas });
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
   let db;
   try {
     const body = await request.json();
-    const { Sala, QtdCadeiras, Predio, Andar, PortadorNec, Turma } = body;
+    const { Sala, QtdCadeiras, Predio, Andar, PortadorNec, Turma, QtdPortNec } = body;
     let { CodSala } = body
     db = getDBConnection(dbConfig());
 
@@ -74,6 +76,7 @@ export async function POST(request: NextRequest) {
       Turma: Turma || null,
       Status: "Ativo",
       PortadorNec: PortadorNec || null,
+      QtdPortNec: QtdPortNec || null,
     });
 
     return NextResponse.json({ success: true, message: "Sala cadastrada com sucesso." }, { status: 201 });

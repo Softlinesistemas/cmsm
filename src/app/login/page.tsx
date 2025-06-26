@@ -4,11 +4,21 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Footer from '../../components/FooterAdm'
 import Header from '../../components/HeaderAdm'
-import api from '@/utils/api'
 import { signIn, getSession } from "next-auth/react";
+import { ripplesLoading } from '../../../public'
+import Image from 'next/image'
+import toast from 'react-hot-toast'
+
+const LoadingImage = () => (
+  <div className="flex justify-center items-center h-full">
+    <Image className="w-6 h-w-6" src={ripplesLoading} alt="Loading..." />
+  </div>
+);
+
 
 const login = () => {
   const [primeiroAcesso, setPrimeiroAcesso] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [cpf, setCpf] = useState('')
   const [user, setUser] = useState('')
   const [password, setPassword] = useState('')
@@ -21,7 +31,7 @@ const login = () => {
 
   const handleLogin = async () => {
     setError("");
-
+    setLoading(true);
     const res = await signIn("credentials", {
       redirect: false,
       user,
@@ -30,16 +40,19 @@ const login = () => {
 
     if (res?.error) {
       setError(res.error);
+      setLoading(false);
       return;
     }
 
     const session = await getSession();
-
+    toast.success("Login concluído, redirecionando...")
+    
     if (session?.user?.admin) {
       router.push("/dashboard");
     } else {
       router.push("/acompanhamento");
     }
+    setLoading(false);
   };
 
   return (
@@ -115,20 +128,20 @@ const login = () => {
               onClick={primeiroAcesso ? handlePrimeiroAcesso : handleLogin}
               className="bg-yellow-400 text-black font-bold py-2 px-6 rounded-full hover:bg-yellow-500 transition w-full text-center"
             >
-              {primeiroAcesso ? 'CONTINUAR' : 'ENTRAR'}
+              {loading ? LoadingImage() : primeiroAcesso ? 'CONTINUAR' : 'ENTRAR'}
             </button>
           </div>
 
-          <a href="/recuperarSenha" className="text-xs text-gray-300 mt-3 hover:underline">
+          {/* <a href="/recuperarSenha" className="text-xs text-gray-300 mt-3 hover:underline">
             RECUPERAR SENHA
-          </a>
+          </a> */}
 
-          <button
+          {/* <button
             onClick={() => setPrimeiroAcesso(!primeiroAcesso)}
             className="text-xs text-gray-300 mt-3 hover:underline"
           >
             {primeiroAcesso ? 'Voltar ao login' : 'Primeiro acesso'}
-          </button>
+          </button> */}
         </div>
       </main>
 

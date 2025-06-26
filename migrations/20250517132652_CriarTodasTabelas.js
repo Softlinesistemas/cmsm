@@ -9,6 +9,7 @@ exports.up = function(knex) {
       table.string('Turma', 20);
       table.string('Status', 6);
       table.string('PortadorNec', 1);
+      table.integer('QtdPortNec');
     })
 
     .createTable('Funcao', function(table) {

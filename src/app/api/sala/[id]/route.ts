@@ -27,7 +27,8 @@ export async function GET(request: NextRequest) {
         "Predio",
         "Andar",
         "Status",
-        "PortadorNec"
+        "PortadorNec",
+        "QtdPortNec"
       )
       .where({ CodSala: Number(id) })
       .first();

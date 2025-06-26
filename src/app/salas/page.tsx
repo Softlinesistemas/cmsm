@@ -18,10 +18,11 @@ export default function SalasPage() {
   const [form, setForm] = useState({
     CodSala: '',
     Sala: '',
-    QtdCadeiras: '',
+    QtdCadeiras: 0,
     Predio: '',
     Andar: '',
     PortadorNec: '',
+    QtdPortNec: 0,
     Turma: '6º Ano',
   });
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -44,10 +45,11 @@ export default function SalasPage() {
       const payload = {
         CodSala: Number(form.CodSala),
         Sala: form.Sala,
-        QtdCadeiras: Number(form.QtdCadeiras),
+        QtdCadeiras: form.QtdCadeiras || 0,
         Predio: form.Predio || null,
         Andar: form.Andar || null,
         PortadorNec: form.PortadorNec,
+        QtdPortNec: form.QtdPortNec || 0,
         Turma: form.Turma,
       };
       if (editingId) {
@@ -94,11 +96,12 @@ export default function SalasPage() {
     setForm({
       CodSala: String(s.CodSala),
       Sala: s.Sala,
-      QtdCadeiras: String(s.QtdCadeiras),
+      QtdCadeiras: s.QtdCadeiras || 0,
       Predio: s.Predio || '',
       Andar: s.Andar || '',
       PortadorNec: s.PortadorNec || 'N',
       Turma: s.Turma || '',
+      QtdPortNec: s.QtdPortNec || 0,
     });
   };
 
@@ -118,7 +121,7 @@ export default function SalasPage() {
   };
 
   const resetForm = () => {
-    setForm({ CodSala: '', Sala: '', QtdCadeiras: '', Predio: '', Andar: '', PortadorNec: 'N', Turma: '' });
+    setForm({ CodSala: '', Sala: '', QtdCadeiras: 0, Predio: '', Andar: '', PortadorNec: 'N', Turma: '', QtdPortNec: 0 });
     setEditingId(null);
   };
 
@@ -280,7 +283,7 @@ export default function SalasPage() {
                 <input
                   name="QtdCadeiras"
                   type="number"
-                  min="1"
+                  min="0"
                   value={form.QtdCadeiras}
                   onChange={handleChange}
                   className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
@@ -288,7 +291,7 @@ export default function SalasPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-2">Ano</label>
                 <div className="flex flex-wrap gap-4 text-red-800">
@@ -339,6 +342,23 @@ export default function SalasPage() {
                   </label>
                 </div>
               </div>
+              {form.PortadorNec === 'X' && (
+                <div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Cadeiras reservadas</label>
+                    <input
+                      name="QtdPortNec"
+                      type="number"
+                      min="0"
+                      max={form.QtdCadeiras}
+                      value={form.QtdPortNec}
+                      onChange={handleChange}
+                      className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <p className='text-sm text-red-600'>capacidade reservada para portadores de necessidades especiais</p>
+                </div>
+              )}
             </div>
 
             <button

@@ -28,7 +28,7 @@ const adminMenuItems: MenuItem[] = [
   { label: 'Comunicados', key: 'Comunicados', icon: <Megaphone size={18} />, path: '/dashboardAdmin' },
   { label: 'Email em Massa', key: 'EmailMassa', icon: <Mail size={18} />, path: '/dashboardAdmin' },
   { label: 'Gestão Admins', key: 'GestaoAdmins', icon: <Users size={18} />, path: '/dashboardAdmin' },
-  { label: 'Logs de Acesso', key: 'LogsAcesso', icon: <Server size={18} />, path: '/dashboardAdmin' },
+  // { label: 'Logs de Acesso', key: 'LogsAcesso', icon: <Server size={18} />, path: '/dashboardAdmin' },
   { label: 'Backup', key: 'Backup', icon: <Database size={18} />, path: '/dashboardAdmin' },
   // { label: 'Configurações', key: 'Configuracoes', icon: <Settings size={18} />, path: '/dashboardAdmin' }
 ]
