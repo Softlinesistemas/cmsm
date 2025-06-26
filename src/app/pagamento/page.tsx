@@ -16,7 +16,7 @@ export default function PagamentoPage() {
   // Função que chama a API para gerar a GRU
   const gerarPagamento = async () => {
     try {
-      const res = await fetch('/api/gerar-pagamento', {
+      const res = await fetch('/api/pagamento', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
