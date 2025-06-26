@@ -1,4 +1,4 @@
-import React, { forwardRef, ButtonHTMLAttributes } from 'react'; 
+import React, { forwardRef, ButtonHTMLAttributes } from 'react';
 import LoadingIcon from './LoadingIcon';
 import { cn } from '@/utils/utilsClassName';
 
