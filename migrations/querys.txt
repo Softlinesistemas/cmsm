@@ -104,6 +104,9 @@ CREATE TABLE Funcao (
     GRUHoraFim     CHAR(5)        NULL,
     NotaMinMat     DECIMAL(5,2)   NULL,
     NotaMinPor     DECIMAL(5,2)   NULL
+    EditalCaminho  VARCHAR(100)   PRIMARY KEY,
+    CronogramaCaminho  VARCHAR(100) PRIMARY KEY,
+    DocumentosCaminho  VARCHAR(100) PRIMARY KEY,
 );
 
 CREATE TABLE Cota (

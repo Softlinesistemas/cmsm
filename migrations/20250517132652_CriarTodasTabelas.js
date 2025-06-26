@@ -27,6 +27,9 @@ exports.up = function(knex) {
       table.string('GRUHoraFim', 5);
       table.decimal('NotaMinMat', 5, 2);
       table.decimal('NotaMinPor', 5, 2);
+      table.string('EditalCaminho', 100);
+      table.string('CronogramaCaminho', 100);
+      table.string('DocumentosCaminho', 100);
     })
     
     .createTable('Cota', function(table) {

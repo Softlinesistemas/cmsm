@@ -105,8 +105,9 @@ export default function Home() {
                 className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow mb-2"
               >
                 <a
-                  href={`/arquivos/${edital.titulo.toLowerCase().replace(/ /g, "-")}.pdf`}
+                  href={`${process.env.NEXT_PUBLIC_IMAGE_URL}${dataConfiguracao?.EditalCaminho}`}
                   download
+                  target='_blank'
                   className="bg-blue-900 text-white font-semibold px-4 py-2 rounded hover:bg-blue-800 transition-colors"
                 >
                   {edital.titulo}
@@ -117,10 +118,11 @@ export default function Home() {
               </div>
             ))}
 
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow">
+           <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow">
               <a
-                href="/arquivos/cronograma.pdf"
+                href={`${process.env.NEXT_PUBLIC_IMAGE_URL}${dataConfiguracao?.CronogramaCaminho}`}
                 download
+                target='_blank'
                 className="bg-yellow-700 text-white font-semibold px-4 py-2 rounded hover:bg-gray-800 transition-colors"
               >
                 Cronograma
@@ -132,8 +134,9 @@ export default function Home() {
 
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow">
               <a
-                href="/arquivos/documentos-necessarios.pdf"
+                href={`${process.env.NEXT_PUBLIC_IMAGE_URL}${dataConfiguracao?.DocumentosCaminho}`}
                 download
+                target='_blank'
                 className="bg-green-800 text-white font-semibold px-4 py-2 rounded hover:bg-green-700 transition-colors"
               >
                 Documentos

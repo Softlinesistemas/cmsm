@@ -10,7 +10,7 @@ export default async function uploadImagensEdge(input: File | File[]) {
     const key = `${Date.now()}-${file.name}`;
     await s3
       .upload({
-        Bucket: process.env.BBZ_BUCKET_NAME ?? "cmsm",
+        Bucket: process.env.AWS_BUCKET_NAME ?? "cmsm-rs",
         Key: `images/${key}`,
         Body: buffer,
         ContentType: file.type,

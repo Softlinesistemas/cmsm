@@ -32,7 +32,7 @@ export default function CotasPage() {
       toast.success(response.data.message)
       refetch();
     } catch (error: any) {
-      toast.error(error.response.data.error || error.response.data.message)
+      toast.error(error.response.data.error || error.response.data.message);
     }
     setNovaDescricao('')
     queryClient.invalidateQueries('cotas')
