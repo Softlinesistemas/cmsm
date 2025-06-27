@@ -8,6 +8,7 @@ import { signIn, getSession } from "next-auth/react";
 import { ripplesLoading } from '../../../public'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
+import Link from 'next/link'
 
 const LoadingImage = () => (
   <div className="flex justify-center items-center h-full">
@@ -131,6 +132,7 @@ const login = () => {
               {loading ? LoadingImage() : primeiroAcesso ? 'CONTINUAR' : 'ENTRAR'}
             </button>
           </div>
+            <Link href="/dashboard" className='mt-2 text-sm text-blue-500 hover:underline hover:text-blue-700 cursor-pointer'>Pular etapa (provisório)</Link>            
 
           {/* <a href="/recuperarSenha" className="text-xs text-gray-300 mt-3 hover:underline">
             RECUPERAR SENHA
