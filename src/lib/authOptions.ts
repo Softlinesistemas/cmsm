@@ -5,6 +5,9 @@ import type { JWT } from "next-auth/jwt";
 import type { User } from "next-auth";
 
 export const authOptions: AuthOptions = {
+  pages: {
+    signIn: "/login",
+  },
   providers: [
     // GOV.BR
     {
