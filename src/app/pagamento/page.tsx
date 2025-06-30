@@ -27,7 +27,7 @@ export default function PagamentoPage() {
           referencia: 'INSCRICAO-10001',
           descricao: 'Inscrição CMSM 2025/2026 6° ano'
         })
-      })
+      }) 
 
       if (!res.ok) {
         const erro = await res.json()

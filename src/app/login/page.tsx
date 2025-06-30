@@ -132,7 +132,7 @@ const login = () => {
               {loading ? LoadingImage() : primeiroAcesso ? 'CONTINUAR' : 'ENTRAR'}
             </button>
           </div>
-            <Link href="/dashboard" className='mt-2 text-sm text-blue-500 hover:underline hover:text-blue-700 cursor-pointer'>Pular etapa (provisório)</Link>            
+          {/* <Link href="/dashboard" className='mt-2 text-sm text-blue-500 hover:underline hover:text-blue-700 cursor-pointer'>Pular etapa (provisório)</Link>             */}
 
           {/* <a href="/recuperarSenha" className="text-xs text-gray-300 mt-3 hover:underline">
             RECUPERAR SENHA

@@ -5,11 +5,9 @@ import { S3 } from "aws-sdk";
 const uploadImagens = async (files: any) => {
   let fileContents: any[] = [];
   let originalFile: any[] = [];
-      console.log(files)
   try {
     for (const file of files) {
       let newFilename = `${Date.now().toString()}-${file.newFilename}`
-      console.log(file)
       const params: S3.Types.PutObjectRequest = {
         Bucket: process.env.BBZ_BUCKET_NAME ?? "cmsm",
         Key: newFilename,

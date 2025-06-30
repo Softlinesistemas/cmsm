@@ -18,7 +18,7 @@ export async function GET() {
     if (!configuracao) {
       return NextResponse.json({ message: "Nenhuma configuração encontrada." }, { status: 404 });
     }
-    console.log(configuracao)
+
     return NextResponse.json(configuracao);
   } catch (error) {
     console.error("Erro ao buscar configuração:", error);

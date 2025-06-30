@@ -33,7 +33,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const body = req.body as PagamentoRequestBody
 
   try {
-    // 1) Chamar API PagTesouro
     const response = await fetch('https://api.pagtesouro.tesouro.gov.br/pagamentos', {
       method: 'POST',
       headers: {

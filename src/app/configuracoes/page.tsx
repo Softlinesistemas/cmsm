@@ -91,7 +91,6 @@ export default function Configuracoes() {
 
    useEffect(() => {
     if (data) {
-    console.log(data)
     setProcessoSel(data.ProcessoSel || processoSel);
     setValInscricao(data.ValInscricao != null ? formatarValor((data.ValInscricao * 100).toString()) : valInscricao);
 
