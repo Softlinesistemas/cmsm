@@ -2,18 +2,7 @@ import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 import type { JWT } from "next-auth/jwt";
-import type { User } from "next-auth";
 import { fetchGovBrFullProfile, GovBrFullProfile } from "@/lib/govbr";
-import { Issuer } from "openid-client";
-
-const govbrIssuer = await Issuer.discover("https://sso.staging.acesso.gov.br/");
-
-const govbrClient = new govbrIssuer.Client({
-  client_id: process.env.NEXT_PUBLIC_GOVBR_CLIENT_ID!,
-  client_secret: process.env.NEXT_PUBLIC_GOVBR_CLIENT_SECRET!,
-  redirect_uris: [`${process.env.NEXTAUTH_URL || ""}api/auth/callback/govbr`],
-  response_types: ["code"],
-});
 
 export const authOptions: AuthOptions = {
   pages: {
@@ -28,13 +17,13 @@ export const authOptions: AuthOptions = {
         url: `${process.env.NEXT_PUBLIC_GOVBR_URL}authorize`,
         params: { scope: "openid email profile" },
       },
+      version: "2.0",
+      wellKnown: `${process.env.NEXT_PUBLIC_GOVBR_URL}/.well-known/openid-configuration`,
       token: `${process.env.NEXT_PUBLIC_GOVBR_URL}token`,
       userinfo: `${process.env.NEXT_PUBLIC_GOVBR_URL}userinfo`,
       checks: ["pkce", "state"],
       clientId: process.env.NEXT_PUBLIC_GOVBR_CLIENT_ID!,
       clientSecret: process.env.NEXT_PUBLIC_GOVBR_CLIENT_SECRET!,
-      issuer: process.env.NEXT_PUBLIC_GOVBR_URL,
-      client: govbrClient,
       profile(profile: any) {
         return {
           id: profile.sub,
