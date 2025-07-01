@@ -23,6 +23,7 @@ export const authOptions: AuthOptions = {
       checks: ["pkce", "state"],
       clientId: process.env.NEXT_PUBLIC_GOVBR_CLIENT_ID!,
       clientSecret: process.env.NEXT_PUBLIC_GOVBR_CLIENT_SECRET!,
+      issuer: process.env.NEXT_PUBLIC_GOVBR_URL,
       profile(profile: any) {
         return {
           id: profile.sub,
