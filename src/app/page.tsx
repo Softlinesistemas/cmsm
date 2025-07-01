@@ -17,7 +17,7 @@ export default function Home() {
   const { data: session, status } = useSession();
 
   const handleGovLogin = async () => {
-    await signIn("govbr", { callbackUrl: (status === "authenticated" && !session?.user?.admin) ? "/acompanhamento" : "/login" });
+    await signIn("govbr", { callbackUrl: "/acompanhamento" });
   };
 
   const fetchConfig = async () => {

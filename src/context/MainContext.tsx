@@ -1,6 +1,5 @@
 "use client"
 import React, { createContext, useState, useEffect, useMemo, ReactNode } from "react";
-import { useTranslation } from "react-i18next";
 import Processo from '@/components/Processo'
 import Inscricoes from '@/components/Inscricoes'
 // import Pagamentos from "@/components/Pagamentos";
@@ -41,8 +40,6 @@ const saveSettings = (settings: Partial<Record<string, unknown>>) => {
  
 export const MainProvider = ({ children }: { children: ReactNode }) => {
   const stored = getStoredSettings();
-  const { i18n } = useTranslation();
-  const currentLocale = i18n.language;
 
   const [selectedComponent, setSelectedComponent] = useState('Inscrição');
   const [showSidebar, setShowSidebar] = useState(true);
