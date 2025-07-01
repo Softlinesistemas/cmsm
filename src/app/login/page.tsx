@@ -47,7 +47,7 @@ const login = () => {
 
     const session = await getSession();
     toast.success("Login concluído, redirecionando...")
-    
+    console.log(session?.user)
     if (session?.user?.admin) {
       router.push("/dashboard");
     } else {

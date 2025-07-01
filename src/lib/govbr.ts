@@ -25,16 +25,16 @@ export async function fetchGovBrFullProfile(
 
   // 1) Dados básicos (OpenID Connect)
   const { data: basic } = await axios.get(
-    "https://sso.acesso.gov.br/userinfo",
+    `${process.env.NEXT_PUBLIC_GOVBR_URL}userinfo`,
     { headers }
   );
 
   // 2) Dados pessoais completos (ajuste a URL se for /v2/me ou SCIM)
-  const { data: personal } = await axios.get(
-    "https://api.acesso.gov.br/dados/v1/me",
-    { headers }
-  );
+  // const { data: personal } = await axios.get(
+  //   `https://api.acesso.gov.br/dados/v1/me`,
+  //   { headers }
+  // );
 
   // Junta tudo (personal sobrescreve basic em caso de conflito)
-  return { ...basic, ...personal };
+  return { ...basic };
 }

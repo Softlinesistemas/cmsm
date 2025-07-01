@@ -10,26 +10,20 @@ export const authOptions: AuthOptions = {
     signIn: "/login",
   },
   providers: [
-    // GOV.BR
      {
       id: "govbr",
       name: "Gov.br",
       type: "oauth",
-      // 1) Endereço para iniciar o código de autorização
       authorization: {
-        url: "https://sso.staging.acesso.gov.br/authorize",
+        url: `${process.env.NEXT_PUBLIC_GOVBR_URL}authorize`,
         params: { scope: "openid email profile" },
       },
-      // 2) Endpoint que troca o `code` por tokens
-      token: "https://sso.staging.acesso.gov.br/token",
-      // 3) Endpoint para buscar os dados básicos do usuário
-      userinfo: "https://sso.staging.acesso.gov.br/userinfo",
-      // 4) Configuração PKCE + state
+      token: `${process.env.NEXT_PUBLIC_GOVBR_URL}token`,
+      userinfo: `${process.env.NEXT_PUBLIC_GOVBR_URL}userinfo`,
       checks: ["pkce", "state"],
       clientId: process.env.NEXT_PUBLIC_GOVBR_CLIENT_ID!,
       clientSecret: process.env.NEXT_PUBLIC_GOVBR_CLIENT_SECRET!,
       profile(profile: any) {
-        console.log(profile)
         return {
           id: profile.sub,
           name: profile.name || profile.preferred_username,
@@ -89,17 +83,33 @@ export const authOptions: AuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 dias
   },
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ token, user, account }) {
+      // Login ADM
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+        token.admin = user.admin ?? false;
+      }
+
+      // Login com Gov.br
       if (account?.access_token && !token._govbrFetched) {
-        const full: GovBrFullProfile = await fetchGovBrFullProfile(
-          account.access_token
-        );
+        const full: GovBrFullProfile = await fetchGovBrFullProfile(account.access_token);
+
         token = {
           ...token,
-          ...full,
+          access_token: account.access_token,
+          id: token.id ?? full.sub,
+          name: full.name,
+          email: full.email,
+          picture: full.picture,
+          cpf: full.sub,
+          birthdate: full.birthdate,
+          phone_number: full.phone_number,
+          admin: false,
           _govbrFetched: true,
         };
       }
+
       return token;
     },
     async session({ session, token }: { session: any; token: JWT }) {
@@ -119,5 +129,4 @@ export const authOptions: AuthOptions = {
   },
 };
 
-// Export default para permitir `import authOptions from "@/lib/authOptions"`
 export default authOptions;

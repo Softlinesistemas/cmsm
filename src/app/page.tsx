@@ -88,7 +88,7 @@ export default function Home() {
               <span className="text-gray-700 font-medium">Entrar com gov.br</span>
             </button>
             <div className='w-full'>            
-              <Link href={status !== "authenticated" ? "/formulario" : session?.user?.admin ? "/dashboard" :"/acompanhamento"} className='mt-1 text-sm text-blue-500 hover:underline hover:text-blue-700 cursor-pointer'>Pular etapa (provisório)</Link>
+              {/* <Link href={status !== "authenticated" ? "/formulario" : session?.user?.admin ? "/dashboard" :"/acompanhamento"} className='mt-1 text-sm text-blue-500 hover:underline hover:text-blue-700 cursor-pointer'>Pular etapa (provisório)</Link> */}
             </div>
           </div>
         </div>
