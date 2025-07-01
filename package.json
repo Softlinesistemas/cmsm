@@ -91,6 +91,7 @@
     "ts-node": "^10.9.2",
     "uuid": "^9.0.1",
     "video.js": "^8.17.3",
+    "xlsx": "^0.18.5",
     "zipcodes": "^8.0.0"
   },
   "devDependencies": {

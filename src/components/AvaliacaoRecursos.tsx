@@ -44,7 +44,7 @@ const AvaliacaoRecursos = () => {
         setObservacao("");
         refetch();
       } catch (error: any) {
-        toast.error(error);
+        toast.error(error.response.data.error || error.response.data.message);;
       }
     }
   };
@@ -56,7 +56,7 @@ const AvaliacaoRecursos = () => {
       toast.success(`Pedido de insenção Aprovado para o candidato ${numeroInscricao}`);
       refetch();
     } catch (error: any) {
-      toast.error(error);
+      toast.error(error.response.data.error || error.response.data.message);;
     }  
     setLoadingAprovar(false);
   };
@@ -68,7 +68,7 @@ const AvaliacaoRecursos = () => {
       toast.success(`Pedido de insenção Reprovado para o candidato ${numeroInscricao}`);
       refetch();
     } catch (error: any) {
-      toast.error(error);
+      toast.error(error.response.data.error || error.response.data.message);;
     }
     setLoadingReprovar(false);
   };

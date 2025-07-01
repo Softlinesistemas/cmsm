@@ -1,41 +1,85 @@
 'use client';
 
 import { useState, useEffect, useContext } from "react";
-
+import { useQuery } from "react-query";
+import api from "@/utils/api";
+import LoadingIcon from "./common/LoadingIcon";
+import toast from "react-hot-toast";
+import { useSession } from 'next-auth/react';
+import moment from "moment-timezone";
+import * as XLSX from 'xlsx';
 
 const Gabarito = () => {
-  const [inscritos, setInscritos] = useState([
-    { id: 1, nome: 'João Silva', cpf: '000.000.000-00', numeroInscricao: '123456', serie: '6º Ano', gabaritoRecebido: false },
-    { id: 2, nome: 'Maria Souza', cpf: '111.111.111-11', numeroInscricao: '654321', serie: '1º Ano', gabaritoRecebido: true },
-    { id: 3, nome: 'Carlos Lima', cpf: '222.222.222-22', numeroInscricao: '111222', serie: '6º Ano', gabaritoRecebido: false },
-  ]);
-
+  const { data: session, status } = useSession();
   const [busca, setBusca] = useState('');
+  const [processando, setProcessando] = useState(false);
 
-  const enviarGabarito = (id: number, file: File | null) => {
-    if (!file) {
-      alert("Selecione um arquivo para enviar!");
-      return;
+  const { data: candidatosGabarito, isLoading, refetch } = useQuery(
+    ['candidatosGabarito', busca],
+    async () => {
+      const response = await api.get(`api/candidato/gabarito?query=${busca}`);
+      return response.data;
     }
-
-    console.log(`Enviando gabarito para ID ${id} - ${file.name}`);
-    setInscritos(prev =>
-      prev.map(inscrito =>
-        inscrito.id === id ? { ...inscrito, gabaritoRecebido: true } : inscrito
-      )
-    );
-
-    alert(`Gabarito ${file.name} enviado para inscrito ${id}!`);
-  };
-
-  const inscritosFiltrados = inscritos.filter(inscrito =>
-    inscrito.nome.toLowerCase().includes(busca.toLowerCase()) ||
-    inscrito.cpf.includes(busca) ||
-    inscrito.numeroInscricao.includes(busca)
   );
 
+  const enviarGabarito = async (id: number) => {
+    try {
+      await api.put(`api/candidato/${id}`, { 
+        RevisaoGabarito: "X", 
+        CodUsuImportacao: session?.user.id, 
+        CodUsuRev: session?.user.id, 
+        DataRevisao: moment().tz('America/Sao_Paulo').format('YYYY-MM-DD'),
+        NotaMatematica: 0,
+        NotaPortugues: 0,
+        NotaRedacao: "",
+        Status: ""
+      });
+      toast.success(`Gabarito enviado para inscrição ${id}`);
+      refetch();
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || error.response?.data?.message || 'Erro ao enviar');
+    }
+  };
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setProcessando(true);
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const rows: any[] = XLSX.utils.sheet_to_json(sheet, { defval: null });
+      const promises = rows.map(row => {
+        const id = row.cod_inscricao;
+        return api.put(`api/candidato/${id}`, {
+          RevisaoGabarito: "X",
+          CodUsuImportacao: session?.user.id,
+          CodUsuRev: session?.user.id,
+          DataRevisao: moment().tz('America/Sao_Paulo').format('YYYY-MM-DD'),
+          NotaMatematica: row.ac_mat ?? 0,
+          NotaPortugues: row.ac_port ?? 0,
+          NotaRedacao: row.nlp ?? 0,
+          NotaEInterp: row.npo_ei ?? 0,
+          Status: row.classificacao || ''
+        });
+      });
+      await Promise.all(promises);
+      toast.success('Envio em lote finalizado!');
+      refetch();
+    } catch (err) {
+      console.error(err);
+      toast.error('Falha no processamento do arquivo');
+    } finally {
+      setProcessando(false);
+      // reset input
+      (e.target as HTMLInputElement).value = '';
+    }
+  };
+
   return (
-    <div className="p-4 bg-white rounded-xl shadow shadow-gray-300">
+    <div className="p-4 bg-white rounded-xl shadow-gray-300 shadow">
       <h2 className="text-2xl font-bold mb-4 text-blue-800">Envio de Gabaritos</h2>
 
       {/* Busca */}
@@ -49,114 +93,70 @@ const Gabarito = () => {
         />
       </div>
 
-      {/* Tabela */}
+      {/* Tabela de candidatos individuais */}
       <div className="overflow-x-auto">
         <table className="min-w-full border rounded">
           <thead className="bg-blue-800 text-white">
             <tr>
-              <th className="border px-2 py-1 text-xs md:text-sm">ID</th>
+              <th className="border px-2 py-1 text-xs md:text-sm">#</th>
+              <th className="border px-2 py-1 text-xs md:text-sm">Inscrição</th>
               <th className="border px-2 py-1 text-xs md:text-sm">Nome</th>
               <th className="border px-2 py-1 text-xs md:text-sm">CPF</th>
-              <th className="border px-2 py-1 text-xs md:text-sm">Inscrição</th>
               <th className="border px-2 py-1 text-xs md:text-sm">Série</th>
               <th className="border px-2 py-1 text-xs md:text-sm">Status</th>
-              <th className="border px-2 py-1 text-xs md:text-sm">Ação</th>
             </tr>
           </thead>
           <tbody>
-            {inscritosFiltrados.map((inscrito) => (
-              <tr key={inscrito.id} className="hover:bg-blue-50 transition-colors text-black">
-                <td className="border px-2 py-1 text-xs md:text-sm">{inscrito.id}</td>
-                <td className="border px-2 py-1 text-xs md:text-sm">{inscrito.nome}</td>
-                <td className="border px-2 py-1 text-xs md:text-sm">{inscrito.cpf}</td>
-                <td className="border px-2 py-1 text-xs md:text-sm">{inscrito.numeroInscricao}</td>
-                <td className="border px-2 py-1 text-xs md:text-sm">{inscrito.serie}</td>
-                <td className="border px-2 py-1 text-xs md:text-sm">
-                  <span
-                    className={`px-2 py-1 rounded text-white text-xs
-                      ${inscrito.gabaritoRecebido ? 'bg-green-600' : 'bg-red-600'}`}
-                  >
-                    {inscrito.gabaritoRecebido ? 'Recebido' : 'Pendente'}
-                  </span>
-                </td>
-                <td className="border px-2 py-1 text-xs md:text-sm">
-                  {/* Upload */}
-                  <div className="flex flex-col md:flex-row items-center gap-1">
-                    <label className="cursor-pointer text-blue-700 underline text-xs">
-                      <input
-                        type="file"
-                        id={`file-${inscrito.id}`}
-                        className="hidden"
-                      />
-                      Selecionar
-                    </label>
-                    <button
-                      onClick={() => {
-                        const inputFile = document.getElementById(`file-${inscrito.id}`) as HTMLInputElement;
-                        const file = inputFile?.files?.[0] || null;
-                        enviarGabarito(inscrito.id, file);
-                      }}
-                      disabled={inscrito.gabaritoRecebido}
-                      className={`px-2 py-1 rounded text-xs text-white transition
-                        ${inscrito.gabaritoRecebido ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
+            {isLoading ? (
+              <tr><td colSpan={7}><LoadingIcon /></td></tr>
+            ) : candidatosGabarito?.length ? (
+              candidatosGabarito.map((inscrito: any, idx: number) => (
+                <tr key={inscrito.CodIns} className="hover:bg-blue-50 transition-colors text-black">
+                  <td className="border px-2 py-1 text-xs md:text-sm">{idx + 1}</td>
+                  <td className="border px-2 py-1 text-xs md:text-sm">{inscrito.CodIns}</td>
+                  <td className="border px-2 py-1 text-xs md:text-sm">{inscrito.Nome}</td>
+                  <td className="border px-2 py-1 text-xs md:text-sm">{inscrito.CPF}</td>
+                  <td className="border px-2 py-1 text-xs md:text-sm">{inscrito.Seletivo}</td>
+                  <td className="border px-2 py-1 text-xs md:text-sm">
+                    <span
+                      className={`px-2 py-1 rounded text-white text-xs ${inscrito.RevisaoGabarito === "X" ? 'bg-green-600' : 'bg-red-600'}`}
                     >
-                      Enviar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {inscritosFiltrados.length === 0 && (
+                      {inscrito.RevisaoGabarito === "X" ? 'Recebido' : 'Pendente'}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
-                <td colSpan={7} className="text-center py-2 text-gray-500 text-sm">Nenhum inscrito encontrado.</td>
+                <td colSpan={7} className="text-center py-2 text-gray-500 text-sm">
+                  Nenhum inscrito encontrado.
+                </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      {/* Observação para futuro envio em lote */}
-      <div className="mt-4">
-        {/* Botão de upload em lote */}
-        <div className="flex flex-col md:flex-row items-center gap-2 mb-2">
-          <label htmlFor="upload-lote" className="text-blue-700 underline cursor-pointer text-xs">
-            Selecionar arquivo em lote
-          </label>
-          <input
-            type="file"
-            id="upload-lote"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                alert(`Arquivo de gabaritos em lote selecionado: ${file.name}`);
-                // Aqui futuramente: chamada para API ou processamento do lote
-              }
-            }}
-          />
-          <button
-            onClick={() => {
-              const inputFile = document.getElementById('upload-lote') as HTMLInputElement;
-              const file = inputFile?.files?.[0] || null;
-              if (file) {
-                alert(`Enviando gabaritos em lote: ${file.name}`);
-                // TODO: Integrar com backend para envio real!
-              } else {
-                alert('Selecione um arquivo em lote antes de enviar.');
-              }
-            }}
-            className="px-3 py-1 text-xs rounded bg-purple-600 hover:bg-purple-700 text-white transition"
-          >
-            Enviar Lote
-          </button>
-        </div>
-
-        {/* Texto de observação */}
-        <div className="text-xs text-gray-500 italic">
-          💡 Envio em lote de gabaritos já está em preparação!
-        </div>
+      {/* Upload em lote */}
+      <div className="mt-6">
+        <label htmlFor="upload-lote" className="text-blue-700 underline cursor-pointer text-sm">
+          Selecionar arquivo de gabarito (Excel)
+        </label>
+        <input
+          type="file"
+          id="upload-lote"
+          accept=".xlsx, .xls"
+          className="hidden"
+          onChange={handleFile}
+        />
+        <button
+          onClick={() => document.getElementById('upload-lote')?.click()}
+          disabled={processando}
+          className={`ml-2 px-3 py-1 text-sm rounded text-white transition ${processando ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'}`}
+        >
+          {processando ? 'Processando...' : 'Enviar Lote'}
+        </button>
       </div>
-
     </div>
   );
 };
