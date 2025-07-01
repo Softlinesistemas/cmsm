@@ -6,5 +6,5 @@ export function usePagination(initialPage = 1) {
   const nextPage = () => setPage((prevPage) => prevPage + 1);
   const prevPage = () => setPage((prevPage) => prevPage - 1);
 
-  return { page, nextPage, prevPage };
+  return { page, nextPage, prevPage }; 
 }
