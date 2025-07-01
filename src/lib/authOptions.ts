@@ -5,6 +5,7 @@ import type { JWT } from "next-auth/jwt";
 import { fetchGovBrFullProfile, GovBrFullProfile } from "@/lib/govbr";
 
 export const authOptions: AuthOptions = {
+  debug: true,
   pages: {
     signIn: "/login",
   },
@@ -18,7 +19,8 @@ export const authOptions: AuthOptions = {
         params: { scope: "openid email profile" },
       },
       version: "2.0",
-      wellKnown: `${process.env.NEXT_PUBLIC_GOVBR_URL}/.well-known/openid-configuration`,
+      issuer: process.env.NEXT_PUBLIC_GOVBR_URL!,
+      wellKnown: `${process.env.NEXT_PUBLIC_GOVBR_URL}.well-known/openid-configuration`,
       token: `${process.env.NEXT_PUBLIC_GOVBR_URL}token`,
       userinfo: `${process.env.NEXT_PUBLIC_GOVBR_URL}userinfo`,
       checks: ["pkce", "state"],
