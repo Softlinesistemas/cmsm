@@ -5,7 +5,6 @@ import type { JWT } from "next-auth/jwt";
 import { fetchGovBrFullProfile, GovBrFullProfile } from "@/lib/govbr";
 
 export const authOptions: AuthOptions = {
-  debug: true,
   pages: {
     signIn: "/login",
   },
@@ -29,6 +28,7 @@ export const authOptions: AuthOptions = {
       profile(profile: any) {
         return {
           id: profile.sub,
+          cpf: profile.sub,
           name: profile.name || profile.preferred_username,
           email: profile.email,
           birthdate: profile.birthdate,

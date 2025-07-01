@@ -1,25 +1,35 @@
 import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
 
+// Extensões de tipos para incluir campos extras do Gov.br e permitir campos opcionais
 declare module "next-auth" {
   interface Session {
-    user?: {
-      id?: string;
-      name?: string | null;
-      email?: string | null;
-      admin?: boolean;
-    } & DefaultSession["user"];
+    user: DefaultSession["user"] & Partial<{
+      id: string;
+      admin: boolean;
+      cpf: string;
+      birthdate: string;
+      phone_number: string;
+      picture: string;
+    }>;
   }
 
-  interface User extends DefaultUser {
-    admin?: boolean;
-  }
+  interface User extends DefaultUser, Partial<{
+    id: string;
+    admin: boolean;
+    cpf: string;
+    birthdate: string;
+    phone_number: string;
+    picture: string;
+  }> {}
 }
 
 declare module "next-auth/jwt" {
-  interface JWT {
-    id?: string;
-    name?: string | null;
-    email?: string | null;
-    admin?: boolean;
-  }
+  interface JWT extends Partial<{
+    id: string;
+    admin: boolean;
+    cpf: string;
+    birthdate: string;
+    phone_number: string;
+    picture: string;
+  }> {}
 }

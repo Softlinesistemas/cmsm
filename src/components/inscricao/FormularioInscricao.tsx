@@ -82,28 +82,7 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
             <div className="col-span-12 md:col-span-2">
               <label className="text-blue-800 font-medium mb-1 block">Foto</label>
               <div className="w-24 h-24 border-2 border-dashed border-blue-300 rounded-md relative">
-                <input
-                  type="file"
-                  name="fotoCandidato"
-                  accept="image/*"
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  onChange={e => {
-                    const file = e.target.files?.[0]
-                    if (file) {
-                      const reader = new FileReader()
-                      reader.onloadend = () =>
-                        setFormData({ ...formData, fotoPreview: reader.result as string })
-                      reader.readAsDataURL(file)
-                    }
-                  }}
-                />
-                {formData.fotoPreview ? (
-                  <img src={formData.fotoPreview} className="w-full h-full object-cover" />
-                ) : (
-                  <span className="absolute inset-0 flex items-center justify-center text-blue-300 text-xs">
-                    Adicionar
-                  </span>
-                )}
+                <img src={formData?.fotoPreview} className="w-full h-full object-cover" />
               </div>
             </div>
             <div className="col-span-12 md:col-span-4">
