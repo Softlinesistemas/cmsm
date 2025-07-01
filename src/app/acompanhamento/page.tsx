@@ -23,8 +23,9 @@ export default function Formulario() {
   const [loading, setLoading] = useState(false);
   const [checkboxMarcado, setCheckboxMarcado] = useState(false);
 
-    useEffect(() => {
+  useEffect(() => {
     if (status === "authenticated" && session.user) {
+      console.log(session.user);
       setFormData({ ...formData, nome: session?.user?.name || "", emailCandidato: session?.user?.email || "",cpf: String(session?.user?.id), dataNascimento: session?.user?.birthdate || "", celular: session?.user?.phone_number || "", fotoPreview: session?.user?.picture || session?.user?.image || ""})
     }
   }, [status]);
