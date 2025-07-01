@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams  } from 'next/navigation'
 import Footer from '../../components/FooterAdm'
 import Header from '../../components/HeaderAdm'
 import { signIn, getSession } from "next-auth/react";
@@ -9,13 +9,13 @@ import { ripplesLoading } from '../../../public'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import { useQuery } from 'react-query';
 
 const LoadingImage = () => (
   <div className="flex justify-center items-center h-full">
     <Image className="w-6 h-w-6" src={ripplesLoading} alt="Loading..." />
   </div>
 );
-
 
 const login = () => {
   const [primeiroAcesso, setPrimeiroAcesso] = useState(false)
@@ -24,7 +24,9 @@ const login = () => {
   const [user, setUser] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const router = useRouter()
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
 
   const handlePrimeiroAcesso = () => {
     router.push(`/cadColaborador/?cpf=${cpf}`)
@@ -47,7 +49,7 @@ const login = () => {
 
     const session = await getSession();
     toast.success("Login concluído, redirecionando...")
-    console.log(session?.user)
+
     if (session?.user?.admin) {
       router.push("/dashboard");
     } else {
@@ -56,7 +58,16 @@ const login = () => {
     setLoading(false);
   };
 
-  return (
+  const handleGovLogin = async () => {
+    await signIn("govbr", { callbackUrl: "/acompanhamento" });
+  };
+
+  function handleClickToken() {
+    const token = "9f8b3c4d6a7e1f2b5c9d0e8f4a1b3c7d9e0f2a4b";
+    router.push(`/login?token=${token}`);
+  }
+
+  return token === "9f8b3c4d6a7e1f2b5c9d0e8f4a1b3c7d9e0f2a4b" ? (
     <div className="min-h-screen bg-white flex flex-col justify-between">
       <Header />
 
@@ -132,22 +143,32 @@ const login = () => {
               {loading ? LoadingImage() : primeiroAcesso ? 'CONTINUAR' : 'ENTRAR'}
             </button>
           </div>
-          {/* <Link href="/dashboard" className='mt-2 text-sm text-blue-500 hover:underline hover:text-blue-700 cursor-pointer'>Pular etapa (provisório)</Link>             */}
-
-          {/* <a href="/recuperarSenha" className="text-xs text-gray-300 mt-3 hover:underline">
-            RECUPERAR SENHA
-          </a> */}
-
-          {/* <button
-            onClick={() => setPrimeiroAcesso(!primeiroAcesso)}
-            className="text-xs text-gray-300 mt-3 hover:underline"
-          >
-            {primeiroAcesso ? 'Voltar ao login' : 'Primeiro acesso'}
-          </button> */}
         </div>
       </main>
 
       <Footer />
+    </div>
+  ) : (
+    <div className="fixed inset-0 flex items-center justify-center flex-col">
+        <div className="px-6 py-4 flex flex-col items-center">
+          <button
+            onClick={handleGovLogin}
+            className="flex items-center space-x-2 bg-white border border-gray-300 rounded px-4 py-2 hover:scale-105 transition-transform"
+          >
+            <img
+              src="https://www.gov.br/++theme++padrao_govbr/img/govbr-colorido-b.png"
+              alt="gov.br"
+              className="h-6"
+            />
+            <span className="text-gray-700 font-medium text-sm">Entrar com gov.br</span>
+          </button>
+        </div>
+        <p onClick={handleClickToken} className='mt-2 text-sm text-blue-500 hover:underline hover:text-blue-700 cursor-pointer'>Login ADM (botão provisório)</p>
+      <div className="mt-8 w-full flex justify-center">
+        <Link href="/" className="text-blue-600 border border-blue-600 px-5 py-2 rounded-md hover:bg-blue-600 hover:text-white transition-colors duration-300 cursor-pointer">        
+            ← Voltar para a página inicial      
+        </Link>
+      </div>
     </div>
   )
 }

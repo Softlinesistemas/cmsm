@@ -3,10 +3,11 @@
 import React, { useState, useContext, memo } from 'react'
 import { useRouter } from 'next/navigation'
 import { MainContext } from '@/context/MainContext'
-import {
+import { LogOutIcon,
   ChevronDown, ChevronUp, Menu, X, Home, Settings, Users, FileText, Archive, User, Building2,
   ClipboardList, UploadCloud, FileBarChart, ShieldCheck, BadgeCheck, Megaphone, Mail, Server, Database
 } from 'lucide-react'
+import { signOut } from 'next-auth/react'
 
 type MenuItem = {
   label: string
@@ -181,6 +182,13 @@ const Sidebar: React.FC = () => {
         >
           <Settings size={18} />
           {!isSidebarOpen ? null : <span>CONFIGURAÇÕES</span>}
+        </button>
+        <button
+          onClick={async () => await signOut({ callbackUrl: "/", redirect: true })}
+          className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-blue-800 transition-all duration-300`}
+        >
+          <LogOutIcon size={18} />
+          {!isSidebarOpen ? null : <span>Sair</span>}
         </button>
       </aside>
     </div>

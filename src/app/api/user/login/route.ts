@@ -23,7 +23,7 @@ export async function POST(request: Request) {
         builder.where("S.Usuario", userName).orWhere("C.CPF", userName);
       })
       .first();
-  
+      
     if (!user) {
       return NextResponse.json(
         { message: "Invalid credentials." },
