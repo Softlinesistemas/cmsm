@@ -5,7 +5,7 @@ import { useQuery } from 'react-query'
 import { useRouter } from 'next/navigation'
 import { Check } from 'lucide-react'
 
-const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setCheckboxMarcado, provisoryKey, loading, provisoryUser, paymentButton, podeEditarExtras, handleSubmit, setFormData, formData, handleChange }) => {
+const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, checkboxMarcado, setCheckboxMarcado, provisoryKey, loading, provisoryUser, paymentButton, podeEditarExtras, handleSubmit, setFormData, formData, handleChange }) => {
   const router = useRouter();
 
   const einCpfMask = (value: string) => {
@@ -37,6 +37,9 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
     const { data: cotas, isLoading, refetch } = useQuery('cotas', async () => {
         const response = await api.get('api/cotas')
         return response.data
+    }, {
+      refetchOnWindowFocus: false,
+      retry: 5,
     })
 
   const fetchAddress = async (cep: string, resp = false) => {
@@ -87,13 +90,14 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
             </div>
             <div className="col-span-12 md:col-span-4">
               <label className="text-blue-800 font-medium mb-1 block">Nome do Candidato</label>
-              <input name="nome" value={formData.nome} onChange={handleChange} required className={baseInput}  />
+              <input name="nome" value={formData.nome} onChange={handleChange} required className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento}/>
             </div>
              <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">Vaga</label>
                 <select
                   name="Seletivo"
                   value={formData.Seletivo}
+                  disabled={isAcompanhamento}
                   onChange={handleChange}
                   required
                   className={`${baseInput}`}
@@ -116,15 +120,15 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
               {/* Linha 1 */}
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">CPF</label>
-                <input maxLength={14} value={einCpfMask(formData.cpf || "")} name="cpf" onChange={handleChange} required className={baseInput}  />
+                <input disabled={isAcompanhamento} readOnly={isAcompanhamento} maxLength={14} value={einCpfMask(formData.cpf || "")} name="cpf" onChange={handleChange} required className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Data de Nasc.</label>
-                <input type="date" name="dataNascimento" value={formData.dataNascimento} onChange={handleChange} className={baseInput}  />
+                <input disabled={isAcompanhamento} readOnly={isAcompanhamento} type="date" name="dataNascimento" value={formData.dataNascimento} onChange={handleChange} className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Sexo</label>
-                <select name="sexo" value={formData.sexo} onChange={handleChange} className={baseInput}>
+                <select name="sexo" value={formData.sexo} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
                   <option value="">Selecione</option>
                   <option value="masculino">Masculino</option>
                   <option value="feminino">Feminino</option>
@@ -133,11 +137,12 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
               {/* Linha 2 */}
               <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">CEP</label>
-                <input name="cep" value={cepMask(formData.cep)} onChange={handleChange} onBlur={() => fetchAddress(formData.cep)} className={baseInput}  />
+                <input name="cep" value={cepMask(formData.cep)} onChange={handleChange} onBlur={() => fetchAddress(formData.cep)} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
               <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">UF</label>
                 <select
+                  disabled={isAcompanhamento}
                   name="uf"
                   value={formData.uf}
                   onChange={handleChange}
@@ -176,20 +181,20 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
               </div>
               <div className="col-span-12 md:col-span-6">
                 <label className="block text-blue-800 font-medium mb-1">Cidade</label>
-                <input name="cidade" value={formData.cidade} onChange={handleChange} className={baseInput}  />
+                <input name="cidade" value={formData.cidade} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
               {/* Linha 3 */}
               <div className="col-span-12 md:col-span-8">
                 <label className="block text-blue-800 font-medium mb-1">Endereço</label>
-                <input name="endereco" value={formData.endereco} onChange={handleChange} className={baseInput}  />
+                <input name="endereco" value={formData.endereco} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
               <div className="col-span-6 md:col-span-2">
                 <label className="block text-blue-800 font-medium mb-1">Número</label>
-                <input name="numero" value={formData.numero} onChange={handleChange} className={baseInput} maxLength={6} />
+                <input name="numero" value={formData.numero} onChange={handleChange} className={baseInput} maxLength={6} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
               <div className="col-span-6 md:col-span-2">
                 <label className="block text-blue-800 font-medium mb-1">Complemento</label>
-                <input name="complemento" value={formData.complemento} onChange={handleChange} className={baseInput}  />
+                <input name="complemento" value={formData.complemento} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
             </div>
           </div>
@@ -200,13 +205,12 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
               {/* Necessidades */}
               <div>
                 <label className="text-blue-800 font-medium mb-1 block">Necessidades Especiais?</label>
-                <select name="necessidades" value={formData.necessidades} onChange={handleChange} className={baseInput}>
-                  <option value="">Selecione</option>
+                <select name="necessidades" value={formData.necessidades} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
                   <option value="">Não</option>
                   <option value="X">Sim</option>
                 </select>
                 {formData.necessidades === 'X' && (
-                  <select name="tipoNecessidade" value={formData.tipoNecessidade} onChange={handleChange} required className={`${baseInput} mt-2`}>
+                  <select name="tipoNecessidade" value={formData.tipoNecessidade} onChange={handleChange} required className={`${baseInput} mt-2`} disabled={isAcompanhamento}>
                     <option value="">Tipo de Necessidade</option>
                     <option value="visual">Visual</option>
                     <option value="auditiva">Auditiva</option>
@@ -220,8 +224,7 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
               {/* Transtorno Funcional */}
               <div>
                 <label className="text-blue-800 font-medium mb-1 block">Transtorno Funcional?</label>
-                <select name="transtornoFuncional" value={formData.transtornoFuncional} onChange={handleChange} className={baseInput}>
-                  <option value="">Selecione</option>
+                <select name="transtornoFuncional" value={formData.transtornoFuncional} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
                   <option value="">Não</option>
                   <option value="X">Sim</option>
                 </select>
@@ -246,13 +249,12 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
               {/* Atendimento Especial */}
               <div>
                 <label className="text-blue-800 font-medium mb-1 block">Atendimento Especial?</label>
-                <select name="atendimentoEspecial" value={formData.atendimentoEspecial} onChange={handleChange} className={baseInput}>
-                  <option value="">Selecione</option>
+                <select name="atendimentoEspecial" value={formData.atendimentoEspecial} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
                   <option value="">Não</option>
                   <option value="X">Sim</option>
                 </select>
                 {formData.atendimentoEspecial === 'X' && (
-                  <select name="tipoAtendimento" value={formData.tipoAtendimento} onChange={handleChange} required className={`${baseInput} mt-2`}>
+                  <select name="tipoAtendimento" value={formData.tipoAtendimento} onChange={handleChange} required className={`${baseInput} mt-2`} disabled={isAcompanhamento}>
                     <option value="">Tipo de Atendimento</option>
                     <option value="leitura">Leitura em voz alta</option>
                     <option value="tempo-extra">Tempo extra</option>
@@ -270,7 +272,7 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
                   name="tipoCota"
                   value={formData.tipoCota}
                   onChange={handleChange}
-                  disabled={!podeEditarExtras}
+                  disabled={!podeEditarExtras || isAcompanhamento}
                   className={`${baseInput} ${!podeEditarExtras ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
                   <option value="">Selecione</option>
@@ -292,15 +294,14 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
                   name="necessitaCondicoes"
                   value={formData.necessitaCondicoes}
                   onChange={handleChange}
-                  disabled={!podeEditarExtras}
+                  disabled={!podeEditarExtras || isAcompanhamento}
                   className={`${baseInput} ${!podeEditarExtras ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
-                  <option value="">Selecione</option>
                   <option value="">Não</option>
                   <option value="X">Sim</option>
                 </select>
                 {formData.necessitaCondicoes === 'X' && (
-                  <select name="tipoAtendimentoProva" value={formData.tipoAtendimentoProva} onChange={handleChange} required className={`${baseInput} mt-2`}>
+                  <select name="tipoAtendimentoProva" value={formData.tipoAtendimentoProva} onChange={handleChange} required className={`${baseInput} mt-2`} disabled={isAcompanhamento}>
                     <option value="">Tipo de Condição</option>
                     <option value="tempoExtra">Tempo Extra</option>
                     <option value="localAcessivel">Local Acessível</option>
@@ -321,6 +322,8 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
               name="dadosVaga"
               placeholder="Candidato capacitado para realizar o exame intelectual"
               value={formData.dadosVaga}
+              disabled={isAcompanhamento} 
+              readOnly={isAcompanhamento}
               onChange={handleChange}
               className="w-full bg-red-800 rounded px-8 py-5 shadown text-md text-center placeholder:text-white text-xl"
             />
@@ -332,19 +335,19 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-12 md:col-span-6">
                 <label className="block text-blue-800 font-medium mb-1">Nome</label>
-                <input name="nomeResponsavel" value={formData.nomeResponsavel} onChange={handleChange} className={baseInput}  />
+                <input name="nomeResponsavel" value={formData.nomeResponsavel} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
               <div className="col-span-12 md:col-span-6">
                 <label className="block text-blue-800 font-medium mb-1">CPF</label>
-                <input maxLength={14} name="cpfResponsavel" value={einCpfMask(formData.cpfResponsavel || "")} onChange={handleChange} className={baseInput}  />
+                <input maxLength={14} name="cpfResponsavel" value={einCpfMask(formData.cpfResponsavel || "")} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Data de Nasc.</label>
-                <input type="date" name="dataNascimentoResponsavel" value={formData.dataNascimentoResponsavel} onChange={handleChange} className={baseInput}  />
+                <input type="date" name="dataNascimentoResponsavel" value={formData.dataNascimentoResponsavel} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Sexo</label>
-                <select name="sexoResponsavel" value={formData.sexoResponsavel} onChange={handleChange} className={baseInput}>
+                <select name="sexoResponsavel" value={formData.sexoResponsavel} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
                   <option value="">Selecione</option>
                   <option value="masculino">Masculino</option>
                   <option value="feminino">Feminino</option>
@@ -352,17 +355,18 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Profissão</label>
-                <input name="profissao" value={formData.profissao} onChange={handleChange} className={baseInput}  />
+                <input name="profissao" value={formData.profissao} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
 
               {/* Endereço Responsável */}
               <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">CEP</label>
-                <input name="cep_Resp" value={formData.cep_Resp} onChange={handleChange} onBlur={() => fetchAddress(formData.cep_Resp, true)} className={baseInput}  />
+                <input name="cep_Resp" value={formData.cep_Resp} onChange={handleChange} onBlur={() => fetchAddress(formData.cep_Resp, true)} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
               <div className="col-span-12 md:col-span-3">
                 <label className="block text-blue-800 font-medium mb-1">UF</label>
                 <select
+                  disabled={isAcompanhamento}
                   name="uf_Resp"
                   value={formData.uf_Resp}
                   onChange={handleChange}
@@ -401,28 +405,28 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
               </div>
               <div className="col-span-12 md:col-span-6">
                 <label className="block text-blue-800 font-medium mb-1">Cidade</label>
-                <input name="cidade_Resp" value={formData.cidade_Resp} onChange={handleChange} className={baseInput}  />
+                <input name="cidade_Resp" value={formData.cidade_Resp} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
               <div className="col-span-12 md:col-span-8">
                 <label className="block text-blue-800 font-medium mb-1">Endereço</label>
-                <input name="endereco_Resp" value={formData.endereco_Resp} onChange={handleChange} className={baseInput}  />
+                <input name="endereco_Resp" value={formData.endereco_Resp} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento}  />
               </div>
               <div className="col-span-6 md:col-span-2">
                 <label className="block text-blue-800 font-medium mb-1">Número</label>
-                <input name="numero_Resp" value={formData.numero_Resp} onChange={handleChange} className={baseInput}  />
+                <input name="numero_Resp" value={formData.numero_Resp} onChange={handleChange} className={baseInput}  disabled={isAcompanhamento} readOnly={isAcompanhamento}/>
               </div>
               <div className="col-span-6 md:col-span-2">
                 <label className="block text-blue-800 font-medium mb-1">Complemento</label>
-                <input name="complemento_Resp" value={formData.complemento_Resp} onChange={handleChange} className={baseInput}  />
+                <input name="complemento_Resp" value={formData.complemento_Resp} onChange={handleChange} className={baseInput}  disabled={isAcompanhamento} readOnly={isAcompanhamento}/>
               </div>
 
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Celular</label>
-                <input type="tel" name="celular"  placeholder="(99) 99999-9999" value={phoneMask(formData.celular)} onChange={handleChange} className={baseInput}  />
+                <input type="tel" name="celular"  placeholder="(99) 99999-9999" value={phoneMask(formData.celular)} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento}/>
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Parentesco</label>
-                <select name="parentesco" value={formData.parentesco} onChange={handleChange} className={baseInput}>
+                <select name="parentesco" value={formData.parentesco} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
                   <option value="">Selecione</option>
                   <option value="pai">Pai</option>
                   <option value="mãe">Mãe</option>
@@ -432,13 +436,13 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
               {/* Forças Armadas */}
               <div className="col-span-12 md:col-span-4">
                 <label className="text-blue-800 font-medium mb-1 block">Forças Armadas?</label>
-                <select name="forcas" value={formData.forcas} onChange={handleChange} className={baseInput} >
+                <select name="forcas" value={formData.forcas} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
                   <option value="">Selecione</option>
                   <option value="">Não</option>
                   <option value="X">Sim</option>
                 </select>
                 {formData.forcas === 'X' && (
-                  <select name="ramoForcas" value={formData.ramoForcas} onChange={handleChange} required className={`${baseInput} mt-2`}>
+                  <select name="ramoForcas" value={formData.ramoForcas} onChange={handleChange} required className={`${baseInput} mt-2`} disabled={isAcompanhamento}>
                     <option value="">Ramo das Forças</option>
                     <option value="exercito">Exército</option>
                     <option value="marinha">Marinha</option>
@@ -450,19 +454,18 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
 
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Email Responsavel</label>
-                <input type="email" name="emailResponsavel" value={formData.emailResponsavel} onChange={handleChange} className={baseInput}  />
+                <input type="email" name="emailResponsavel" value={formData.emailResponsavel} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Email Candidato</label>
-                <input type="email" name="emailCandidato" value={formData.emailCandidato} onChange={handleChange} className={baseInput}  />
+                <input type="email" name="emailCandidato" value={formData.emailCandidato} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
               </div>
               {primeiroCad && (
                 <div className="col-span-12 md:col-span-4">
                     <label className="text-red-800 font-medium mb-1 block">Solicitar Isenção</label>
-                    <select name='isencao' value={formData.isencao} onChange={handleChange} className={baseInput}>
-                        <option value="">Selecione</option>
-                        <option value="não">Não</option>
-                        <option value="sim">Sim</option>
+                    <select name='isencao' value={formData.isencao} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
+                        <option value="">Não</option>
+                        <option value="Pendente">Sim</option>
                     </select>
                 </div>
               )}
@@ -472,6 +475,8 @@ const FormularioInscricao: React.FC<any> = ({ primeiroCad, checkboxMarcado, setC
           {primeiroCad && (
             <label className="flex items-center justify-center mb-4 text-red-700">
               <input
+                disabled={isAcompanhamento} 
+                readOnly={isAcompanhamento}
                 type="checkbox"
                 checked={checkboxMarcado}
                 onChange={(e) => setCheckboxMarcado(e.target.checked)}

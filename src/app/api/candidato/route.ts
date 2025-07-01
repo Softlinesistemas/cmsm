@@ -100,7 +100,9 @@ export async function POST(request: Request) {
       NotaRedacao,
       DataRevisao,
       CodUsuRev,
-      Seletivo
+      Seletivo,
+      isencao,
+      observacao
     } = body;
 
     db = getDBConnection(dbConfig());
@@ -190,6 +192,8 @@ export async function POST(request: Request) {
           NotaRedacao,
           DataRevisao,
           CodUsuRev,
+          isencao,
+          observacao
         });
       return NextResponse.json({ message: "Candidato atualizado com sucesso." });
     } else {
@@ -260,6 +264,8 @@ export async function POST(request: Request) {
         NotaRedacao,
         DataRevisao,
         CodUsuRev,
+        isencao,
+        observacao
       });
       return NextResponse.json({ message: "Candidato inserido com sucesso." });
     }

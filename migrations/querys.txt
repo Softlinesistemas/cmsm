@@ -40,6 +40,8 @@ CREATE TABLE Candidato (
     AtendimentoEsp      CHAR(1)        NULL,                   -- 'X'
     Responsavel         VARCHAR(100)   NULL,
     CPFResp             VARCHAR(12)    NULL,
+    isencao             VARCHAR(12)    NULL,
+    observacao          VARCHAR(255)    NULL,
     NascResp            DATETIME       NULL,
     SexoResp            CHAR(1)        NULL,
     CepResp             VARCHAR(9)     NULL,

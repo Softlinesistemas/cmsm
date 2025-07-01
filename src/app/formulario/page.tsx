@@ -63,7 +63,8 @@ export default function Formulario() {
     emailCandidato: '',
     fotoPreview: '',
     isencao: '',
-    Seletivo: ''
+    Seletivo: '',
+    observacao: '',
   })
 
   useEffect(() => {
@@ -135,6 +136,8 @@ export default function Formulario() {
         Email: formData.emailCandidato || null,
         CaminhoFoto: formData.fotoPreview || null,
         Seletivo: formData.Seletivo,
+        isencao:  formData.isencao,
+        observacao:  formData.observacao,
   
         // Campos nulos:
         DataCad: null, // backend

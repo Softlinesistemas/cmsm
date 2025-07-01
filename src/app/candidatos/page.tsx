@@ -19,6 +19,9 @@ export default function AdminEditarCandidato() {
   const { data: cotas, isLoading, refetch } = useQuery('cotas', async () => {
     const response = await api.get('api/cotas')
     return response.data
+  }, {
+    refetchOnWindowFocus: false,
+    retry: 5,
   });
 
   const [formData, setFormData] = useState({
@@ -61,7 +64,9 @@ export default function AdminEditarCandidato() {
       emailResponsavel: '',
       emailCandidato: '',
       fotoPreview: '',
-      Seletivo: ''
+      Seletivo: '',
+      isencao: '',
+      observacao: ''
     })
 
   // Busca candidato por nome, cpf ou inscrição
@@ -133,6 +138,8 @@ export default function AdminEditarCandidato() {
       emailCandidato: candidate.Email ?? '',
       fotoPreview: candidate.CaminhoFoto ?? '',
       Seletivo: candidate.Seletivo ?? '',
+      isencao: candidate.isencao ?? '',
+      observacao: candidate.observacao ?? '',
     });
   }
 
@@ -422,7 +429,6 @@ export default function AdminEditarCandidato() {
                   <div>
                     <label className="text-blue-800 font-medium mb-1 block">Necessidades Especiais?</label>
                     <select name="necessidades" value={formData?.necessidades} onChange={handleChange} className={baseInput}>
-                      <option value="">Selecione</option>
                       <option value="">Não</option>
                       <option value="X">Sim</option>
                     </select>
@@ -442,7 +448,6 @@ export default function AdminEditarCandidato() {
                   <div>
                     <label className="text-blue-800 font-medium mb-1 block">Transtorno Funcional?</label>
                     <select name="transtornoFuncional" value={formData?.transtornoFuncional} onChange={handleChange} className={baseInput}>
-                      <option value="">Selecione</option>
                       <option value="">Não</option>
                       <option value="X">Sim</option>
                     </select>
@@ -468,7 +473,6 @@ export default function AdminEditarCandidato() {
                   <div>
                     <label className="text-blue-800 font-medium mb-1 block">Atendimento Especial?</label>
                     <select name="atendimentoEspecial" value={formData?.atendimentoEspecial} onChange={handleChange} className={baseInput}>
-                      <option value="">Selecione</option>
                       <option value="">Não</option>
                       <option value="X">Sim</option>
                     </select>
@@ -654,7 +658,6 @@ export default function AdminEditarCandidato() {
                   <div className="col-span-12 md:col-span-4">
                     <label className="text-blue-800 font-medium mb-1 block">Forças Armadas?</label>
                     <select name="forcas" value={formData?.forcas} onChange={handleChange} className={baseInput} >
-                      <option value="">Selecione</option>
                       <option value="">Não</option>
                       <option value="X">Sim</option>
                     </select>

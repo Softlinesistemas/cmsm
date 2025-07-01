@@ -1,7 +1,10 @@
 'use client';
-
+import { useQuery } from "react-query";
 import { useState } from "react";
 import { FaCheck, FaTimes, FaComment } from "react-icons/fa";
+import api from "@/utils/api";
+import toast from "react-hot-toast";
+import LoadingIcon from "./common/LoadingIcon";
 
 /**
  * Componente AvaliacaoRecursos
@@ -11,60 +14,22 @@ import { FaCheck, FaTimes, FaComment } from "react-icons/fa";
  */
 const AvaliacaoRecursos = () => {
   // Estado inicial com lista de recursos
-  const [recursos, setRecursos] = useState([
-    {
-      id: 1,
-      nome: 'Recurso 1',
-      cpf: '000.000.000-00',
-      tipo: 'Recurso de Concurso',
-      status: 'Pendente',
-      observacoes: ['Primeira observação'],
-    },
-    {
-      id: 2,
-      nome: 'Recurso 2',
-      cpf: '111.111.111-11',
-      tipo: 'Recurso de Inscrição',
-      status: 'Aprovado',
-      observacoes: [],
-    },
-  ]);
+  const { data: candidatosRecursos, isLoading, refetch } = useQuery('candidatosRecursos', async () => {
+    const response = await api.get('api/candidato/recurso')
+    return response.data
+  });
 
   // Controle do modal
   const [modalAberto, setModalAberto] = useState(false);
   const [observacao, setObservacao] = useState("");
-  const [recursoSelecionado, setRecursoSelecionado] = useState<any | null>(null);
-
-  /**
-   * Aprova o recurso alterando o status para "Aprovado".
-   * @param id ID do recurso
-   */
-  const aprovarRecurso = (id: number) => {
-    setRecursos((prev) =>
-      prev.map((r) =>
-        r.id === id ? { ...r, status: 'Aprovado' } : r
-      )
-    );
-  };
-
-  /**
-   * Reprova o recurso alterando o status para "Reprovado".
-   * @param id ID do recurso
-   */
-  const desaprovarRecurso = (id: number) => {
-    setRecursos((prev) =>
-      prev.map((r) =>
-        r.id === id ? { ...r, status: 'Reprovado' } : r
-      )
-    );
-  };
+  const [loadingAprovar, setLoadingAprovar] = useState(false);
+  const [loadingReprovar, setLoadingReprovar] = useState(false);
 
   /**
    * Abre o modal para adicionar/visualizar observações.
    * @param recurso Recurso selecionado
    */
   const abrirModal = (recurso: any) => {
-    setRecursoSelecionado(recurso);
     setObservacao(""); // Limpa o campo para nova observação
     setModalAberto(true);
   };
@@ -72,17 +37,49 @@ const AvaliacaoRecursos = () => {
   /**
    * Adiciona a observação ao recurso selecionado e fecha o modal.
    */
-  const adicionarObservacao = () => {
+  const adicionarObservacao = async (numeroInscricao: number) => {
     if (observacao.trim() !== "") {
-      setRecursos((prev) =>
-        prev.map((r) =>
-          r.id === recursoSelecionado?.id
-            ? { ...r, observacoes: [...r.observacoes, observacao] }
-            : r
-        )
-      );
-      setModalAberto(false);
+      try {  
+        await api.put(`api/candidato/${numeroInscricao}`, { observacao });
+        setObservacao("");
+        refetch();
+      } catch (error: any) {
+        toast.error(error);
+      }
     }
+  };
+
+  const aprovarRecurso = async (numeroInscricao: number) => {
+    setLoadingAprovar(true);
+    try {  
+      await api.put(`api/candidato/${numeroInscricao}`, { isencao: "Aprovado" });
+      toast.success(`Pedido de insenção Aprovado para o candidato ${numeroInscricao}`);
+      refetch();
+    } catch (error: any) {
+      toast.error(error);
+    }  
+    setLoadingAprovar(false);
+  };
+
+  const desaprovarRecurso = async (numeroInscricao: number) => {
+    setLoadingReprovar(true);
+    try {  
+      await api.put(`api/candidato/${numeroInscricao}`, { isencao: "Reprovado" });
+      toast.success(`Pedido de insenção Reprovado para o candidato ${numeroInscricao}`);
+      refetch();
+    } catch (error: any) {
+      toast.error(error);
+    }
+    setLoadingReprovar(false);
+  };
+
+   const einCpfMask = (value: string) => {
+    let cleaned = value.replace(/\D/g, "");
+
+    if (cleaned.length <= 3) return cleaned;
+    if (cleaned.length <= 6) return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
+    if (cleaned.length <= 9) return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
+    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`;
   };
 
   return (
@@ -92,10 +89,10 @@ const AvaliacaoRecursos = () => {
 
       {/* Tabela Responsiva */}
       <div className="overflow-x-auto">
-        <table className="min-w-full border rounded-lg overflow-hidden">
+        <table className="min-w-full border rounded-lg o  verflow-hidden">
           <thead className="bg-blue-800 text-white">
             <tr>
-              <th className="border px-4 py-2">ID</th>
+              <th className="border px-4 py-2">CodIns</th>
               <th className="border px-4 py-2">Nome</th>
               <th className="border px-4 py-2">CPF</th>
               <th className="border px-4 py-2">Tipo</th>
@@ -104,42 +101,39 @@ const AvaliacaoRecursos = () => {
             </tr>
           </thead>
           <tbody>
-            {recursos.map((r) => (
-              <tr key={r.id} className="bg-blue-50 hover:bg-blue-100 text-black">
-                <td className="border px-4 py-2">{r.id}</td>
-                <td className="border px-4 py-2">{r.nome}</td>
-                <td className="border px-4 py-2">{r.cpf}</td>
-                <td className="border px-4 py-2">{r.tipo}</td>
+            {candidatosRecursos?.length ? candidatosRecursos?.map((r: any) => (
+              <tr key={r.CodIns} className="bg-blue-50 hover:bg-blue-100 text-black">
+                <td className="border px-4 py-2">{r.CodIns}</td>
+                <td className="border px-4 py-2">{r.Nome}</td>
+                <td className="border px-4 py-2">{einCpfMask(r.CPF)}</td>
+                <td className="border px-4 py-2">Isenção</td>
                 <td className="border px-4 py-2">
                   <span
-                    className={`px-2 py-1 rounded text-white text-xs
-                      ${
-                        r.status === 'Aprovado' ? 'bg-green-600' :
-                        r.status === 'Reprovado' ? 'bg-red-600' :
-                        'bg-yellow-600'
-                      }`}
+                    className={`px-2 py-1 rounded text-white text-xs ${
+                      r.isencao === 'Aprovado'
+                        ? 'bg-green-600'
+                        : r.isencao === 'Reprovado'
+                        ? 'bg-red-600'
+                        : 'bg-yellow-600'
+                    }`}
                   >
-                    {r.status}
+                    {r.isencao || "Pendente"}
                   </span>
                 </td>
                 <td className="border px-4 py-2 flex flex-wrap gap-2 justify-center">
-                  {/* Botão Aprovar */}
                   <button
-                    onClick={() => aprovarRecurso(r.id)}
+                    onClick={() => aprovarRecurso(r.CodIns)}
                     className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 rounded hover:bg-green-500"
                   >
-                    <FaCheck /> Aprovar
+                    {loadingAprovar ? <LoadingIcon /> : <FaCheck />} Aprovar
                   </button>
 
-                  {/* Botão Reprovar */}
                   <button
-                    onClick={() => desaprovarRecurso(r.id)}
+                    onClick={() => desaprovarRecurso(r.CodIns)}
                     className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 rounded hover:bg-red-500"
                   >
-                    <FaTimes /> Reprovar
+                    {loadingReprovar ? <LoadingIcon /> : <FaTimes />} Reprovar
                   </button>
-
-                  {/* Botão Observações */}
                   <button
                     onClick={() => abrirModal(r)}
                     className="flex items-center gap-1 bg-gray-300 text-black px-2 py-1 rounded hover:bg-gray-400"
@@ -147,65 +141,62 @@ const AvaliacaoRecursos = () => {
                     <FaComment /> Observações
                   </button>
                 </td>
+                {modalAberto && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-4 rounded shadow-lg w-full max-w-md">
+                      {/* Título do Modal */}
+                      <h3 className="text-lg font-bold mb-2 text-blue-800">
+                        Observações para {r.Nome}
+                      </h3>
+  
+                      {/* Informações adicionais */}
+                      <div className="flex w-full flex-col">
+                        <p className="text-sm text-gray-600 mb-2">
+                          CodIns: {r.CodIns}
+                        </p>
+                        <p className="text-sm text-gray-600 mb-2">
+                          CPF: {einCpfMask(r.CPF)}
+                        </p>
+                        <p className="text-sm text-gray-600 mb-2">
+                        Tipo: Isenção
+                        </p>                      
+                      </div>
+  
+                      {/* Campo de observação */}
+                      <textarea
+                        value={observacao || r?.observacao}
+                        onChange={(e) => setObservacao(e.target.value)}
+                        className="w-full border border-gray-300 rounded p-2 mb-2 text-black"
+                        rows={3}
+                        maxLength={255}
+                        placeholder="Digite a observação"
+                      />
+  
+                      {/* Botões do modal */}
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => setModalAberto(false)}
+                          className="px-3 py-1 bg-gray-300 text-black rounded hover:bg-gray-400"
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          onClick={() => adicionarObservacao(r.CodIns)}
+                          className="px-3 py-1 bg-blue-800 text-white rounded hover:bg-blue-700"
+                        >
+                          Salvar
+                        </button>
+                      </div>              
+                    </div>
+                  </div>
+                )}
               </tr>
-            ))}
+            )) : isLoading ? <LoadingIcon /> : <tr aria-colspan={6}><p>Ainda não há recursos para análise.</p></tr>}
           </tbody>
         </table>
       </div>
 
       {/* Modal de Observações */}
-      {modalAberto && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded shadow-lg w-full max-w-md">
-            {/* Título do Modal */}
-            <h3 className="text-lg font-bold mb-2 text-blue-800">
-              Observações para {recursoSelecionado.nome}
-            </h3>
-
-            {/* Informações adicionais */}
-            <p className="text-sm text-gray-600 mb-2">
-              CPF: {recursoSelecionado.cpf} | Tipo: {recursoSelecionado.tipo}
-            </p>
-
-            {/* Campo de observação */}
-            <textarea
-              value={observacao}
-              onChange={(e) => setObservacao(e.target.value)}
-              className="w-full border border-gray-300 rounded p-2 mb-2 text-black"
-              rows={3}
-              placeholder="Digite a observação"
-            />
-
-            {/* Botões do modal */}
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setModalAberto(false)}
-                className="px-3 py-1 bg-gray-300 text-black rounded hover:bg-gray-400"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={adicionarObservacao}
-                className="px-3 py-1 bg-blue-800 text-white rounded hover:bg-blue-700"
-              >
-                Salvar
-              </button>
-            </div>
-
-            {/* Linha do tempo das observações */}
-            {recursoSelecionado.observacoes.length > 0 && (
-              <div className="mt-4">
-                <h4 className="font-semibold text-red-800">Linha do Tempo:</h4>
-                <ul className="list-disc list-inside text-black">
-                  {recursoSelecionado.observacoes.map((obs: string, index: number) => (
-                    <li key={index}>{obs}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

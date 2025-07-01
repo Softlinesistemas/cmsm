@@ -25,7 +25,6 @@ export default function Formulario() {
 
   useEffect(() => {
     if (status === "authenticated" && session.user) {
-      console.log(session.user);
       setFormData({ ...formData, nome: session?.user?.name || "", emailCandidato: session?.user?.email || "",cpf: String(session?.user?.id), dataNascimento: session?.user?.birthdate || "", celular: session?.user?.phone_number || "", fotoPreview: session?.user?.picture || session?.user?.image || ""})
     }
   }, [status]);
@@ -211,7 +210,7 @@ export default function Formulario() {
         <h2 className="text-2xl font-bold text-center text-blue-800 mb-8">
           FORMULÁRIO DE INSCRIÇÃO
         </h2>
-        <FormularioInscricao checkboxMarcado={checkboxMarcado} setCheckboxMarcado={setCheckboxMarcado} provisoryKey={provisoryKey} loading={loading} provisoryUser={provisoryUser} paymentButton={paymentButton} podeEditarExtras={podeEditarExtras} handleSubmit={handleSubmit} setFormData={setFormData} formData={formData} handleChange={handleChange}/>
+        <FormularioInscricao isAcompanhamento checkboxMarcado={checkboxMarcado} setCheckboxMarcado={setCheckboxMarcado} provisoryKey={provisoryKey} loading={loading} provisoryUser={provisoryUser} paymentButton={paymentButton} podeEditarExtras={podeEditarExtras} handleSubmit={handleSubmit} setFormData={setFormData} formData={formData} handleChange={handleChange}/>
       </main>
       <Footer />
     </div>

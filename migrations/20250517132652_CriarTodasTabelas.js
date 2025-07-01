@@ -67,6 +67,8 @@ exports.up = function(knex) {
       table.string('AtendimentoEsp', 1);
       table.string('Responsavel', 100);
       table.string('CPFResp', 12);
+      table.string('isencao', 12);
+      table.string('observacao', 255);
       table.dateTime('NascResp');
       table.string('SexoResp', 1);
       table.string('CepResp', 9);

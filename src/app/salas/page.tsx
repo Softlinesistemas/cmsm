@@ -225,7 +225,8 @@ export default function SalasPage() {
       NotaPortugues: p.NotaPortugues,
       NotaRedacao: p.NotaRedacao,
       DataRevisao: p.DataRevisao,
-      CodUsuRev: p.CodUsuRev
+      CodUsuRev: p.CodUsuRev,
+      isencao: p.isencao,
     }));
 
     const csv = jsonToCSV(rows, {

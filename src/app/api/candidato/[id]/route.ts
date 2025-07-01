@@ -17,6 +17,7 @@ export async function PUT(request: NextRequest) {
     }
     const body = await request.json();
     const {
+      observacao,
       Nome,
       CPF,
       Nasc,
@@ -78,7 +79,8 @@ export async function PUT(request: NextRequest) {
       NotaRedacao,
       DataRevisao,
       CodUsuRev,
-      Seletivo
+      Seletivo,
+      isencao,
     } = body;
 
     if (!CodIns) {
@@ -117,6 +119,7 @@ export async function PUT(request: NextRequest) {
     await db("Candidato")
       .where({ CodIns })
       .update({
+        observacao,
         Nome,
         CPF: cpfFormatado,
         Nasc,
@@ -143,6 +146,7 @@ export async function PUT(request: NextRequest) {
         Responsavel,
         CPFResp: CPFResp?.replace(/\D/g, ""),
         NascResp,
+        isencao,
         SexoResp: SexoResp === "masculino" ? "M" : "F",
         CepResp,
         EnderecoResp,

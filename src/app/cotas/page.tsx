@@ -20,6 +20,9 @@ export default function CotasPage() {
   const { data: cotas, isLoading, refetch } = useQuery('cotas', async () => {
     const response = await api.get('api/cotas')
     return response.data
+  }, {
+    refetchOnWindowFocus: false,
+    retry: 5,
   })
 
   const inserirCota = async () => {
