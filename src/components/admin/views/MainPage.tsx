@@ -6,7 +6,6 @@ export default function MainPage() {
   return (
     <div className="relative h-full w-full">
       <div className="relative h-full w-full">
-
         {/* Logo */}
         <div className="absolute inset-0 flex items-start justify-center pt-40">
           <Image 
