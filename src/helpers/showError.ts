@@ -9,5 +9,5 @@ const showError = (error: any) => {
         toast.error(error.response.data.mensagem)
     };
 }
-
+ 
 export default showError;
