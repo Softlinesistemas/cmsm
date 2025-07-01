@@ -1,124 +1,110 @@
-'use client'
+'use client';
 
 import { useState } from "react";
-
-// Dados mockados com lógica de status baseada na pontuação
-const dadosMock = [
-  { inscricao: '2025001', nome: 'João Silva', cpf: '123.456.789-00', contatoResponsavel: '(84) 99999-0000', pontuacao: 87.5, modalidade: '6anos' },
-  { inscricao: '2025002', nome: 'Maria Souza', cpf: '987.654.321-00', contatoResponsavel: '(84) 98888-0000', pontuacao: 62.3, modalidade: '1ano' },
-  { inscricao: '2025003', nome: 'Lucas Lima', cpf: '111.222.333-44', contatoResponsavel: '(84) 97777-0000', pontuacao: 79.2, modalidade: '6anos' },
-  { inscricao: '2025004', nome: 'Ana Paula', cpf: '222.333.444-55', contatoResponsavel: '(84) 91111-0000', pontuacao: 55.0, modalidade: '1ano' },
-  { inscricao: '2025005', nome: 'Carlos Mendes', cpf: '333.444.555-66', contatoResponsavel: '(84) 92222-0000', pontuacao: 90.4, modalidade: '6anos' },
-  { inscricao: '2025006', nome: 'Fernanda Torres', cpf: '444.555.666-77', contatoResponsavel: '(84) 93333-0000', pontuacao: 81.1, modalidade: '6anos' },
-  { inscricao: '2025007', nome: 'Bruno Rocha', cpf: '555.666.777-88', contatoResponsavel: '(84) 94444-0000', pontuacao: 47.3, modalidade: '1ano' },
-  { inscricao: '2025008', nome: 'Isabela Dias', cpf: '666.777.888-99', contatoResponsavel: '(84) 95555-0000', pontuacao: 77.9, modalidade: '6anos' },
-  { inscricao: '2025009', nome: 'Ricardo Alves', cpf: '777.888.999-00', contatoResponsavel: '(84) 96666-0000', pontuacao: 58.5, modalidade: '1ano' },
-  { inscricao: '2025010', nome: 'Juliana Costa', cpf: '888.999.000-11', contatoResponsavel: '(84) 97777-0000', pontuacao: 83.2, modalidade: '6anos' },
-].map(dado => ({
-  ...dado,
-  status:
-    dado.pontuacao >= 80 ? 'Aprovado e Classificado' :
-      dado.pontuacao < 59 ? 'Reprovado' :
-        'Aprovado'
-}));
+import { useQuery } from "react-query";
+import api from "@/utils/api";
+import LoadingIcon from "./common/LoadingIcon";
+import toast from "react-hot-toast";
 
 const Resultados = () => {
-  const [modalidadeSelecionada, setModalidadeSelecionada] = useState<'6anos' | '1ano'>('6anos');
-  const [filtroStatus, setFiltroStatus] = useState<'Todos' | 'Aprovado' | 'Aprovado e Classificado' | 'Reprovado'>('Todos');
+  const [modalidade, setModalidade] = useState<'6° ano'|'1° ano'>('6° ano');
+  const [filtroStatus, setFiltroStatus] = useState<'Todos'|'APROVADO'|'APROVADO E CLASSIFICADO'|'REPROVADO'>('Todos');
 
-  // Filtro por modalidade e status
-  const resultadosFiltrados = dadosMock.filter((r) => {
-    const filtroModalidade = r.modalidade === modalidadeSelecionada;
-    const filtroPorStatus = filtroStatus === 'Todos' || r.status === filtroStatus;
-    return filtroModalidade && filtroPorStatus;
-  });
+  const statusParam = filtroStatus === 'Todos' ? '' : filtroStatus.replace(/ /g, '_').toUpperCase();
+
+  const { data: candidatos, isLoading, error, refetch } = useQuery(
+    ['resultados', modalidade, filtroStatus],
+    async () => {
+      const res = await api.get(
+        `api/candidato/gabarito?ano=${modalidade}&status=${statusParam}`
+      );
+      return res.data;
+    },
+    { keepPreviousData: true }
+  );
+
+  const filtrarLocal = (lista: any[]) => {
+    return lista
+      .filter(c => c.Seletivo === modalidade)
+      .filter(c => filtroStatus === 'Todos' || c.Status === filtroStatus);
+  };
+
+  const mostrar = candidatos ? filtrarLocal(candidatos) : [];
 
   return (
-    <div className="flex justify-center items-start min-h-screen bg-gray-50 py-10">
-      <div className="max-w-6xl w-full bg-white rounded-xl shadow-md p-6">
-        <h2 className="text-3xl font-bold mb-6 text-center">Resultados por Modalidade</h2>
+    <div className="flex justify-center bg-gray-50 py-10 min-h-screen">
+      <div className="w-full max-w-6xl bg-white shadow-md rounded-xl p-6">
+        <h2 className="text-center text-3xl font-bold mb-6">Resultados por Modalidade</h2>
 
-        {/* Botões de modalidade */}
-        <div className="mb-6 flex flex-wrap items-center gap-4">
-          <p className="font-semibold text-black">Selecionar Ano:</p>
+        <div className="flex flex-wrap gap-4 justify-center mb-6">
           <button
-            onClick={() => setModalidadeSelecionada('6anos')}
-            className={`px-4 py-2 rounded ${modalidadeSelecionada === '6anos' ? 'bg-blue-600 text-white' : 'bg-gray-400'}`}
+            className={`px-4 py-2 rounded ${modalidade === '6° ano' ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}
+            onClick={() => setModalidade('6° ano')}
           >
             6 anos
           </button>
           <button
-            onClick={() => setModalidadeSelecionada('1ano')}
-            className={`px-4 py-2 rounded ${modalidadeSelecionada === '1ano' ? 'bg-blue-600 text-white' : 'bg-gray-400'}`}
+            className={`px-4 py-2 rounded ${modalidade === '1° ano' ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}
+            onClick={() => setModalidade('1° ano')}
           >
             1 ano
           </button>
         </div>
 
-        {/* Filtro por status */}
-        <div className="mb-8 flex flex-wrap items-center gap-4">
-          <p className="font-semibold text-black">Filtrar por Status:</p>
-          {['Todos', 'Aprovado', 'Aprovado e Classificado', 'Reprovado'].map(status => (
+        <div className="flex flex-wrap gap-4 justify-center mb-8">
+          {['Todos', 'APROVADO', 'APROVADO E CLASSIFICADO', 'REPROVADO'].map(st => (
             <button
-              key={status}
-              onClick={() => setFiltroStatus(status as any)}
-              className={`px-4 py-2 rounded ${filtroStatus === status ? 'bg-green-600 text-white' : 'bg-gray-400'}`}
-            >
-              {status}
-            </button>
+              key={st}
+              className={`px-4 py-2 rounded ${filtroStatus === st ? 'bg-green-600 text-white' : 'bg-gray-300'}`}
+              onClick={() => setFiltroStatus(st as any)}
+            >{st}</button>
           ))}
         </div>
 
-        {/* Tabela */}
-        <div className="overflow-auto">
-          <table className="w-full table-auto border text-sm text-center">
-            <thead className="bg-blue-700 font-semibold text-write">
-              <tr>
-                <th className="border px-4 py-2">Inscrição</th>
-                <th className="border px-4 py-2">Nome</th>
-                <th className="border px-4 py-2">CPF</th>
-                <th className="border px-4 py-2">Status</th>
-                <th className="border px-4 py-2">Contato</th>
-                <th className="border px-4 py-2">Pontuação</th>
-              </tr>
-            </thead>
-            <tbody>
-              {resultadosFiltrados.length > 0 ? (
-                resultadosFiltrados.map((r) => (
-                  <tr key={r.inscricao} className="hover:bg-gray-50 text-black">
-                    <td className="border px-4 py-2">{r.inscricao}</td>
-                    <td className="border px-4 py-2">{r.nome}</td>
-                    <td className="border px-4 py-2">{r.cpf}</td>
-                    <td>
-                      <span
-                        className={`
-                              px-2 py-1 rounded-md font-semibold text-xs
-                              ${r.pontuacao >= 80
-                            ? 'bg-green-200 text-green-800'
-                            : r.pontuacao < 60
-                              ? 'bg-red-200 text-red-800'
-                              : 'bg-yellow-200 text-yellow-800'
-                          }
-                           `}
-                      >
-                        {r.status}
-                      </span>
-                    </td>
-
-                    <td className="border px-4 py-2">{r.contatoResponsavel}</td>
-                    <td className="border px-4 py-2">{r.pontuacao.toFixed(1)}</td>
-                  </tr>
-                ))
-              ) : (
+        {isLoading ? (
+          <div className="flex justify-center"><LoadingIcon /></div>
+        ) : error ? (
+          <div className="text-red-500 text-center">Erro ao carregar resultados.</div>
+        ) : (
+          <div className="overflow-auto">
+            <table className="w-full table-auto border text-sm text-center text-black">
+              <thead className="bg-blue-700 text-white">
                 <tr>
-                  <td colSpan={6} className="text-center py-4 text-gray-500">
-                    Nenhum resultado encontrado.
-                  </td>
+                  <th className="border px-4 py-2">Inscrição</th>
+                  <th className="border px-4 py-2">Nome</th>
+                  <th className="border px-4 py-2">CPF</th>
+                  <th className="border px-4 py-2">Status</th>
+                  <th className="border px-4 py-2">Pontuação</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {mostrar.length ? (
+                  mostrar.map(c => (
+                    <tr key={c.CodIns} className="hover:bg-gray-100">
+                      <td className="border px-4 py-2">{c.CodIns}</td>
+                      <td className="border px-4 py-2">{c.Nome}</td>
+                      <td className="border px-4 py-2">{c.CPF}</td>
+                      <td className="border px-4 py-2">
+                        <span className={`px-2 py-1 rounded-md font-semibold text-xs
+                          ${c.NotaMatematica + c.NotaPortugues + 0 >= 80 ? 'bg-green-200 text-green-800'
+                            : c.NotaMatematica + c.NotaPortugues + 0 < 60 ? 'bg-red-200 text-red-800'
+                            : 'bg-yellow-200 text-yellow-800'}
+                        `}>
+                          {c.Status}
+                        </span>
+                      </td>
+                      <td className="border px-4 py-2">{((c.NotaMatematica ?? 0) + (c.NotaPortugues ?? 0)).toFixed(1)}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="py-4 text-gray-500">Nenhum resultado encontrado.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
