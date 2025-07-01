@@ -4,6 +4,16 @@ import axios from "axios";
 import type { JWT } from "next-auth/jwt";
 import type { User } from "next-auth";
 import { fetchGovBrFullProfile, GovBrFullProfile } from "@/lib/govbr";
+import { Issuer } from "openid-client";
+
+const govbrIssuer = await Issuer.discover("https://sso.staging.acesso.gov.br/");
+
+const govbrClient = new govbrIssuer.Client({
+  client_id: process.env.NEXT_PUBLIC_GOVBR_CLIENT_ID!,
+  client_secret: process.env.NEXT_PUBLIC_GOVBR_CLIENT_SECRET!,
+  redirect_uris: [`${process.env.NEXTAUTH_URL || ""}api/auth/callback/govbr`],
+  response_types: ["code"],
+});
 
 export const authOptions: AuthOptions = {
   pages: {
@@ -24,6 +34,7 @@ export const authOptions: AuthOptions = {
       clientId: process.env.NEXT_PUBLIC_GOVBR_CLIENT_ID!,
       clientSecret: process.env.NEXT_PUBLIC_GOVBR_CLIENT_SECRET!,
       issuer: process.env.NEXT_PUBLIC_GOVBR_URL,
+      client: govbrClient,
       profile(profile: any) {
         return {
           id: profile.sub,
