@@ -6,9 +6,9 @@ import type { User } from "next-auth";
 import { fetchGovBrFullProfile, GovBrFullProfile } from "@/lib/govbr";
 
 export const authOptions: AuthOptions = {
-  pages: {
-    signIn: "/login",
-  },
+  // pages: {
+  //   signIn: "/login",
+  // },
   providers: [
      {
       id: "govbr",
