@@ -26,7 +26,7 @@ export const getStoredSettings = () => {
   const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
   return stored ? JSON.parse(stored) : {};
 };
- 
+
 
 const saveSettings = (settings: Partial<Record<string, unknown>>) => {
   if (typeof window !== "undefined") {
