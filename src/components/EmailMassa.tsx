@@ -3,6 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import api from "@/utils/api";
 
 // Componente reutilizável para campo de texto
 const CampoTexto = ({ label, value, onChange, placeholder, textarea = false } : any) => (
@@ -73,6 +74,7 @@ const EmailMassa = () => {
 
   // Função para enviar os e-mails em massa
   const enviarEmails = async () => {
+    toast.dismiss();
     if (!assunto || !mensagem) {
       toast.error('Preencha o assunto e a mensagem antes de enviar.');
       return;
@@ -83,13 +85,11 @@ const EmailMassa = () => {
     toast.loading('⏳ Enviando emails em lotes...');
 
     try {
-      const response = await axios.post('/api/enviar-emails', { assunto, mensagem });
+      const response = await api.post('api/emails/multiple', { subject: assunto, message: mensagem });
       setRelatorio(response.data);
-      toast.dismiss(); // Remove loading
       toast.success('✅ Envio concluído com sucesso!');
     } catch (error) {
       console.error('Erro ao enviar emails:', error);
-      toast.dismiss();
       toast.error('Erro ao enviar emails. Tente novamente.');
     } finally {
       setLoading(false);
@@ -97,11 +97,10 @@ const EmailMassa = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <div className="max-w-4xl mx-auto p-4">
       {/* Notificações visuais */}
 
-
-      <h2 className="text-2xl font-bold mb-4">Envio de Email em Massa</h2>
+      <h2 className="text-2xl font-bold mb-4">Envio de Emails em Massa</h2>
 
       {/* Campos de assunto e mensagem */}
       <CampoTexto

@@ -78,7 +78,7 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
         setComponent(<CadastroEditais />);
         break;
       case 'Comunicados':
-        setComponent(<Comunicados />);
+        setComponent(<EmailMassa />);
         break;
       case 'EmailMassa':
         setComponent(<EmailMassa />);
