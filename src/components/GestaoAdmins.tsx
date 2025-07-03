@@ -2,76 +2,99 @@
 
 import { useState } from 'react';
 import { FaEdit, FaTrash, FaPlus, FaUserSlash } from 'react-icons/fa';
+import toast from 'react-hot-toast';
+import api from '@/utils/api';
+import { useQuery } from 'react-query';
 
 const modulosDisponiveis: string[] = ['Admin', 'Financeiro', 'Dashboard'];
 
-const usuariosIniciais = [
-  {
-    id: 1,
-    nome: 'Matheus Pereira Ferreira',
-    cpf: '01936928051',
-    modulos: ['Adm', 'Financeiro', 'Dashboard'],
-    ativo: true,
-  },
-  {
-    id: 2,
-    nome: 'Luis Antonio de Oliveira Silva',
-    cpf: '53374266053',
-    modulos: ['Adm', 'Financeiro', 'Dashboard'],
-    ativo: true,
-  },
-  {
-    id: 3,
-    nome: 'Viviane Machado Paim',
-    cpf: '00687703085',
-    modulos: ['Financeiro'],
-    ativo: true,
-  },
-  {
-    id: 4,
-    nome: 'Carlos Augusto de Souza Pires',
-    cpf: '07363861730',
-    modulos: ['Dashboard'],
-    ativo: true,
-  },
-];
-
 export default function GestaoUsuarios() {
-  const [usuarios, setUsuarios] = useState(usuariosIniciais);
+  const [usuarios, setUsuarios] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [novoUsuario, setNovoUsuario] = useState({
     nome: '',
     cpf: '',
+    senha: '',
     modulos: [] as string[],
   });
+
+    const { data: usuariosArray, isLoading, refetch } = useQuery('adms', async () => {
+      const response = await api.get('api/user/novo')
+      setUsuarios(response.data);
+      return response.data
+    }, {
+      refetchOnWindowFocus: false,
+      retry: 5,
+    });
 
   const toggleModulo = (modulo: string) => {
     setNovoUsuario((prev: any) => ({
       ...prev,
       modulos: prev.modulos.includes(modulo)
-        ? prev.modulos.filter((m: any) => m !== modulo)
-        : [...prev.modulos, modulo],
+        ? [] 
+        : [modulo], 
     }));
   };
 
-  const adicionarUsuario = () => {
-    if (!novoUsuario.nome || !novoUsuario.cpf) {
-      alert('Preencha nome e CPF!');
+  const adicionarUsuario = async () => {
+    const { nome, cpf, modulos, senha } = novoUsuario;
+
+    if (!nome.trim()) {
+      toast.error("Preencha o nome!");
       return;
     }
 
-    setUsuarios((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        nome: novoUsuario.nome,
-        cpf: novoUsuario.cpf,
-        modulos: novoUsuario.modulos,
-        ativo: true,
-      },
-    ]);
+    if (!cpf.trim()) {
+      toast.error("Preencha o CPF!");
+      return;
+    }
 
-    setNovoUsuario({ nome: '', cpf: '', modulos: [] });
+    if (modulos.length === 0) {
+      toast.error("Selecione o segmento!");
+      return;
+    }
+
+    let codSeg = null;
+
+    switch (modulos[0]) {
+      case "Admin":
+        codSeg = 2
+        break;
+      case "Financeiro":
+        codSeg = 3
+        break;
+      case "Dashboard":
+        codSeg = 4
+        break;
+      default: 
+        codSeg = 2
+    }
+
+    const payload = {
+      CodSeg: codSeg,
+      user: nome,
+      password: senha,
+      cpf: cpf
+    }
+
+    
+    try {
+      await api.post("api/user/novo", {...payload });
+     
+      setUsuarios((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          nome,
+          cpf,
+          modulos,
+          ativo: true,
+        },
+      ]);
+    } catch (error: any) {
+      toast.error(error.response.data.error || error.response.data.message);
+    }
+    setNovoUsuario({ nome: '', cpf: '', senha: '', modulos: [] });
     setShowModal(false);
   };
 
@@ -85,6 +108,15 @@ export default function GestaoUsuarios() {
     if (confirm('Tem certeza que deseja excluir?')) {
       setUsuarios((prev) => prev.filter((u) => u.id !== id));
     }
+  };
+
+  const einCpfMask = (value: string) => {
+    let cleaned = value.replace(/\D/g, "");
+
+    if (cleaned.length <= 3) return cleaned;
+    if (cleaned.length <= 6) return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
+    if (cleaned.length <= 9) return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
+    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`;
   };
 
   return (
@@ -107,7 +139,7 @@ export default function GestaoUsuarios() {
             <tr className="bg-gray-200 !text-gray-700">
               <th className="px-4 py-2 text-left">Nome</th>
               <th className="px-4 py-2">CPF</th>
-              <th className="px-4 py-2">Módulos</th>
+              <th className="px-4 py-2">Segmento</th>
               <th className="px-4 py-2">Status</th>
               <th className="px-4 py-2">Ações</th>
             </tr>
@@ -133,13 +165,13 @@ export default function GestaoUsuarios() {
                   </span>
                 </td>
                 <td className="px-4 py-2 flex items-center justify-center gap-3">
-                  <button
+                  {/* <button
                     onClick={() => desativarUsuario(u.id)}
                     className="text-yellow-600 hover:text-yellow-800"
                     title="Ativar/Desativar"
                   >
                     <FaUserSlash />
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => excluirUsuario(u.id)}
                     className="text-red-600 hover:text-red-800"
@@ -176,7 +208,8 @@ export default function GestaoUsuarios() {
             <input
               type="text"
               placeholder="CPF"
-              value={novoUsuario.cpf}
+              value={einCpfMask(novoUsuario.cpf)}
+              max={14}
               onChange={(e) =>
                 setNovoUsuario((prev) => ({
                   ...prev,
@@ -185,8 +218,20 @@ export default function GestaoUsuarios() {
               }
               className="border rounded w-full p-2"
             />
+            <input
+              type="password"
+              placeholder="Senha"
+              value={novoUsuario.senha}
+              onChange={(e) =>
+                setNovoUsuario((prev) => ({
+                  ...prev,
+                  senha: e.target.value,
+                }))
+              }
+              className="border rounded w-full p-2"
+            />
             <div>
-              <h4 className="font-semibold text-gray-700">Módulos</h4>
+              <h4 className="font-semibold text-gray-700">Segmento</h4>
               <div className="flex flex-wrap gap-2">
                 {modulosDisponiveis?.map((m: string) => (
                   <button

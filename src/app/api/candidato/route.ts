@@ -111,7 +111,7 @@ export async function POST(request: Request) {
       const maxCodInsRow = await db("Candidato").max("CodIns as maxCodIns").first();
       const maxCodIns = maxCodInsRow?.maxCodIns ?? 0;
 
-      CodIns = maxCodIns >= 10000 ? maxCodIns + 1 : 10000;
+      CodIns = maxCodIns >= 10001 ? maxCodIns + 1 : 10001;
     }
 
     const existing = await db("Candidato").where({ CodIns }).first();

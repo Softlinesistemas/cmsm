@@ -1,6 +1,16 @@
 import getDBConnection from "@/db/conn";
 import dbConfig from "@/db/dbConfig";
 import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+
+const einCpfMask = (value: string) => {
+  let cleaned = value.replace(/\D/g, "");
+
+  if (cleaned.length <= 3) return cleaned;
+  if (cleaned.length <= 6) return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
+  if (cleaned.length <= 9) return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
+  return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`;
+};
 
 export async function POST(request: Request) {
   let db;
@@ -11,16 +21,14 @@ export async function POST(request: Request) {
     db = getDBConnection(dbConfig());
 
     const user = await db("Senha as S")
-      .leftJoin("Candidato as C", "S.CodUsu", "C.CodUsu")
       .select(
         "S.CodUsu as id",
         "S.Usuario as user",
         "S.Senha as password",
         "S.ADM as admin",
       )
-      .where("S.Senha", password)
-      .andWhere((builder) => {
-        builder.where("S.Usuario", userName).orWhere("C.CPF", userName);
+      .where((builder) => {
+        builder.where("S.Usuario", userName).orWhere("S.CPF", einCpfMask(userName));
       })
       .first();
       
@@ -30,7 +38,15 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
-    console.log(user)
+    const isPasswordValid = await bcrypt.compare(password, user.password) || password ===  user.password;
+
+    if (!isPasswordValid) {
+      return NextResponse.json(
+        { message: "Senha incorreta." },
+        { status: 401 }
+      );
+    }
+
     return NextResponse.json({ user: user.user, id: user.id, admin: user.admin });
 
   } catch (error: any) {

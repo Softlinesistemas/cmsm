@@ -11,7 +11,7 @@ CREATE TABLE Sala (
 );
 
 CREATE TABLE Candidato (
-    CodIns              INT            NOT NULL PRIMARY KEY,   -- inicia em 10000
+    CodIns              INT            NOT NULL PRIMARY KEY,   -- inicia em 10001
     Nome                VARCHAR(100)   NOT NULL,
     Seletivo            VARCHAR(10)    NOT NULL,
     DataCad             DATETIME       NOT NULL,
@@ -86,9 +86,11 @@ CREATE TABLE Senha (
     CodUsu     INT          NOT NULL PRIMARY KEY,  -- PK e FK para candidato
     Usuario    VARCHAR(20)  NOT NULL,
     ADM        CHAR(1)      NOT NULL,              -- flag admin
+    CodUsu     INT          NULL,  
     DataCad    DATETIME     NOT NULL,
     HoraCad    CHAR(5)      NOT NULL,
-    Senha      VARCHAR(255), 
+    CPF        VARCHAR(14)  NULL, 
+    Senha      VARCHAR(255) NOT NULL, 
 );
 
 CREATE TABLE Funcao (

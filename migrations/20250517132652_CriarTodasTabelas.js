@@ -112,8 +112,10 @@ exports.up = function(knex) {
 
     .createTable('Senha', function(table) {
       table.integer('CodUsu').notNullable().primary();
+      table.integer('CodSeg');
       table.string('Usuario', 20).notNullable();
       table.string('Senha', 255);
+      table.string('CPF', 14);
       table.string('ADM', 1);
       table.dateTime('DataCad').notNullable();
       table.string('HoraCad', 5).notNullable();

@@ -7,6 +7,7 @@ exports.seed = async function(knex) {
   // Insere novo admin
   await knex('Senha').insert({
     CodUsu: 1,
+    CodSeg: 2, // Código referente a administrador
     Usuario: 'admin',
     ADM: 'X',
     DataCad: knex.fn.now(),

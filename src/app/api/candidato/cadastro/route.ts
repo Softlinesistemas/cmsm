@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       .max("CodUsu as maxCodUsu")
       .first();
 
-    const nextCodUsu = lastUser?.maxCodUsu ? Number(lastUser.maxCodUsu) + 1 : 10000;
+    const nextCodUsu = lastUser?.maxCodUsu ? Number(lastUser.maxCodUsu) + 1 : 1;
 
     // Insere o novo usuário com CodUsu definido manualmente
     await db("Senha").insert({

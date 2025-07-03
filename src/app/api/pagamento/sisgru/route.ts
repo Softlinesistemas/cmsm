@@ -3,6 +3,7 @@ import axios from 'axios'
 
 // https://webservice.sisgru.tesouro.gov.br/sisgru/services/v1/grus
 // https://webservice.homsisgru.tesouro.gov.br/sisgru/services/v1/grus
+// https://valpagtesouro.tesouro.gov.br/api/gru/solicitacao-pagamento
 
 export async function POST(req: NextRequest) {
   try {

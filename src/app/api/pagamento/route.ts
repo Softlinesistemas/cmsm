@@ -1,68 +1,113 @@
-import { NextRequest, NextResponse } from 'next/server';
+// app/api/pagtesouro/route.ts
 
-const TOKEN_URL = 'https://api-pagtesouro.tesouro.gov.br/oauth2/token';
-const PAGAMENTO_URL = 'https://api-pagtesouro.tesouro.gov.br/api/v2/solicitacao-pagamento';
+import { NextRequest, NextResponse } from 'next/server'
 
-const CLIENT_ID = process.env.PAGTESOURO_CLIENT_ID!;
-const CLIENT_SECRET = process.env.PAGTESOURO_CLIENT_SECRET!;
-const CODIGO_SERVICO = process.env.PAGTESOURO_CODIGO_SERVICO!;
+const PAGTESOURO_TOKEN = process.env.PAGTESOURO_TOKEN as string
+const PAGTESOURO_BASE_URL = process.env.PAGTESOURO_BASE_URL as string
 
-async function getAccessToken() {
-  const basicAuth = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
-
-  const res = await fetch(TOKEN_URL, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Basic ${basicAuth}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({
-      grant_type: 'client_credentials',
-    }),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Erro ao obter token: ${res.statusText}`);
-  }
-
-  const data = await res.json();
-  return data.access_token;
-}
-
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await req.json();
-    const accessToken = await getAccessToken();
+    // Espera JSON no body com os campos necessários
+    const payload = await request.json()
 
-    const payload = {
-      codigoServico: CODIGO_SERVICO,
-      requisicaoPagamento: {
-        referencia: body.referencia,             // string única para essa cobrança
-        valorOriginal: body.valorOriginal,       // número decimal string "100.50"
-        cnpjCpf: body.cnpjCpf,                    // string, sem pontuação
-        nomeContribuinte: body.nomeContribuinte, // string
-        vencimento: body.vencimento,              // string ISO 8601 "yyyy-MM-dd"
-      },
-    };
-
-    // 3. Chamar endpoint de solicitação de pagamento
-    const res = await fetch(PAGAMENTO_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      return NextResponse.json({ error: data }, { status: res.status });
+    // Validar payload básico
+    const requiredFields = [
+      'codigoServico', // 11908
+      'referencia', // CodIns
+      'competencia', // 072025
+      'vencimento',
+      'cnpjCpf',
+      'nomeContribuinte',
+      'valorPrincipal'
+    ]
+    for (const field of requiredFields) {
+      if (!payload[field]) {
+        return NextResponse.json(
+          { error: `Campo obrigatório faltando: ${field}` },
+          { status: 400 }
+        )
+      }
     }
 
-    return NextResponse.json(data);
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    // Monta chamada ao PagTesouro
+    const response = await fetch(
+      `${PAGTESOURO_BASE_URL}/pagamentos`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${PAGTESOURO_TOKEN}`
+        },
+        body: JSON.stringify(payload)
+      }
+    )
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      // Retorna erro detalhado
+      return NextResponse.json(
+        { error: data },
+        { status: response.status }
+      )
+    }
+
+    // Sucesso: retorna a próxima URL e demais dados
+    return NextResponse.json(data)
+
+  } catch (error: any) {
+    console.error('Erro na rota PagTesouro:', error)
+    return NextResponse.json(
+      { error: 'Erro interno no servidor' },
+      { status: 500 }
+    )
   }
 }
+
+// Rota GET para consulta de status
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const referencia = searchParams.get('referencia')
+
+    if (!referencia) {
+      return NextResponse.json(
+        { error: 'Parâmetro referencia é obrigatório' },
+        { status: 400 }
+      )
+    }
+
+    const response = await fetch(
+      `${PAGTESOURO_BASE_URL}/pagamentos/status?referencia=${encodeURIComponent(referencia)}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${PAGTESOURO_TOKEN}`
+        }
+      }
+    )
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      return NextResponse.json({ error: data }, { status: response.status })
+    }
+
+    return NextResponse.json(data)
+
+  } catch (error: any) {
+    console.error('Erro na rota PagTesouro (status):', error)
+    return NextResponse.json(
+      { error: 'Erro interno no servidor' },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * Configuração necessária no .env.local:
+ *
+ * PAGTESOURO_TOKEN=seu_token_jwt_aqui
+ * PAGTESOURO_BASE_URL=https://valpagtesouro.tesouro.gov.br/simulador/api
+ *
+ * Ajuste PAGTESOURO_BASE_URL em produção conforme manual da STN.
+ */
