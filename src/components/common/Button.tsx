@@ -1,7 +1,7 @@
 import React, { forwardRef, ButtonHTMLAttributes } from 'react';
 import LoadingIcon from './LoadingIcon';
 import { cn } from '@/utils/utilsClassName';
- 
+
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
   size?: 'sm' | 'md' | 'lg' | "";
