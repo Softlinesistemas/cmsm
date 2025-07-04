@@ -4,7 +4,7 @@ import api from '@/utils/api'
 import { useQuery } from 'react-query'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-
+ 
 const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, checkboxMarcado, setCheckboxMarcado, provisoryKey, loading, provisoryUser, paymentButton, podeEditarExtras, handleSubmit, setFormData, formData, handleChange }) => {
   const router = useRouter();
 
