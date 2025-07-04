@@ -61,9 +61,9 @@ export default function PagamentoPage() {
         nomeContribuinte: candidato?.Nome,
         cnpjCpf: candidato?.CPF,
         referencia: candidato?.CodIns,
-        competencia: moment(config.GRUDataFim).tz('America/Sao_Paulo').format('MMYYYY'),
-        vencimento: moment(config.GRUDataFim).tz('America/Sao_Paulo').format('DDMMYYYY'),
-        valorPrincipal: config.ValInscricao,
+        competencia: moment(config?.GRUDataFim).tz('America/Sao_Paulo').format('MMYYYY'),
+        vencimento: moment(config?.GRUDataFim).tz('America/Sao_Paulo').format('DDMMYYYY'),
+        valorPrincipal: 1 || config?.ValInscricao,
         email: candidato?.Email,
         urlRetorno: `${process.env.NEXT_PUBLIC_BACKEND_URL}/local`,
         descricao: `${candidato?.ProcessoSel} ${candidato?.Seletivo}`
@@ -120,6 +120,11 @@ export default function PagamentoPage() {
               </button>
             ) : (
               <>
+                {statusPagamento && (
+                  <p className="mt-4 text-green-700 font-semibold">
+                    Status: {statusPagamento}
+                  </p>
+                )}
                 <div className="iframe-container mb-8">
                   <iframe
                     className="iframe-epag"
@@ -128,11 +133,6 @@ export default function PagamentoPage() {
                     ref={iframeRef}
                   />
                 </div>
-                {statusPagamento && (
-                  <p className="mt-4 text-green-700 font-semibold">
-                    Status: {statusPagamento}
-                  </p>
-                )}
               </>
             )}
           </div>
@@ -143,13 +143,6 @@ export default function PagamentoPage() {
               <img src={qrCodeUrl} alt="QR Code de pagamento" className="mx-auto" />
             </div>
           )}
-
-          {pagamentoData && (
-            <pre className="mt-8 p-4 bg-gray-50 text-xs rounded max-w-4xl mx-auto">
-              {JSON.stringify(pagamentoData, null, 2)}
-            </pre>
-          )}
-
         </main>
       ) : (
         <main className="flex-grow px-4 py-12 text-center">
