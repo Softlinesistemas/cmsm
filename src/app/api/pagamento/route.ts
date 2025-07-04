@@ -40,24 +40,31 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const response = await fetch(
-      `${PAGTESOURO_BASE_URL}/pagamentos`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${PAGTESOURO_TOKEN}`
-        },
-        body: JSON.stringify(payload)
-      }
-    )
+    const response = await fetch(`${PAGTESOURO_BASE_URL}/pagamentos`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${PAGTESOURO_TOKEN}`
+      },
+      body: JSON.stringify(payload)
+    })
 
-    const data = await response.json()
+    const contentType = response.headers.get('content-type')
+    const rawBody = await response.text()
+
+    // Ajuda a diagnosticar
+    console.log('Resposta bruta PagTesouro:', rawBody)
+
     if (!response.ok) {
-      return NextResponse.json({ error: data }, { status: response.status })
+      return NextResponse.json({ error: rawBody }, { status: response.status })
     }
 
-    return NextResponse.json(data)
+    if (contentType && contentType.includes('application/json')) {
+      const data = JSON.parse(rawBody)
+      return NextResponse.json(data)
+    } else {
+      return NextResponse.json({ error: 'Resposta inválida da API do PagTesouro' }, { status: 502 })
+    }
 
   } catch (error: any) {
     console.error('Erro na rota PagTesouro:', error)
