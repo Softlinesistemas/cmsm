@@ -7,7 +7,8 @@ declare module "next-auth" {
       id: string;
       admin: boolean;
       cpf: string;
-      birthdate: string;
+      birthdate?: string;
+      access_token?: string;
       phone_number: string;
       picture: string;
     }>;
@@ -17,7 +18,8 @@ declare module "next-auth" {
     id: string;
     admin: boolean;
     cpf: string;
-    birthdate: string;
+    access_token?: string;
+    birthdate?: string;
     phone_number: string;
     picture: string;
   }> {}
@@ -28,7 +30,8 @@ declare module "next-auth/jwt" {
     id: string;
     admin: boolean;
     cpf: string;
-    birthdate: string;
+    access_token?: string;
+    birthdate?: string;
     phone_number: string;
     picture: string;
   }> {}

@@ -125,6 +125,7 @@ export const authOptions: AuthOptions = {
           birthdate: token.birthdate as string,
           image:     token.picture as string,
           phone: token.phone_number as string,
+          access_token: token.access_token as string, 
         };
       }
       return session;
