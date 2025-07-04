@@ -24,7 +24,9 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "cmsm.s3.us-east-005.backblazeb2.com" },
-      { protocol: "https", hostname: "images.unsplash.com" }
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "sso.staging.acesso.gov.br" },
+      { protocol: "https", hostname: "sso.acesso.gov.br" }
     ],
   },
 };

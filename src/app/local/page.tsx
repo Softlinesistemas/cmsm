@@ -102,7 +102,12 @@ export default function LocalHorarioPage() {
         {/* Espaço para QR Code */}
         <div className="mt-6 flex justify-center">
           <div className="border border-dashed border-gray-400 rounded-lg p-4 w-40 h-40 flex items-center justify-center text-xs text-gray-500">
-            QR CODE<br />
+            {!candidato && (
+              <>
+                QR CODE
+                <br />
+              </>
+            )}
             {candidato ? (
               <QRCodeCanvas
                 value={JSON.stringify({
