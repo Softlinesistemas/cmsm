@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const response = await fetch(`${PAGTESOURO_BASE_URL}/pagamentos`, {
+    const response = await fetch(`${PAGTESOURO_BASE_URL}/api/gru/solicitacao-pagamento`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
