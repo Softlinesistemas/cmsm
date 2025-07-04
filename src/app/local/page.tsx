@@ -77,17 +77,17 @@ export default function LocalHorarioPage() {
         <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 text-center gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-4">
             <div className="text-xs text-gray-500 mb-1 uppercase">Local</div>
-            <div className="font-bold text-base  text-blue-800">{localInfo.local}</div>
+            <div className="font-bold text-base  text-blue-800">{localInfo?.local}</div>
           </div>
 
           <div className="bg-white rounded-lg shadow p-4">
             <div className="text-xs text-gray-500 mb-1 uppercase">Data</div>
-            <div className="font-bold text-base  text-blue-800">{localInfo.data}</div>
+            <div className="font-bold text-base  text-blue-800">{localInfo?.data}</div>
           </div>
 
           <div className="bg-white rounded-lg shadow p-4">
             <div className="text-xs text-black mb-1 uppercase">Sala</div>
-            <div className="font-bold text-base text-blue-800">{localInfo.sala}</div>
+            <div className="font-bold text-base text-blue-800">{localInfo?.sala}</div>
           </div>
         </div>
 
@@ -96,7 +96,7 @@ export default function LocalHorarioPage() {
           <h2 className="text-lg font-semibold text-gray-700 uppercase mb-2">
             Abertura dos Portões
           </h2>
-          <div className="text-green-900 font-bold text-[36px]">{localInfo.aberturaPortoes}</div>
+          <div className="text-green-900 font-bold text-[36px]">{localInfo?.aberturaPortoes}</div>
         </div>
 
         {/* Espaço para QR Code */}
@@ -111,11 +111,11 @@ export default function LocalHorarioPage() {
             {candidato ? (
               <QRCodeCanvas
                 value={JSON.stringify({
-                  nome: candidato.Nome,
-                  inscricao: candidato.CodIns,
+                  nome: candidato?.Nome,
+                  inscricao: candidato?.CodIns,
                   nasc: moment(candidato?.Nasc).tz("America/Sao_Paulo").format("DD/MM/YYYY"),
-                  sexo: candidato.Sexo,
-                  seletivo: dataConfiguracao.Seletivo + ' ' + candidato.Seletivo
+                  sexo: candidato?.Sexo,
+                  seletivo: dataConfiguracao?.ProcessoSel + ' ' + candidato?.Seletivo
                 })}
                 size={150}
                 bgColor="#ffffff"
