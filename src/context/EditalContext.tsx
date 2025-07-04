@@ -12,7 +12,7 @@ interface EditalContextProps {
   editais: Edital[];
   adicionarEdital: (novo: Edital) => void;
 }
-
+ 
 const EditalContext = createContext<EditalContextProps | undefined>(undefined);
 
 export const EditalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
