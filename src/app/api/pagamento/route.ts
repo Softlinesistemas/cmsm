@@ -31,11 +31,12 @@ export async function POST(request: NextRequest) {
     if (USE_MOCK) {
       // MOCK de sucesso
       return NextResponse.json({
-        codigoQr: 'mocked-qr-code-base64',
-        linhaDigitavel: '12345678901234567890123456789012345678901234',
-        urlPagamento: 'https://valpagtesouro.tesouro.gov.br/simulador/pagamento/mock',
-        vencimento: payload.vencimento,
-        valorPrincipal: payload.valorPrincipal
+          "idPagamento": "1BvAmpIRYZF55yg9D6WOTZ",
+          "dataCriacao": "2022-01-12T16:00:00Z",
+          "proximaUrl": "https://valpagtesouro.tesouro.gov.br/#/pagamento?idSessao=66706694-fce3-4a56-8172-8b4ed12508a4",
+          "situacao": {
+            "codigo": "CRIADO"
+          }  
       })
     }
 
