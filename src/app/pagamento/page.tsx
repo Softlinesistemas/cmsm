@@ -114,7 +114,7 @@ export default function PagamentoPage() {
           <LabelField label="Nome do Candidato" value={candidato?.Nome} full />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <LabelField label="Número de Inscrição" value={candidato?.CodIns} />
-            <LabelField label="Data de Nascimento" value={moment(candidato?.Nac).tz("America/Sao_Paulo").format("DD/MM/YYYY")} />
+            <LabelField label="Data de Nascimento" value={moment(candidato?.Nasc).tz("America/Sao_Paulo").format("DD/MM/YYYY")} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <LabelField label="Sexo" value={candidato?.Sexo === "F" ? "Feminino" : "Masculino"} />
