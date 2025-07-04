@@ -11,7 +11,7 @@ declare module "next-auth" {
       access_token?: string;
       phone_number: string;
       picture: string;
-    }>;
+    }>
   }
 
   interface User extends DefaultUser, Partial<{
@@ -35,4 +35,13 @@ declare module "next-auth/jwt" {
     phone_number: string;
     picture: string;
   }> {}
+}
+
+declare global {
+  interface Window {
+    iFrameResize?: (
+      options: any,
+      target: string | Element | Element[]
+    ) => void;
+  }
 }

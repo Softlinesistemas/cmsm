@@ -25,7 +25,7 @@ export default function Formulario() {
 
   useEffect(() => {
     if (status === "authenticated" && session.user) {
-      setFormData({ ...formData, nome: session?.user?.name || "", emailCandidato: session?.user?.email || "",cpf: String(session?.user?.id), dataNascimento: session?.user?.birthdate || "", celular: session?.user?.phone_number || "", fotoPreview: session?.user?.picture || session?.user?.image || ""})
+      setFormData({ ...formData, nome: session?.user?.name || "", emailCandidato: session?.user?.email || "", cpf: String(session?.user?.cpf), dataNascimento: session?.user?.birthdate || "", celular: session?.user?.phone_number || "", fotoPreview: session?.user?.picture || session?.user?.image || ""})
     }
   }, [status]);
 
