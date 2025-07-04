@@ -1,7 +1,6 @@
 import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
 
-// Extensões de tipos para incluir campos extras do Gov.br e permitir campos opcionais
-declare module "next-auth" {
+ declare module "next-auth" {
   interface Session {
     user: DefaultSession["user"] & Partial<{
       id: string;
