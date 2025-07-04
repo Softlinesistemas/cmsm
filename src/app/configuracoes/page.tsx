@@ -18,7 +18,7 @@ export default function Configuracoes() {
   const [dataIniEF, setDataIniEF] = useState('');
   const [horaIniEF, setHoraIniEF] = useState('');
   const [dataFimEF, setDataFimEF] = useState('');
-  const [horaFimEF, setHoraFimEF] = useState('');
+  const [horaFimEF, setHoraFimEF] = useState('23:59');
 
   const [nascIniEM, setNascIniEM] = useState('');
   const [nascFimEM, setNascFimEM] = useState('');
@@ -161,7 +161,7 @@ export default function Configuracoes() {
                   <label className="text-sm text-gray-600 mb-1 block">Data e Hora Final</label>
                   <div className="flex gap-2">
                     <input type="date" className="border rounded px-3 py-2 w-1/2" value={dataFimEF} onChange={(e) => setDataFimEF(e.target.value)} />
-                    <input type="time" className="border rounded px-3 py-2 w-1/2" value={horaFimEF} onChange={(e) => setHoraFimEF(e.target.value)} />
+                    <input type="time" className="border rounded px-3 py-2 w-1/2 bg-gray-100 text-gray-500 cursor-not-allowed" value="23:59:59" disabled />                  
                   </div>
                 </div>
               </div>

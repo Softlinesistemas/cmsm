@@ -5,6 +5,10 @@ import Footer from '@/components/FooterAdm'
 import StepsNavbar from '@/components/StepsNavbar'
 import { useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react';
+import api from '@/utils/api'
+import { useQuery } from 'react-query'
+import { useSession } from 'next-auth/react'
+import moment from 'moment-timezone'
 
 export default function PagamentoPage() {
   const [gruUrl, setGruUrl] = useState('')               // URL para baixar a GRU (PDF)
@@ -12,31 +16,61 @@ export default function PagamentoPage() {
   const [gerado, setGerado] = useState(false)            // Controle do estado: GRU gerada ou não
   const [statusPagamento, setStatusPagamento] = useState('')   // Status do pagamento, se disponível
   const [qrCodeUrl, setQrCodeUrl] = useState('')         // URL da imagem do QR Code, se tiver
+  const { data: session, status } = useSession();
+
+  const { data: candidato, isLoading, refetch } = useQuery(
+    ['candidatoData'],
+    async () => {
+      const response = await api.get(`api/candidato/${session?.user.cpf}`);
+      return response.data;
+    },
+    {
+      retry: 5,
+      refetchOnWindowFocus: false,
+      enabled: !!session?.user.cpf
+    }
+  );
+
+   const {
+    data: dataConfiguracao,
+    isLoading: configLoading
+  } = useQuery(
+    ['configuracao'],
+      async () => {
+        try {
+          const response = await api.get('api/configuracao');
+          const configuracao = response?.data;
+          return configuracao;
+        } catch (error) {
+          // Não retorna nada pois é um fetch
+        }
+      },
+    {
+      retry: 5,    
+    }
+  );  
 
   // Função que chama a API para gerar a GRU
   const gerarPagamento = async () => {
     try {
-      const res = await fetch('/api/pagamento', {
-        method: 'POST',
+      const res = await api.post('api/pagamento', {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nome: 'Raimundo Nonato ... Costa',
-          cpf: '00000000000',
-          email: 'email@exemplo.com',
-          valor: 85.0,
-          referencia: 'INSCRICAO-10001',
-          descricao: 'Inscrição CMSM 2025/2026 6° ano'
+          codigoServico: "11908", // valor fixo
+          nomeContribuinte: candidato?.Nome,
+          cnpjCpf: candidato?.CPF,
+          email: candidato?.Email,
+          vencimento: moment(dataConfiguracao?.GRUDataFim).tz("America/Sao_Paulo").format("DDMMYYYY"),
+          urlRetorno: process.env.NEXT_PUBLIC_BACKEND_URL + "/local",
+          expiracaoPix: 1,
+          valorPrincipal: dataConfiguracao?.ValInscricao,
+          referencia: candidato?.CodIns,
+          descricao: `${candidato?.ProcessoSel} ${candidato?.Seletivo}`
         })
       }) 
 
-      if (!res.ok) {
-        const erro = await res.json()
-        console.error('Erro:', erro)
-        alert(`Erro ao gerar pagamento: ${erro.error || 'Erro desconhecido'}`)
-        return
-      }
+      const data = res.data;
 
-      const data = await res.json()
       console.log('Resposta completa PagTesouro:', data)
 
       // Extrai a URL da GRU do objeto retornado (varia conforme API)
@@ -71,21 +105,22 @@ export default function PagamentoPage() {
     <div className="flex flex-col min-h-screen bg-white">
       <Header />
       <StepsNavbar activeStep={2} />
+      {candidato?.CodIns || true ? 
       <main className="flex-grow px-4 py-12">
         <h1 className="text-center text-2xl font-bold text-green-900 mb-2">Pagamento</h1>
-        <h2 className="text-center text-lg text-gray-800 mb-8">Requerimento realizado com sucesso</h2>
+        <h2 className="text-center text-lg text-gray-800 mb-8">Requerimento realizado com sucesso, efetue o pagamento no valor de: R$ {dataConfiguracao?.ValInscricao}</h2>
 
         <div className="max-w-3xl mx-auto space-y-6 mb-8">
-          <LabelField label="Nome do Candidato" value="Raimundo Nonato ... Costa" full />
+          <LabelField label="Nome do Candidato" value={candidato?.Nome} full />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <LabelField label="Número de Inscrição" value="10001" />
-            <LabelField label="Data de Nascimento" value="01/01/2012" />
+            <LabelField label="Número de Inscrição" value={candidato?.CodIns} />
+            <LabelField label="Data de Nascimento" value={moment(candidato?.Nac).tz("America/Sao_Paulo").format("DD/MM/YYYY")} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <LabelField label="Sexo" value="Masculino" />
-            <LabelField label="Doc. ID" value="00000000000" />
+            <LabelField label="Sexo" value={candidato?.Sexo === "F" ? "Feminino" : "Masculino"} />
+            <LabelField label="Doc. ID" value={candidato?.CodIns} />
           </div>
-          <LabelField label="Candidato ao" value="6º Ano do CMSM" full />
+          {candidato?.Seletivo && <LabelField label="Candidato ao" value={candidato?.Seletivo + " do CMSM"} full />}
         </div>
 
         <AlternateText text="Em caso de dúvidas, entre em contato com a secretaria da escola." />
@@ -132,7 +167,11 @@ export default function PagamentoPage() {
             <pre>{JSON.stringify(pagamentoData, null, 2)}</pre>
           </div>
         )}
-      </main>
+      </main> : (
+        <main className='flex-grow px-4 py-12 min-h-screen'>
+          <h2 className="text-center text-lg text-gray-800 mb-8">Perdão, mas não foi encontrado inscrições para esse CPF.</h2>
+        </main>
+      )}
       <Footer />
     </div>
   )

@@ -3,18 +3,14 @@
 import Header from '../../components/HeaderAdm'
 import Footer from '../../components/FooterAdm'
 import StepsNavbar from '../../components/StepsNavbar'
-
-// import { QRCode } from 'react-qrcode-logo'
+import api from '@/utils/api'
+import { useQuery } from 'react-query'
+import { useSession } from 'next-auth/react'
+import moment from 'moment-timezone'
+import { QRCodeCanvas } from 'qrcode.react'
 
 export default function LocalHorarioPage() {
-  const candidato = {
-    nome: 'Ramon Silva dos Santos',
-    numeroInscricao: '10001',
-    dataNascimento: '10/01/1995',
-    sexo: 'Masculino',
-    docId: '123456789',
-    vaga: '6º ano'
-  }
+  const { data: session, status } = useSession();
 
   const localInfo = {
     local: 'Escola Municipal João Paulo II',
@@ -22,6 +18,38 @@ export default function LocalHorarioPage() {
     sala: 'Sala 05',
     aberturaPortoes: '07:30'
   }
+  
+  const { data: candidato, isLoading, refetch } = useQuery(
+    ['candidatoData'],
+    async () => {
+      const response = await api.get(`api/candidato/${session?.user.cpf}`);
+      return response.data;
+    },
+    {
+      retry: 5,
+      refetchOnWindowFocus: false,
+      enabled: !!session?.user.cpf
+    }
+  );
+
+    const {
+    data: dataConfiguracao,
+    isLoading: configLoading
+  } = useQuery(
+    ['configuracao'],
+      async () => {
+        try {
+          const response = await api.get('api/configuracao');
+          const configuracao = response?.data;
+          return configuracao;
+        } catch (error) {
+          // Não retorna nada pois é um fetch
+        }
+      },
+    {
+      retry: 5,    
+    }
+  );  
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -36,12 +64,12 @@ export default function LocalHorarioPage() {
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm  text-black">
-            <div><strong>Nome do Candidato:</strong> {candidato.nome}</div>
-            <div><strong>Número de Inscrição:</strong> {candidato.numeroInscricao}</div>
-            <div><strong>Data de Nascimento:</strong> {candidato.dataNascimento}</div>
-            <div><strong>Sexo:</strong> {candidato.sexo}</div>
-            <div><strong>Doc. ID:</strong> {candidato.docId}</div>
-            <div className="md:col-span-2"><strong>Candidato ao:</strong> {candidato.vaga}</div>
+            <div><strong>Nome do Candidato:</strong> {candidato?.Nome}</div>
+            <div><strong>Número de Inscrição:</strong> {candidato?.CodIns}</div>
+            <div><strong>Data de Nascimento:</strong> {candidato?.Nasc}</div>
+            <div><strong>Sexo:</strong> {candidato?.Sexo}</div>
+            <div><strong>Doc. ID:</strong> {candidato?.CodIns}</div>
+            <div className="md:col-span-2"><strong>Candidato ao:</strong> {candidato?.ProcessoSel} {candidato?.Seletivo}</div>
           </div>
         </div>
 
@@ -75,8 +103,21 @@ export default function LocalHorarioPage() {
         <div className="mt-6 flex justify-center">
           <div className="border border-dashed border-gray-400 rounded-lg p-4 w-40 h-40 flex items-center justify-center text-xs text-gray-500">
             QR CODE<br />
-            {/* <QRCode value={JSON.stringify(candidato)} /> */}
-            (dados do candidato)
+            {candidato ? (
+              <QRCodeCanvas
+                value={JSON.stringify({
+                  nome: candidato.Nome,
+                  inscricao: candidato.CodIns,
+                  nasc: candidato.Nasc,
+                  sexo: candidato.Sexo,
+                  seletivo: candidato.ProcessoSel + ' ' + candidato.Seletivo
+                })}
+                size={150}
+                bgColor="#ffffff"
+                fgColor="#000000"
+                level="H"
+              />
+            ) : "(dados do candidato)"}
           </div>
         </div>
       </main>

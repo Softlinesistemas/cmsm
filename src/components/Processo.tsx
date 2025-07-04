@@ -15,6 +15,9 @@ export default function Processo() {
     async () => {
       const response = await api.get(`api/candidato/recurso/listagem?status=${filtroStatus}`);
       return response.data;
+    },
+    {
+      retry: 5,
     }
   );
 

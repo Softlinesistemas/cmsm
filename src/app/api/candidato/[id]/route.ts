@@ -8,6 +8,46 @@ function getIdFromRequest(request: NextRequest): string | null {
   return parts[parts.length - 1] || null;
 }
 
+function getCpfFromRequest(request: NextRequest): string | null {
+  const url = new URL(request.url);
+  const parts = url.pathname.split("/");
+  const cpf = parts[parts.length - 1];
+  return cpf || null;
+}
+
+export async function GET(request: NextRequest) {
+  let db;
+
+  try {
+    const cpf = getCpfFromRequest(request)?.replace(/\D/g, "");
+
+    if (!cpf) {
+      return NextResponse.json({ error: "CPF não fornecido." }, { status: 400 });
+    }
+
+    db = getDBConnection(dbConfig());
+
+    const candidato = await db("Candidato").where({ CPF: cpf }).first();
+
+    if (!candidato) {
+      return NextResponse.json(
+        { error: "Candidato não encontrado para o CPF informado." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(candidato);
+  } catch (error) {
+    console.error("Erro ao buscar candidato:", error);
+    return NextResponse.json(
+      { error: "Erro ao buscar candidato." },
+      { status: 500 }
+    );
+  } finally {
+    if (db) await db.destroy();
+  }
+}
+
 export async function PUT(request: NextRequest) {
   let db;
   try {

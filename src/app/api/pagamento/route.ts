@@ -4,17 +4,16 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const PAGTESOURO_TOKEN = process.env.PAGTESOURO_TOKEN as string
 const PAGTESOURO_BASE_URL = process.env.PAGTESOURO_BASE_URL as string
+const USE_MOCK = process.env.USE_PAGTESOURO_MOCK === 'true'
 
 export async function POST(request: NextRequest) {
   try {
-    // Espera JSON no body com os campos necessários
     const payload = await request.json()
 
-    // Validar payload básico
     const requiredFields = [
-      'codigoServico', // 11908
-      'referencia', // CodIns
-      'competencia', // 072025
+      'codigoServico',
+      'referencia',
+      'competencia',
       'vencimento',
       'cnpjCpf',
       'nomeContribuinte',
@@ -29,7 +28,17 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Monta chamada ao PagTesouro
+    if (USE_MOCK) {
+      // MOCK de sucesso
+      return NextResponse.json({
+        codigoQr: 'mocked-qr-code-base64',
+        linhaDigitavel: '12345678901234567890123456789012345678901234',
+        urlPagamento: 'https://valpagtesouro.tesouro.gov.br/simulador/pagamento/mock',
+        vencimento: payload.vencimento,
+        valorPrincipal: payload.valorPrincipal
+      })
+    }
+
     const response = await fetch(
       `${PAGTESOURO_BASE_URL}/pagamentos`,
       {
@@ -43,24 +52,15 @@ export async function POST(request: NextRequest) {
     )
 
     const data = await response.json()
-
     if (!response.ok) {
-      // Retorna erro detalhado
-      return NextResponse.json(
-        { error: data },
-        { status: response.status }
-      )
+      return NextResponse.json({ error: data }, { status: response.status })
     }
 
-    // Sucesso: retorna a próxima URL e demais dados
     return NextResponse.json(data)
 
   } catch (error: any) {
     console.error('Erro na rota PagTesouro:', error)
-    return NextResponse.json(
-      { error: 'Erro interno no servidor' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Erro interno no servidor' }, { status: 500 })
   }
 }
 
@@ -77,6 +77,16 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    if (USE_MOCK) {
+      // MOCK de status
+      return NextResponse.json({
+        referencia,
+        status: 'PAGO',
+        dataPagamento: '2025-07-04',
+        valorPago: '50.00'
+      })
+    }
+
     const response = await fetch(
       `${PAGTESOURO_BASE_URL}/pagamentos/status?referencia=${encodeURIComponent(referencia)}`,
       {
@@ -87,7 +97,6 @@ export async function GET(request: NextRequest) {
     )
 
     const data = await response.json()
-
     if (!response.ok) {
       return NextResponse.json({ error: data }, { status: response.status })
     }
@@ -96,13 +105,9 @@ export async function GET(request: NextRequest) {
 
   } catch (error: any) {
     console.error('Erro na rota PagTesouro (status):', error)
-    return NextResponse.json(
-      { error: 'Erro interno no servidor' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Erro interno no servidor' }, { status: 500 })
   }
 }
-
 /**
  * Configuração necessária no .env.local:
  *

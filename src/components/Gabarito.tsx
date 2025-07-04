@@ -19,6 +19,9 @@ const Gabarito = () => {
     async () => {
       const response = await api.get(`api/candidato/gabarito?query=${busca}`);
       return response.data;
+    },
+    {
+      retry: 5,
     }
   );
 

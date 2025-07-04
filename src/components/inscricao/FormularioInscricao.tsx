@@ -3,7 +3,7 @@ import LoadingIcon from '@/components/common/LoadingIcon'
 import api from '@/utils/api'
 import { useQuery } from 'react-query'
 import { useRouter } from 'next/navigation'
-import { Check } from 'lucide-react'
+import Image from 'next/image'
 
 const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, checkboxMarcado, setCheckboxMarcado, provisoryKey, loading, provisoryUser, paymentButton, podeEditarExtras, handleSubmit, setFormData, formData, handleChange }) => {
   const router = useRouter();
@@ -85,7 +85,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
             <div className="col-span-12 md:col-span-2">
               <label className="text-blue-800 font-medium mb-1 block">Foto</label>
               <div className="w-24 h-24 border-2 border-dashed border-blue-300 rounded-md relative">
-                <img src={formData?.fotoPreview} className="w-full h-full object-cover" />
+                <Image src={formData?.fotoPreview} height={undefined} width={undefined} alt='Foto do candidato' className="w-full h-full object-cover" />
               </div>
             </div>
             <div className="col-span-12 md:col-span-4">
