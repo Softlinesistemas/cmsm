@@ -1,5 +1,5 @@
 import { getServerConfig } from "@/db/getServerConfig";
-
+ 
 interface Connection {
   host: string;
   user: string;
