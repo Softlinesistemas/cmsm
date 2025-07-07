@@ -72,12 +72,12 @@ export async function POST(request: NextRequest) {
         GRUData: parsedBody?.dataCriacao,
         GRUHora: parsedBody?.dataCriacao,
         GRUValor: payload?.valorPrincipal,
+        GRURef: payload?.referencia,
         GRUStatus: "CRIADO"
       });
 
     if (contentType && contentType.includes('application/json')) {
-      const data = JSON.parse(rawBody)
-      return NextResponse.json(data)
+      return NextResponse.json(parsedBody)
     } else {
       return NextResponse.json({ error: 'Resposta inválida da API do PagTesouro' }, { status: 502 })
     }
@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
 
     if (!candidato) {
       return NextResponse.json(
-        { error: "Candidato não encontrado para o CPF informado." },
+        { error: "Candidato não encontrado para o Código de inscrição informado." },
         { status: 404 }
       );
     }

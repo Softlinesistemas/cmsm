@@ -91,6 +91,7 @@ exports.up = function(knex) {
       table.string('GRUHora', 5);
       table.string('GRUUrl', 255);
       table.string('GRUStatus', 50);
+      table.string('GRURef', 50);
       table.integer('CodSala').unsigned();
       table.dateTime('DataEnsalamento');
       table.string('HoraEnsalamento', 6);

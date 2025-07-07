@@ -33,7 +33,7 @@ export default function PagamentoPage() {
   const { data: statusInfo, refetch: checkStatus, isFetching: checkingStatus } = useQuery(
     ['status', referencia],
     () => api
-      .get(`/api/pagamento?referencia=${referencia}`)
+      .get(`api/pagamento?referencia=${referencia}`)
       .then(res => res.data),
     {
       enabled: !!referencia,
@@ -46,7 +46,7 @@ export default function PagamentoPage() {
   useEffect(() => {
     if (candidato?.GRUUrl && !gerado) {
       setGruUrl(candidato.GRUUrl + '&btnConcluir=true')
-      setReferencia(candidato.CodIns)
+      setReferencia(candidato.GRURef)
       setGerado(true)
     }
   }, [candidato, gerado])
@@ -72,15 +72,34 @@ export default function PagamentoPage() {
     }
   }, [gerado])
 
+  function gerarReferencia(codIns: number) {
+    const now = new Date()
+
+    const pad = (num: number, size = 2) => String(num).padStart(size, '0')
+
+    const timestamp = [
+      now.getFullYear(),
+      pad(now.getMonth() + 1),
+      pad(now.getDate()),
+      pad(now.getHours()),
+      pad(now.getMinutes()),
+      pad(now.getSeconds())
+    ].join('')
+
+    return `${timestamp}-${codIns}`
+  }
+
+
   // Gera pagamento GRU
   const gerarPagamento = async () => {
     if (!candidato || !config) return
+    const ref = gerarReferencia(candidato.CodIns)
     try {
       const payload = {
         codigoServico: '11908',
         nomeContribuinte: candidato.Nome,
         cnpjCpf: candidato.CPF,
-        referencia: candidato.CodIns,
+        referencia: ref,
         competencia: moment(config.GRUDataFim).tz('America/Sao_Paulo').format('MMYYYY'),
         vencimento: moment(config.GRUDataFim).tz('America/Sao_Paulo').format('DDMMYYYY'),
         valorPrincipal: config.ValInscricao,
@@ -94,7 +113,7 @@ export default function PagamentoPage() {
       if (!data.proximaUrl) throw new Error('URL não retornada')
 
       setGruUrl(data.proximaUrl + '&btnConcluir=true')
-      setReferencia(data.referencia || candidato.CodIns)
+      setReferencia(data.referencia || ref || candidato?.GRURef)
       setGerado(true)
     } catch (err) {
       console.error('Erro ao gerar GRU:', err)
@@ -141,13 +160,13 @@ export default function PagamentoPage() {
         {statusInfo && (
           <div className="fixed bottom-4 right-4 bg-white border border-gray-200 p-4 rounded-lg shadow-lg max-w-sm">
             <h3 className="text-lg font-semibold mb-2">Detalhes do Pagamento</h3>
-            <p><strong>ID Pagamento:</strong> {statusInfo.idPagamento}</p>
-            <p><strong>Tipo:</strong> {statusInfo.tipoPagamentoEscolhido}</p>
-            <p><strong>Valor:</strong> R$ {statusInfo.valor.toFixed(2)}</p>
-            <p><strong>PSP:</strong> {statusInfo.nomePSP}</p>
-            <p><strong>Transação:</strong> {statusInfo.transacaoPSP}</p>
-            <p><strong>Status:</strong> {statusInfo.situacao.codigo}</p>
-            <p><strong>Data:</strong> {statusInfo.situacao.data}</p>
+            <p><strong>ID Pagamento:</strong>{statusInfo.idPagamento}</p>
+            <p><strong>Tipo:</strong>{statusInfo.tipoPagamentoEscolhido}</p>
+            <p><strong>Valor:</strong>R$ {statusInfo.valor.toFixed(2)}</p>
+            <p><strong>PSP:</strong>{statusInfo.nomePSP}</p>
+            <p><strong>Transação:</strong>{statusInfo.transacaoPSP}</p>
+            <p><strong>Status:</strong>{statusInfo.situacao.codigo}</p>
+            <p><strong>Data:</strong>{moment(statusInfo.situacao.data).tz('America/Sao_Paulo').format('DD/MM/YYYY')}</p>
             <button
               onClick={() => checkStatus()}
               disabled={checkingStatus}
