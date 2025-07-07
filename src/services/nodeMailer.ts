@@ -10,5 +10,5 @@ const transporter = nodemailer.createTransport({
     pass: process.env.GMAIL_PSWD,
   },
 });
- 
+
 export default transporter;
