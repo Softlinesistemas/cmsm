@@ -487,7 +487,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
           )}
 
           {/* BOTÃO */}
-          <div className="text-center">
+          {!isAcompanhamento && <div className="text-center">
             <button disabled={loading} type="submit" className="bg-blue-800 hover:bg-blue-900 text-white font-semibold py-3 px-8 rounded">
               {loading ? <LoadingIcon /> :"ENVIAR"}
             </button>
@@ -502,7 +502,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
                 Ir para pagamento
               </button>
             )}
-          </div>
+          </div>}
         </form>
     </>        
   )
