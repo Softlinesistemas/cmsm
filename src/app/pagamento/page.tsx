@@ -142,7 +142,7 @@ export default function PagamentoPage() {
         </section>
 
         {statusInfo && (
-          <div className="bg-white border border-gray-200 p-4 rounded-lg shadow-lg w-full">
+          <div className="bg-white border border-gray-200 p-4 rounded-lg shadow-lg max-w-3xl mx-auto space-y-6">
             <h3 className="text-lg font-semibold mb-2">Detalhes do Pagamento</h3>
             <p><strong>ID Pagamento:</strong>{statusInfo.idPagamento}</p>
             <p><strong>Tipo:</strong>{statusInfo.tipoPagamentoEscolhido}</p>
