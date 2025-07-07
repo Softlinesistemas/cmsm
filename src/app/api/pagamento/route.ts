@@ -1,8 +1,7 @@
-// app/api/pagtesouro/route.ts
-
 import { NextRequest, NextResponse } from 'next/server'
 import dbConfig from "@/db/dbConfig";
 import getDBConnection from "@/db/conn";
+import moment from 'moment-timezone';
 
 const PAGTESOURO_TOKEN = process.env.PAGTESOURO_TOKEN as string
 const PAGTESOURO_BASE_URL = process.env.PAGTESOURO_BASE_URL as string
@@ -70,7 +69,7 @@ export async function POST(request: NextRequest) {
         RegistroGRU: parsedBody?.idPagamento,
         GRUUrl: parsedBody?.proximaUrl,
         GRUData: parsedBody?.dataCriacao,
-        GRUHora: parsedBody?.dataCriacao,
+        GRUHora: moment(parsedBody?.dataCriacao).format('HH:mm'),
         GRUValor: payload?.valorPrincipal,
         GRURef: payload?.referencia,
         GRUStatus: "CRIADO"
