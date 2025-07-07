@@ -1,7 +1,7 @@
 'use client'
 import LoadingIcon from '@/components/common/LoadingIcon'
 import api from '@/utils/api'
-import { useQuery } from 'react-query'
+import { useQuery } from 'react-query' 
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
