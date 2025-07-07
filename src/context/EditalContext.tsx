@@ -1,7 +1,6 @@
 'use client';
 import React, { createContext, useContext, useState } from "react";
 
-// Interface de um edital
 export interface Edital {
   id: number;
   titulo: string;
