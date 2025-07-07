@@ -11,6 +11,7 @@ import { signIn } from 'next-auth/react'
 import toast from 'react-hot-toast'
 import { useSession } from 'next-auth/react'
 import FormularioInscricao from '@/components/inscricao/FormularioInscricao'
+import { useQuery } from 'react-query'
 
 export default function Formulario() {
   const router = useRouter();
@@ -23,9 +24,59 @@ export default function Formulario() {
   const [loading, setLoading] = useState(false);
   const [checkboxMarcado, setCheckboxMarcado] = useState(false);
 
-  useEffect(() => {
+  const { data: candidato } = useQuery(
+    ['candidato'],
+    () => api.get(`/api/candidato/${session?.user.cpf}`).then(res => res.data),
+    {
+      enabled: !!session?.user.cpf,
+      select: (data) => ({
+        nome: data.Nome || '',
+        numeroInscricao: data.CodIns?.toString() || '',
+        cpf: data.CPF || '',
+        dataNascimento: data.Nasc || '',
+        sexo: data.Sexo || '',
+        cep: data.Cep || '',
+        endereco: data.Endereco || '',
+        cidade: data.Cidade || '',
+        uf: data.UF || '',
+        numero: '', // ajustar se houver campo
+        complemento: data.Complemento || '',
+        necessidades: data.PortadorNec || '',
+        tipoNecessidade: '', // se houver
+        transtornoFuncional: '',
+        transtornoTipos: [],
+        atendimentoEspecial: data.AtendimentoEsp || '',
+        tipoAtendimento: '',
+        tipoCota: data.CodCot1 || '',
+        necessitaCondicoes: '',
+        tipoAtendimentoProva: '',
+        forcas: '',
+        ramoForcas: '',
+        dadosVaga: '',
+        nomeResponsavel: data.Responsavel || '',
+        cpfResponsavel: data.CPFResp || '',
+        dataNascimentoResponsavel: data.NascResp || '',
+        sexoResponsavel: data.SexoResp || '',
+        cep_Resp: data.CepResp || '',
+        endereco_Resp: data.EnderecoResp || '',
+        cidade_Resp: data.CidadeResp || '',
+        uf_Resp: data.UFResp || '',
+        numero_Resp: '',
+        complemento_Resp: data.ComplementoResp || '',
+        profissao: data.ProfissaoResp || '',
+        celular: data.TelResp || '',
+        parentesco: data.Parentesco || '',
+        emailResponsavel: data.EmailResp || '',
+        emailCandidato: data.Email || '',
+        fotoPreview: data.CaminhoFoto || '',
+        Seletivo: data.Seletivo || ''
+      })
+    }
+  );
+
+    useEffect(() => {
     if (status === "authenticated" && session.user) {
-      setFormData({ ...formData, nome: session?.user?.name || "", emailCandidato: session?.user?.email || "", cpf: String(session?.user?.cpf), dataNascimento: session?.user?.birthdate || "", celular: session?.user?.phone_number || "", fotoPreview: session?.user?.picture || session?.user?.image || ""})
+      setFormData({ ...formData, cpf: String(session?.user?.cpf), fotoPreview: session?.user?.picture || session?.user?.image || ""})
     }
   }, [status]);
 
