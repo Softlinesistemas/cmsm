@@ -15,21 +15,31 @@ export async function middleware(request: NextRequest) {
     }
   }
 
- if (request.nextUrl.pathname === "/acompanhamento" && token?.cpf) {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}api/candidato/${token.cpf}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+  if (token?.cpf) {
+    const candidatoUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}api/candidato/${token.cpf}`;
 
-      if (!res.ok) {
-        return NextResponse.redirect(new URL("/formulario", request.url));
+    try {
+      const res = await fetch(candidatoUrl, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (request.nextUrl.pathname === "/acompanhamento") {
+        if (!res.ok) {
+          return NextResponse.redirect(new URL("/formulario", request.url));
+        }
+      }
+
+      if (request.nextUrl.pathname === "/formulario") {
+        if (res.ok) {
+          return NextResponse.redirect(new URL("/acompanhamento", request.url));
+        }
       }
     } catch (err) {
-      return NextResponse.redirect(new URL("/formulario", request.url));
+      console.error("Erro ao verificar candidato:", err);
+      if (request.nextUrl.pathname === "/acompanhamento") {
+        return NextResponse.redirect(new URL("/formulario", request.url));
+      }
     }
   }
 
