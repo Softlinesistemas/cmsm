@@ -141,7 +141,7 @@ export default function PagamentoPage() {
             <div className="md:col-span-2"><strong>Candidato ao:</strong> {config?.ProcessoSel} {candidato?.Seletivo}</div>
         </section>
 
-        {statusInfo && (
+        {statusInfo && !gruUrl && (
           <div className="bg-white border border-gray-200 p-4 rounded-lg shadow-lg max-w-3xl mx-auto space-y-6">
             <h3 className="text-lg font-semibold mb-2">Detalhes do Pagamento</h3>
             <p><strong>ID Pagamento:</strong>{statusInfo.idPagamento}</p>
@@ -159,7 +159,7 @@ export default function PagamentoPage() {
           </div>
         )}
 
-        <div className="text-center mb-8">
+        <div className="text-center my-6">
           {!gerado ? (
             <button
               onClick={gerarPagamento}
@@ -167,7 +167,7 @@ export default function PagamentoPage() {
             >
               {candidato?.RegistroGRU ? 'Gerar novo GRU' : 'Gerar GRU'}
             </button>
-          ) : (
+          ) : gruUrl && (
             <div className="iframe-container mb-8">
               <iframe
                 className="iframe-epag"
