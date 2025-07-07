@@ -1,7 +1,7 @@
 'use client'
 
-import React from 'react'
-import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import api from '@/utils/api'
 import { useSession } from 'next-auth/react'
@@ -35,6 +35,8 @@ const fullSteps = [
 export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
   const router = useRouter()
   const { data: session } = useSession()
+  const [activePath, setActivePath] = useState("");
+  const pathname = usePathname();
 
   const { data: candidato, isLoading, refetch } = useQuery(
     ['candidatoData'],
@@ -52,12 +54,15 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
   const handleClick = async (label: string) => {
     switch (label) {
       case "Dados da Inscrição":
+        setActivePath("/acompanhamento")
         router.push('/acompanhamento')
         break
-      case "Local e Horário":
+        case "Local e Horário":
+        setActivePath("/local")
         router.push('/local')
         break
-      case "Pagamento":
+        case "Pagamento":
+        setActivePath("/pagamento")
         router.push('/pagamento')
         break
       case "Sair":
@@ -77,7 +82,7 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
             onClick={() => handleClick(label)}
             className={
               `flex-1 py-3 text-center cursor-pointer ${
-              (idx === activeStep
+              (activePath === pathname
                 ? 'text-green-900 font-semibold border-b-2 border-green-900'
                 : '')} ${label === "Sair" ? "text-red-600 hover:text-red-800" : ""} `
             }
