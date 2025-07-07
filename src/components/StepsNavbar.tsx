@@ -49,18 +49,18 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
     }
   );
 
-  const handleClick = async (index: number) => {
-    switch (index) {
-      case 0:
+  const handleClick = async (label: string) => {
+    switch (label) {
+      case "Dados da Inscrição":
         router.push('/acompanhamento')
         break
-      case 1:
+      case "Local e Horário":
         router.push('/local')
         break
-      case 2:
+      case "Pagamento":
         router.push('/pagamento')
         break
-      case 3:
+      case "Sair":
         await signOut({ callbackUrl: "/", redirect: true });
         break
       default:
@@ -74,7 +74,7 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
         {(candidato?.RegistroGru ? fullSteps : candidato?.Responsavel && !candidato?.RegistroGru ? middleSteps : initialSteps).map((label, idx) => (
           <li
             key={label}
-            onClick={() => handleClick(idx)}
+            onClick={() => handleClick(label)}
             className={
               `flex-1 py-3 text-center cursor-pointer ${
               (idx === activeStep
