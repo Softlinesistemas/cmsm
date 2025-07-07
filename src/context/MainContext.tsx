@@ -16,7 +16,7 @@ import GestaoAdmins from '@/components/GestaoAdmins'
 import LogsAcesso from '@/components/LogsAcesso'
 import Backup from '@/components/Backup'
 import Configuracoes from '@/components/Configuracoes'
- 
+
 const LOCAL_STORAGE_KEY = "appSettings";
 
 export const MainContext = createContext({} as any);
