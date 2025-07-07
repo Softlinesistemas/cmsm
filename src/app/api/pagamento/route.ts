@@ -93,7 +93,8 @@ export async function POST(request: NextRequest) {
         GRUHora: moment(parsedBody?.dataCriacao).format('HH:mm'),
         GRUValor: payload?.valorPrincipal,
         GRURef: payload?.referencia,
-        GRUStatus: "CRIADO"
+        GRUStatus: "CRIADO",
+        isencao: null
       });
 
     if (contentType && contentType.includes('application/json')) {
