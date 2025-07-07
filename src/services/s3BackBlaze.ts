@@ -6,4 +6,3 @@ export const s3 = new AWS.S3({
   endpoint: process.env.AWS_S3_ENDPOINT,
   s3ForcePathStyle: true,
 });
-
