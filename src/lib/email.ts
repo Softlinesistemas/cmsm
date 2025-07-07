@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-/**
+/** 
  * Função para enviar email de recuperação de senha
  * @param emailDestino - email do usuário
  * @param linkRecuperacao - link para redefinir senha
