@@ -15,6 +15,24 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+ if (request.nextUrl.pathname === "/acompanhamento" && token?.cpf) {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}api/candidato/${token.cpf}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (!res.ok) {
+        return NextResponse.redirect(new URL("/formulario", request.url));
+      }
+    } catch (err) {
+      return NextResponse.redirect(new URL("/formulario", request.url));
+    }
+  }
+
   if (request.nextUrl.pathname === "/dashboardAdmin" || request.nextUrl.pathname.startsWith("/dashboardAdmin/")) {
     if (!token?.admin) {
       return NextResponse.redirect(new URL("/login", request.url));
