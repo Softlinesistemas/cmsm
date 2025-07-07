@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
 
     db = getDBConnection(dbConfig());
 
-    const candidato = await db("Candidato").where({ CodIns: referencia }).select("").first();
+    const candidato = await db("Candidato").where({ CodIns: referencia?.slice(-5) }).select("").first();
 
     if (!candidato) {
       return NextResponse.json(
