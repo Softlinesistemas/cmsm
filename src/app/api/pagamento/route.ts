@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
       // MOCK de status
       return NextResponse.json({
         referencia,
-        status: 'PAGO',
+        status: 'CONCLUIDO',
         dataPagamento: '2025-07-04',
         valorPago: '50.00'
       })
@@ -133,6 +133,13 @@ export async function GET(request: NextRequest) {
     )
 
     const data = await response.json()
+    if (candidato?.GRUStatus !== "CONCLUIDO" && data.situacao.codigo === "CONCLUIDO") {      
+      await db("Candidato")
+        .where({ CodIns: candidato?.CodIns })
+        .update({
+          GRUStatus: "CONCLUIDO"
+        });
+    }
     console.log(data);
     if (!response.ok) {
       return NextResponse.json({ error: data }, { status: response.status })

@@ -38,7 +38,7 @@ export default function PagamentoPage() {
     {
       enabled: !!referencia,
       refetchOnWindowFocus: false,
-      refetchInterval: 5000 // atualiza a cada 5s
+      refetchInterval: 30000 // atualiza a cada 5s
     }
   )
 
@@ -141,13 +141,31 @@ export default function PagamentoPage() {
             <div className="md:col-span-2"><strong>Candidato ao:</strong> {config?.ProcessoSel} {candidato?.Seletivo}</div>
         </section>
 
+        {statusInfo && (
+          <div className="bg-white border border-gray-200 p-4 rounded-lg shadow-lg w-full">
+            <h3 className="text-lg font-semibold mb-2">Detalhes do Pagamento</h3>
+            <p><strong>ID Pagamento:</strong>{statusInfo.idPagamento}</p>
+            <p><strong>Tipo:</strong>{statusInfo.tipoPagamentoEscolhido}</p>
+            <p><strong>Valor:</strong>R$ {statusInfo.valor.toFixed(2)}</p>
+            <p><strong>Status:</strong>{statusInfo.situacao.codigo}</p>
+            <p><strong>Data:</strong>{moment(statusInfo.situacao.data).tz('America/Sao_Paulo').format('DD/MM/YYYY')}</p>
+            <button
+              onClick={() => checkStatus()}
+              disabled={checkingStatus}
+              className="mt-3 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-500 disabled:opacity-50"
+            >
+              {checkingStatus ? 'Verificando...' : 'Atualizar'}
+            </button>
+          </div>
+        )}
+
         <div className="text-center mb-8">
           {!gerado ? (
             <button
               onClick={gerarPagamento}
               className="bg-green-900 text-white py-3 px-8 rounded-lg shadow hover:bg-green-800"
             >
-              {candidato?.RegistroGRU ? 'Recarregar GRU' : 'Gerar GRU'}
+              {candidato?.RegistroGRU ? 'Gerar novo GRU' : 'Gerar GRU'}
             </button>
           ) : (
             <div className="iframe-container mb-8">
@@ -160,27 +178,6 @@ export default function PagamentoPage() {
             </div>
           )}
         </div>
-
-        {/* Cantinho de informações do pagamento */}
-        {statusInfo && (
-          <div className="fixed bottom-4 right-4 bg-white border border-gray-200 p-4 rounded-lg shadow-lg max-w-sm">
-            <h3 className="text-lg font-semibold mb-2">Detalhes do Pagamento</h3>
-            <p><strong>ID Pagamento:</strong>{statusInfo.idPagamento}</p>
-            <p><strong>Tipo:</strong>{statusInfo.tipoPagamentoEscolhido}</p>
-            <p><strong>Valor:</strong>R$ {statusInfo.valor.toFixed(2)}</p>
-            <p><strong>PSP:</strong>{statusInfo.nomePSP}</p>
-            <p><strong>Transação:</strong>{statusInfo.transacaoPSP}</p>
-            <p><strong>Status:</strong>{statusInfo.situacao.codigo}</p>
-            <p><strong>Data:</strong>{moment(statusInfo.situacao.data).tz('America/Sao_Paulo').format('DD/MM/YYYY')}</p>
-            <button
-              onClick={() => checkStatus()}
-              disabled={checkingStatus}
-              className="mt-3 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-500 disabled:opacity-50"
-            >
-              {checkingStatus ? 'Verificando...' : 'Atualizar'}
-            </button>
-          </div>
-        )}
       </main>
 
       <Footer />

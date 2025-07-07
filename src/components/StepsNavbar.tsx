@@ -82,7 +82,7 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
   return (
     <nav className="border-b border-gray-300">
       <ul className="max-w-5xl mx-auto flex text-xs uppercase text-gray-500">
-        {(candidato?.RegistroGru ? fullSteps : candidato?.Responsavel && !candidato?.RegistroGru ? middleSteps : initialSteps).map((label, idx) => (
+        {(candidato?.GRUStatus === "CONCLUIDO" ? fullSteps : candidato?.Responsavel && candidato?.GRUStatus !== "CONCLUIDO" ? middleSteps : initialSteps).map((label, idx) => (
           <li
             key={label}
             onClick={() => handleClick(label)}
