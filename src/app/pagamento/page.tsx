@@ -47,7 +47,6 @@ export default function PagamentoPage() {
     if (candidato?.GRUUrl && !gerado) {
       setGruUrl(candidato.GRUUrl + '&btnConcluir=true')
       setReferencia(candidato.GRURef)
-      setGerado(true)
     }
   }, [candidato, gerado])
 
@@ -72,21 +71,22 @@ export default function PagamentoPage() {
     }
   }, [gerado])
 
-  function gerarReferencia(codIns: number) {
+  function gerarReferencia(codIns: number): number {
     const now = new Date()
 
     const pad = (num: number, size = 2) => String(num).padStart(size, '0')
 
     const timestamp = [
-      now.getFullYear(),
+      String(now.getFullYear()).slice(2),
       pad(now.getMonth() + 1),
       pad(now.getDate()),
       pad(now.getHours()),
-      pad(now.getMinutes()),
-      pad(now.getSeconds())
+      pad(now.getMinutes())
     ].join('')
 
-    return Number(`${timestamp}${codIns}`)
+    const ref = `${timestamp}${String(codIns).padStart(4, '0')}`
+
+    return Number(ref)
   }
 
 
