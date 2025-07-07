@@ -19,6 +19,6 @@ export default async function uploadImagensEdge(input: File | File[]) {
 
     fileKeys.push(key);
   }
-
+ 
   return { status: 200, fileContents: fileKeys };
 }
