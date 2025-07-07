@@ -32,10 +32,16 @@ const fullSteps = [
   'Sair',
 ]
 
+const routeMap: Record<string, string> = {
+  "Dados da Inscrição": "/acompanhamento",
+  "Local e Horário": "/local",
+  "Pagamento": "/pagamento",
+}
+
 export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
   const router = useRouter()
   const { data: session } = useSession()
-  const [activePath, setActivePath] = useState("");
+  const [activePath, setActivePath] = useState("Dados da Inscrição");
   const pathname = usePathname();
 
   const { data: candidato, isLoading, refetch } = useQuery(
@@ -82,9 +88,10 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
             onClick={() => handleClick(label)}
             className={
               `flex-1 py-3 text-center cursor-pointer ${
-              (activePath === pathname
-                ? 'text-green-900 font-semibold border-b-2 border-green-900'
-                : '')} ${label === "Sair" ? "text-red-600 hover:text-red-800" : ""} `
+                routeMap[label] === pathname
+                  ? 'text-green-900 font-semibold border-b-2 border-green-900'
+                  : ''
+              } ${label === "Sair" ? "text-red-600 hover:text-red-800" : ""}`
             }
           >
             {label}

@@ -33,7 +33,7 @@ export default function PagamentoPage() {
 
   // Carrega script do iframe-resizer e inicializa quando a GRU é gerada
   useEffect(() => {
-    if (!gerado) return
+    if (!gerado || candidato?.GRUUrl) return
     const script = document.createElement('script')
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.6.6/iframeResizer.min.js'
     script.async = true
@@ -111,7 +111,7 @@ export default function PagamentoPage() {
           <AlternateText text="Confira seus dados antes de prosseguir." />
 
           <div className="text-center mb-8">
-            {!gerado ? (
+            {!gerado && !candidato?.GRUUrl ? (
               <button
                 onClick={gerarPagamento}
                 className="bg-green-900 text-white py-3 px-8 rounded-lg shadow hover:bg-green-800"
@@ -120,15 +120,10 @@ export default function PagamentoPage() {
               </button>
             ) : (
               <>
-                {statusPagamento && (
-                  <p className="mt-4 text-green-700 font-semibold">
-                    Status: {statusPagamento}
-                  </p>
-                )}
                 <div className="iframe-container mb-8">
                   <iframe
                     className="iframe-epag"
-                    src={gruUrl}
+                    src={`${candidato?.GRUUrl || gruUrl}&tema=tema-light`}
                     scrolling="no"
                     ref={iframeRef}
                   />

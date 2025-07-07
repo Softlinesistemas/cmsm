@@ -1,13 +1,17 @@
 // app/api/pagtesouro/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
+import dbConfig from "@/db/dbConfig";
+import getDBConnection from "@/db/conn";
 
 const PAGTESOURO_TOKEN = process.env.PAGTESOURO_TOKEN as string
 const PAGTESOURO_BASE_URL = process.env.PAGTESOURO_BASE_URL as string
 const USE_MOCK = process.env.USE_PAGTESOURO_MOCK === 'true'
 
 export async function POST(request: NextRequest) {
+  let db;
   try {
+    db = getDBConnection(dbConfig());
     const payload = await request.json()
 
     const requiredFields = [
@@ -33,7 +37,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
           "idPagamento": "1BvAmpIRYZF55yg9D6WOTZ",
           "dataCriacao": "2022-01-12T16:00:00Z",
-          "proximaUrl": "https://valpagtesouro.tesouro.gov.br/#/pagamento?idSessao=66706694-fce3-4a56-8172-8b4ed12508a4",
+          "proximaUrl": "https://valpagtesouro.tesouro.gov.br/#/pagamento?idSessao=66706694-fce3-4a56-8172-8b4ed12508a4&tema=tema-light",
           "situacao": {
             "codigo": "CRIADO"
           }  
@@ -51,6 +55,7 @@ export async function POST(request: NextRequest) {
 
     const contentType = response.headers.get('content-type')
     const rawBody = await response.text()
+    const parsedBody = JSON.parse(rawBody);
 
     // Ajuda a diagnosticar
     console.log('Resposta bruta PagTesouro:', rawBody)
@@ -58,6 +63,16 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       return NextResponse.json({ error: rawBody }, { status: response.status })
     }
+
+    await db("Candidato")
+      .where({ CPF: payload?.cnpjCpf })
+      .update({
+        RegistroGRU: parsedBody?.idPagamento,
+        GRUUrl: parsedBody?.proximaUrl,
+        GRUData: parsedBody?.dataCriacao,
+        GRUHora: parsedBody?.dataCriacao,
+        GRUValor: payload?.valorPrincipal
+      });
 
     if (contentType && contentType.includes('application/json')) {
       const data = JSON.parse(rawBody)
