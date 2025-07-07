@@ -71,7 +71,8 @@ export async function POST(request: NextRequest) {
         GRUUrl: parsedBody?.proximaUrl,
         GRUData: parsedBody?.dataCriacao,
         GRUHora: parsedBody?.dataCriacao,
-        GRUValor: payload?.valorPrincipal
+        GRUValor: payload?.valorPrincipal,
+        GRUStatus: "CRIADO"
       });
 
     if (contentType && contentType.includes('application/json')) {
@@ -89,6 +90,8 @@ export async function POST(request: NextRequest) {
 
 // Rota GET para consulta de status
 export async function GET(request: NextRequest) {
+  let db;
+
   try {
     const { searchParams } = new URL(request.url)
     const referencia = searchParams.get('referencia')
@@ -110,8 +113,19 @@ export async function GET(request: NextRequest) {
       })
     }
 
+    db = getDBConnection(dbConfig());
+
+    const candidato = await db("Candidato").where({ CodIns: referencia }).select("").first();
+
+    if (!candidato) {
+      return NextResponse.json(
+        { error: "Candidato não encontrado para o CPF informado." },
+        { status: 404 }
+      );
+    }
+
     const response = await fetch(
-      `${PAGTESOURO_BASE_URL}/pagamentos/status?referencia=${encodeURIComponent(referencia)}`,
+      `${PAGTESOURO_BASE_URL}/api/gru/pagamentos/${candidato?.RegistroGRU}`,
       {
         headers: {
           'Authorization': `Bearer ${PAGTESOURO_TOKEN}`
@@ -120,6 +134,7 @@ export async function GET(request: NextRequest) {
     )
 
     const data = await response.json()
+    console.log(data);
     if (!response.ok) {
       return NextResponse.json({ error: data }, { status: response.status })
     }

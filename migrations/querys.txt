@@ -107,6 +107,8 @@ CREATE TABLE Funcao (
     ValInscricao   DECIMAL(9,2)   NULL,                   -- até 999.999,99
     GRUDataFim     DATE           NULL,
     GRUHoraFim     CHAR(5)        NULL,
+    GRUUrl         VARCHAR(255)   NULL,
+    GRUStatus      VARCHAR(50)    NULL,
     NotaMinMat     DECIMAL(5,2)   NULL,
     NotaMinPor     DECIMAL(5,2)   NULL
     EditalCaminho  VARCHAR(100)   NULL,
