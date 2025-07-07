@@ -69,7 +69,7 @@ export default function LocalHorarioPage() {
             <div><strong>Data de Nascimento:</strong> {moment(candidato?.Nasc).tz("America/Sao_Paulo").format("DD/MM/YYYY")}</div>
             <div><strong>Sexo:</strong> {candidato?.Sexo}</div>
             <div><strong>Doc. ID:</strong> {candidato?.CodIns}</div>
-            <div className="md:col-span-2"><strong>Candidato ao:</strong> {candidato?.ProcessoSel} {candidato?.Seletivo}</div>
+            <div className="md:col-span-2"><strong>Candidato ao:</strong> {dataConfiguracao?.ProcessoSel} {candidato?.Seletivo}</div>
           </div>
         </div>
 

@@ -86,7 +86,7 @@ export default function PagamentoPage() {
       pad(now.getSeconds())
     ].join('')
 
-    return `${timestamp}-${codIns}`
+    return Number(`${timestamp}${codIns}`)
   }
 
 
@@ -133,7 +133,12 @@ export default function PagamentoPage() {
         </h2>
 
         <section className="max-w-3xl mx-auto space-y-6 mb-8">
-          <LabelField label="Nome do Candidato" value={candidato?.Nome || ''} full />
+            <LabelField label="Nome do Candidato" value={candidato?.Nome || ''} full />
+            <div><strong>Número de Inscrição:</strong> {candidato?.CodIns}</div>
+            <div><strong>Data de Nascimento:</strong> {moment(candidato?.Nasc).tz("America/Sao_Paulo").format("DD/MM/YYYY")}</div>
+            <div><strong>Sexo:</strong> {candidato?.Sexo}</div>
+            <div><strong>Doc. ID:</strong> {candidato?.CodIns}</div>
+            <div className="md:col-span-2"><strong>Candidato ao:</strong> {config?.ProcessoSel} {candidato?.Seletivo}</div>
         </section>
 
         <div className="text-center mb-8">
