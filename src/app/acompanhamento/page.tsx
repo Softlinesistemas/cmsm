@@ -24,61 +24,66 @@ export default function Formulario() {
   const [loading, setLoading] = useState(false);
   const [checkboxMarcado, setCheckboxMarcado] = useState(false);
 
-  const { data: candidato } = useQuery(
-    ['candidato'],
-    () => api.get(`/api/candidato/${session?.user.cpf}`).then(res => res.data),
-    {
-      enabled: !!session?.user.cpf,
-      select: (data) => ({
-        nome: data.Nome || '',
-        numeroInscricao: data.CodIns?.toString() || '',
-        cpf: data.CPF || '',
-        dataNascimento: data.Nasc || '',
-        sexo: data.Sexo || '',
-        cep: data.Cep || '',
-        endereco: data.Endereco || '',
-        cidade: data.Cidade || '',
-        uf: data.UF || '',
-        numero: '', // ajustar se houver campo
-        complemento: data.Complemento || '',
-        necessidades: data.PortadorNec || '',
-        tipoNecessidade: '', // se houver
-        transtornoFuncional: '',
-        transtornoTipos: [],
-        atendimentoEspecial: data.AtendimentoEsp || '',
-        tipoAtendimento: '',
-        tipoCota: data.CodCot1 || '',
-        necessitaCondicoes: '',
-        tipoAtendimentoProva: '',
-        forcas: '',
-        ramoForcas: '',
-        dadosVaga: '',
-        nomeResponsavel: data.Responsavel || '',
-        cpfResponsavel: data.CPFResp || '',
-        dataNascimentoResponsavel: data.NascResp || '',
-        sexoResponsavel: data.SexoResp || '',
-        cep_Resp: data.CepResp || '',
-        endereco_Resp: data.EnderecoResp || '',
-        cidade_Resp: data.CidadeResp || '',
-        uf_Resp: data.UFResp || '',
-        numero_Resp: '',
-        complemento_Resp: data.ComplementoResp || '',
-        profissao: data.ProfissaoResp || '',
-        celular: data.TelResp || '',
-        parentesco: data.Parentesco || '',
-        emailResponsavel: data.EmailResp || '',
-        emailCandidato: data.Email || '',
-        fotoPreview: data.CaminhoFoto || '',
-        Seletivo: data.Seletivo || ''
-      })
-    }
-  );
-
-    useEffect(() => {
+  useEffect(() => {
     if (status === "authenticated" && session.user) {
       setFormData({ ...formData, cpf: String(session?.user?.cpf), fotoPreview: session?.user?.picture || session?.user?.image || ""})
     }
   }, [status]);
+
+  const { data: candidato } = useQuery(
+      ['candidato'],
+    () => api.get(`/api/candidato/${session?.user.cpf}`).then(res => res.data),
+    { enabled: !!session?.user.cpf, refetchOnWindowFocus: false }
+  )
+
+  useEffect(() => {
+    if (candidato) {
+      setFormData(prev => ({
+        ...prev,
+        nome: candidato.Nome || '',
+        numeroInscricao: candidato.CodIns?.toString() || '',
+        cpf: candidato.CPF || '',
+        dataNascimento: candidato.Nasc || '',
+        sexo: candidato.Sexo || '',
+        cep: candidato.Cep || '',
+        endereco: candidato.Endereco || '',
+        cidade: candidato.Cidade || '',
+        uf: candidato.UF || '',
+        numero: '', // Se tiver, ajuste para candidato.Numero
+        complemento: candidato.Complemento || '',
+        necessidades: candidato.PortadorNec || '',
+        tipoNecessidade: '', // Se houver campo correspondente
+        transtornoFuncional: '', // Se houver campo correspondente
+        transtornoTipos: [], // Ajuste se tiver como vir em array
+        atendimentoEspecial: candidato.AtendimentoEsp || '',
+        tipoAtendimento: candidato.tipoAtendimento || '',
+        tipoCota: candidato.CodCot1 || '',
+        necessitaCondicoes: candidato.necessitaCondicoes || '',
+        tipoAtendimentoProva: candidato.tipoAtendimentoProva || '',
+        forcas: candidato.forcas || '',
+        ramoForcas: candidato.ramoForcas || '',
+        dadosVaga: candidato.dadosVaga || '',
+        nomeResponsavel: candidato.Responsavel || '',
+        cpfResponsavel: candidato.CPFResp || '',
+        dataNascimentoResponsavel: candidato.NascResp || '',
+        sexoResponsavel: candidato.SexoResp || '',
+        cep_Resp: candidato.CepResp || '',
+        endereco_Resp: candidato.EnderecoResp || '',
+        cidade_Resp: candidato.CidadeResp || '',
+        uf_Resp: candidato.UFResp || '',
+        numero_Resp: '', // Se tiver campo correspondente
+        complemento_Resp: candidato.ComplementoResp || '',
+        profissao: candidato.ProfissaoResp || '',
+        celular: candidato.TelResp || '',
+        parentesco: candidato.Parentesco || '',
+        emailResponsavel: candidato.EmailResp || '',
+        emailCandidato: candidato.Email || '',
+        fotoPreview: candidato.CaminhoFoto || '',
+        Seletivo: candidato.Seletivo || ''
+      }))
+    }
+  }, [])
+
 
   const [formData, setFormData] = useState({
     nome: '',
