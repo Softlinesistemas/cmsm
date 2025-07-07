@@ -36,25 +36,61 @@ export default function Formulario() {
     { enabled: !!session?.user.cpf, refetchOnWindowFocus: false }
   )
 
+   const einCpfMask = (value: string) => {
+    let cleaned = value.replace(/\D/g, "");
+
+    if (cleaned.length <= 3) return cleaned;
+    if (cleaned.length <= 6) return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
+    if (cleaned.length <= 9) return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
+    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`;
+  }; 
+
+   const phoneMask = (value: string) => {
+      let cleaned = value.replace(/\D/g, "");
+      
+      if (cleaned.length === 0) return "";
+      if (cleaned.length <= 2) return cleaned;
+      if (cleaned.length <= 6) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+      if (cleaned.length <= 10) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7, 11)}`;
+    };
+  
+    const cepMask = (value: string) => {
+    let cleaned = value.replace(/\D/g, "");
+
+    if (cleaned.length <= 5) return cleaned;
+    return `${cleaned.slice(0, 5)}-${cleaned.slice(5, 8)}`; 
+    };
+    
+    const { data: cotas, isLoading, refetch } = useQuery('cotas', async () => {
+        const response = await api.get('api/cotas')
+        return response.data
+    }, {
+      refetchOnWindowFocus: false,
+      retry: 5,
+    })
+  
+
+
   useEffect(() => {
-    if (candidato) {
+    if (candidato && !formData?.nome) {
       setFormData(prev => ({
         ...prev,
         nome: candidato.Nome || '',
         numeroInscricao: candidato.CodIns?.toString() || '',
-        cpf: candidato.CPF || '',
+        cpf: einCpfMask(candidato.CPF) || '',
         dataNascimento: candidato.Nasc || '',
         sexo: candidato.Sexo || '',
-        cep: candidato.Cep || '',
+        cep: cepMask(candidato.Cep) || '',
         endereco: candidato.Endereco || '',
         cidade: candidato.Cidade || '',
         uf: candidato.UF || '',
         numero: '', // Se tiver, ajuste para candidato.Numero
         complemento: candidato.Complemento || '',
         necessidades: candidato.PortadorNec || '',
-        tipoNecessidade: '', // Se houver campo correspondente
-        transtornoFuncional: '', // Se houver campo correspondente
-        transtornoTipos: [], // Ajuste se tiver como vir em array
+        tipoNecessidade: '',
+        transtornoFuncional: '',
+        transtornoTipos: [],
         atendimentoEspecial: candidato.AtendimentoEsp || '',
         tipoAtendimento: candidato.tipoAtendimento || '',
         tipoCota: candidato.CodCot1 || '',
@@ -67,14 +103,14 @@ export default function Formulario() {
         cpfResponsavel: candidato.CPFResp || '',
         dataNascimentoResponsavel: candidato.NascResp || '',
         sexoResponsavel: candidato.SexoResp || '',
-        cep_Resp: candidato.CepResp || '',
+        cep_Resp: cepMask(candidato.CepResp) || '',
         endereco_Resp: candidato.EnderecoResp || '',
         cidade_Resp: candidato.CidadeResp || '',
         uf_Resp: candidato.UFResp || '',
         numero_Resp: '', // Se tiver campo correspondente
         complemento_Resp: candidato.ComplementoResp || '',
         profissao: candidato.ProfissaoResp || '',
-        celular: candidato.TelResp || '',
+        celular: phoneMask(candidato.TelResp) || '',
         parentesco: candidato.Parentesco || '',
         emailResponsavel: candidato.EmailResp || '',
         emailCandidato: candidato.Email || '',
@@ -82,7 +118,7 @@ export default function Formulario() {
         Seletivo: candidato.Seletivo || ''
       }))
     }
-  }, [])
+  }, [candidato])
 
 
   const [formData, setFormData] = useState({
