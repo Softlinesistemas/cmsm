@@ -1,4 +1,4 @@
-"use client" 
+"use client"
 import React, { createContext, useState, useEffect, useMemo, ReactNode } from "react";
 import Processo from '@/components/Processo'
 import Inscricoes from '@/components/Inscricoes'
