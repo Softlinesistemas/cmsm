@@ -43,6 +43,27 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // Rota bloqueada se o valor da inscrição for diferente do valor configurado
+    const [config] = await db("Funcao")
+    .orderBy([
+      { column: "GRUDataFim", order: "desc" },
+      { column: "GRUHoraFim", order: "desc" },
+    ])
+    .limit(1);
+    
+    if (!config) {
+      return NextResponse.json(
+        { error: 'Configuração não encontrada' },
+        { status: 500 }
+      );
+    }
+
+    const esperado = Number(config?.ValInscricao);
+    const recebido = Number(payload.valorPrincipal);
+    if (isNaN(recebido) || recebido !== esperado) {
+      return NextResponse.json({ error: 'O valor da inscrição inválido' }, { status: 400 });
+    }
+
     const response = await fetch(`${PAGTESOURO_BASE_URL}/api/gru/solicitacao-pagamento`, {
       method: 'POST',
       headers: {

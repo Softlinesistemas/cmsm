@@ -9,7 +9,7 @@ const uploadImagens = async (files: any) => {
     for (const file of files) {
       let newFilename = `${Date.now().toString()}-${file.newFilename}`
       const params: S3.Types.PutObjectRequest = {
-        Bucket: process.env.BBZ_BUCKET_NAME ?? "cmsm",
+        Bucket: process.env.AWS_BUCKET_NAME ?? "cmsm-rs",
         Key: newFilename,
         Body: fs.readFileSync(file.filepath),
         ContentType: file.mimetype,

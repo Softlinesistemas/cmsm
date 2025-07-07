@@ -105,7 +105,7 @@ export default function PagamentoPage() {
         valorPrincipal: config.ValInscricao,
         email: candidato.Email,
         urlRetorno: `${process.env.NEXT_PUBLIC_BACKEND_URL}/local`,
-        descricao: `${config.ProcessoSel} ${candidato.Seletivo}`
+        descricao: `${config.ProcessoSel} ${candidato.Seletivo}`,
       }
 
       const res = await api.post('api/pagamento', payload)
