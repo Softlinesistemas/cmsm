@@ -127,7 +127,7 @@ export default function PagamentoPage() {
       <StepsNavbar activeStep={2} />
 
       <main className="flex-grow px-4 py-12">
-       {candidato.isencao !== "Pendente" && <>
+       {candidato?.isencao !== "Pendente" && <>
           <h1 className="text-center text-2xl font-bold text-green-900 mb-2">Pagamento</h1>
           <h2 className="text-center text-lg text-gray-800 mb-8">
             Efetue o pagamento de R$ {config?.ValInscricao}
@@ -162,13 +162,13 @@ export default function PagamentoPage() {
         )}
 
         <div className="text-center my-6">
-          {candidato.isencao === "Pendente" && <h1 className="text-center text-2xl font-bold text-green-900 mb-2">Favor comparecer a unidade do Colégio Militar de Santa Maria para apresentar a documentação compobratória.</h1>}
+          {candidato?.isencao === "Pendente" && <h1 className="text-center text-2xl font-bold text-green-900 mb-2">Favor comparecer a unidade do Colégio Militar de Santa Maria para apresentar a documentação compobratória.</h1>}
           {!gerado ? (
             <button
               onClick={gerarPagamento}
               className="bg-green-900 text-white py-3 px-8 rounded-lg shadow hover:bg-green-800"
             >
-              {candidato.isencao === "Pendente" ? "Desistir da isenção e gerar novo GRU" : candidato?.RegistroGRU ? 'Gerar novo GRU' : 'Gerar GRU'}
+              {candidato?.isencao === "Pendente" ? "Desistir da isenção e gerar novo GRU" : candidato?.RegistroGRU ? 'Gerar novo GRU' : 'Gerar GRU'}
             </button>
           ) : gruUrl && (
             <div className="iframe-container mb-8">
