@@ -30,7 +30,7 @@ export async function enviarEmailRecuperacao(emailDestino: string, linkRecuperac
       <p>Atenciosamente, <br> Equipe CMSM</p>
     `,
   };
-
+ 
   // Envia o email
   await transporter.sendMail(mailOptions);
 }
