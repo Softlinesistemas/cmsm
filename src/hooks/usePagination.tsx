@@ -8,4 +8,4 @@ export function usePagination(initialPage = 1) {
 
   return { page, nextPage, prevPage };
 }
- 
+
