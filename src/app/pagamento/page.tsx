@@ -136,7 +136,7 @@ export default function PagamentoPage() {
             <LabelField label="Nome do Candidato" value={candidato?.Nome || ''} full />
             <div><strong>Número de Inscrição:</strong> {candidato?.CodIns}</div>
             <div><strong>Data de Nascimento:</strong> {moment(candidato?.Nasc).tz("America/Sao_Paulo").format("DD/MM/YYYY")}</div>
-            <div><strong>Sexo:</strong> {candidato?.Sexo}</div>
+            <div><strong>Sexo:</strong> {candidato?.Sexo === "F" ? "Feminino" : "Masculino"}</div>
             <div><strong>Doc. ID:</strong> {candidato?.CodIns}</div>
             <div className="md:col-span-2"><strong>Candidato ao:</strong> {config?.ProcessoSel} {candidato?.Seletivo}</div>
         </section>
