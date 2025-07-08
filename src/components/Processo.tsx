@@ -46,8 +46,8 @@ export default function Processo() {
           >
             <option value="Todos">Todos os Status</option>
             <option value="Pendente">Pendente</option>    
-            <option value="Aprovado">Aprovado</option>    
-            <option value="Reprovado">Reprovado</option>    
+            <option value="Deferido">Deferido</option>    
+            <option value="Indeferido">Indeferido</option>    
           </select>
         </div>
 
@@ -64,8 +64,8 @@ export default function Processo() {
                 <span
                   className={`
                     text-sm px-3 py-1 rounded-full font-medium
-                    ${item.isencao === 'Aprovado' ? 'bg-green-100 text-green-700' :
-                      item.isencao === 'Reprovado' ? 'bg-red-100 text-red-700' :                      
+                    ${item.isencao === 'Deferido' ? 'bg-green-100 text-green-700' :
+                      item.isencao === 'Indeferido' ? 'bg-red-100 text-red-700' :                      
                       'bg-yellow-100 text-yellow-700'}
                   `}
                 >

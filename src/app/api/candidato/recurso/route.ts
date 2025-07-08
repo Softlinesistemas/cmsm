@@ -14,8 +14,8 @@ export async function GET(request: Request) {
     .orderByRaw(`
       CASE isencao
         WHEN 'Pendente' THEN 0
-        WHEN 'Aprovado' THEN 1
-        WHEN 'Reprovado' THEN 2
+        WHEN 'Deferido' THEN 1
+        WHEN 'Indeferido' THEN 2
         ELSE 3
       END
     `)

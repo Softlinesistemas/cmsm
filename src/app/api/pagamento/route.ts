@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
         GRUValor: payload?.valorPrincipal,
         GRURef: payload?.referencia,
         GRUStatus: "CRIADO",
-        isencao: null
+        isencao: "Deferido"
       });
 
     if (contentType && contentType.includes('application/json')) {

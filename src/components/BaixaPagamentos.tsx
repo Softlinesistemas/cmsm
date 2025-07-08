@@ -4,22 +4,19 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { FaCheck, FaTimes, FaFilter } from "react-icons/fa";
 import api from "@/utils/api";
+import toast from "react-hot-toast";
 
-// Tipagem dos candidatos
 interface Candidato {
   id: number;
   nome: string;
   cpf: string;
-  status: "Em Análise" | "Deferido" | "Indeferido" | "Isento";
+  status: "Pendente" | "Deferido" | "Indeferido" | "Isento";
   numeroInscricao?: string;
 }
 
 export default function BaixaPagamentos() {
   const queryClient = useQueryClient();
-  const [filtro, setFiltro] = useState<"Todos" | "Deferido" | "Indeferido" | "Em Análise" | "Isento">("Todos");
-
-  // Função para gerar número de inscrição
-  const gerarNumeroInscricao = (id: number) => `INS-${id.toString().padStart(4, '0')}`;
+  const [filtro, setFiltro] = useState<"Todos" | "Deferido" | "Indeferido" | "Pendente" | "Isento">("Todos");
 
   // Busca candidatos
   const { data: candidatos = [], isLoading } = useQuery<Candidato[]>(
@@ -27,11 +24,11 @@ export default function BaixaPagamentos() {
     async () => {
       const res = await api.get("/api/candidato/deferimento");
       return res.data.candidatos.map((c: any) => ({
-        id: c.id,
+        id: c.CodUsu,
         nome: c.nome,
         cpf: c.cpf,
         status: c.status,
-        numeroInscricao: c.status === 'Deferido' ? gerarNumeroInscricao(c.id) : undefined,
+        numeroInscricao: c.id,
       }));
     }
   );
@@ -39,8 +36,7 @@ export default function BaixaPagamentos() {
   // Mutations
   const deferirMutation = useMutation(
     ({ id }: { id: number }) => {
-      const registro = gerarNumeroInscricao(id);
-      const payload = { valor: 0, registro };
+      const payload = { valor: 0 };
       return api.post(`/api/candidato/deferimento/${id}/deferir`, payload);
     },
     { onSuccess: () => queryClient.invalidateQueries(['candidatos']) }
@@ -73,7 +69,7 @@ export default function BaixaPagamentos() {
   // Contadores
   const totalDeferido = candidatos.filter(c => c.status === 'Deferido').length;
   const totalIndeferido = candidatos.filter(c => c.status === 'Indeferido').length;
-  const totalEmAnalise = candidatos.filter(c => c.status === 'Em Análise').length;
+  const totalEmAnalise = candidatos.filter(c => c.status === 'Pendente').length;
   const totalIsentos = candidatos.filter(c => c.status === 'Isento').length;
 
   if (isLoading) return <div>Carregando...</div>;
@@ -109,7 +105,7 @@ export default function BaixaPagamentos() {
           <option value="Todos">Todos</option>
           <option value="Deferido">Deferido</option>
           <option value="Indeferido">Indeferido</option>
-          <option value="Em Análise">Em Análise</option>
+          <option value="Pendente">Pendente</option>
           <option value="Isento">Isento</option>
         </select>
       </div>
@@ -118,7 +114,7 @@ export default function BaixaPagamentos() {
       <div className="mb-4 text-sm">
         <p><strong className="text-blue-800">Total Deferidos:</strong> {totalDeferido}</p>
         <p><strong className="text-red-800">Total Indeferidos:</strong> {totalIndeferido}</p>
-        <p><strong className="text-gray-800">Total Em Análise:</strong> {totalEmAnalise}</p>
+        <p><strong className="text-gray-800">Total Pendente:</strong> {totalEmAnalise}</p>
         <p><strong className="text-yellow-800">Total Isentos:</strong> {totalIsentos}</p>
       </div>
 
@@ -129,7 +125,7 @@ export default function BaixaPagamentos() {
             <th className="p-2">ID</th>
             <th className="p-2">Nome</th>
             <th className="p-2">CPF</th>
-            <th className="p-2">Status</th>
+            <th className="p-2">Isenção</th>
             <th className="p-2">Nº Inscrição</th>
             <th className="p-2">Ações</th>
           </tr>
@@ -144,7 +140,7 @@ export default function BaixaPagamentos() {
                 <span className={
                   c.status === "Deferido" ? "text-green-600 font-semibold" :
                   c.status === "Indeferido" ? "text-red-600 font-semibold" :
-                  c.status === "Isento" ? "text-yellow-600 font-semibold" :
+                  c.status === "Pendente" ? "text-yellow-600 font-semibold" :
                   "text-gray-600 font-semibold"
                 }>
                   {c.status}
@@ -157,22 +153,22 @@ export default function BaixaPagamentos() {
                   disabled={deferirMutation.isLoading}
                   className="flex items-center gap-1 bg-blue-800 text-white px-2 py-1 rounded hover:bg-blue-700"
                 >
-                  <FaCheck />
+                  Deferir <FaCheck />
                 </button>
                 <button
                   onClick={() => indeferirMutation.mutate({ id: c.id })}
                   disabled={indeferirMutation.isLoading}
                   className="flex items-center gap-1 bg-red-800 text-white px-2 py-1 rounded hover:bg-red-700"
                 >
-                  <FaTimes />
+                  Indeferir <FaTimes />
                 </button>
-                <button
+                {/* <button
                   onClick={() => isentoMutation.mutate({ id: c.id })}
                   disabled={isentoMutation.isLoading}
                   className="flex items-center gap-1 bg-yellow-800 text-white px-2 py-1 rounded hover:bg-yellow-700"
                 >
                   Isento
-                </button>
+                </button> */}
               </td>
             </tr>
           ))}

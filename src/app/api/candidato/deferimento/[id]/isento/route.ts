@@ -13,6 +13,7 @@ export async function POST(request: Request) {
     .where("CodIns", id)
     .update({
       GRUStatus: "Isento",
+      isencao: "Isento",
       RegistroGRU: null,
       GRUValor: null,
       GRUData: null,

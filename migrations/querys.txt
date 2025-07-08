@@ -20,6 +20,7 @@ CREATE TABLE Candidato (
     Nasc                DATETIME       NULL,
     Sexo                CHAR(1)        NULL,                   -- 'M' ou 'F'
     Email               VARCHAR(100)   NULL,
+    CodUsu     INT      NULL,  
     Cep                 VARCHAR(9)     NULL,
     Endereco            VARCHAR(60)    NULL,
     Complemento         VARCHAR(30)    NULL,
@@ -62,7 +63,7 @@ CREATE TABLE Candidato (
     GRUData             DATETIME       NULL,
     GRUValor            DECIMAL(9,2)   NULL,
     GRUHora             CHAR(5)        NULL,
-    GRUStatus           VARCHAR(255)   NULL,
+    GRUStatus           VARCHAR(255)   NULL,                   -- CONCLUIDO/CRIADO...
     CodSala             INT            NULL,
     DataEnsalamento     DATETIME       NULL,
     HoraEnsalamento     CHAR(6)        NULL,
@@ -87,7 +88,6 @@ CREATE TABLE Senha (
     CodUsu     INT          NOT NULL PRIMARY KEY,  -- PK e FK para candidato
     Usuario    VARCHAR(20)  NOT NULL,
     ADM        CHAR(1)      NOT NULL,              -- flag admin
-    CodUsu     INT          NULL,  
     DataCad    DATETIME     NOT NULL,
     HoraCad    CHAR(5)      NOT NULL,
     CPF        VARCHAR(14)  NULL, 

@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   const segments = url.pathname.split("/");
   const id = Number(segments[segments.length - 2]);
 
-  const { valor, registro } = await request.json();
+  const { valor } = await request.json();
 
   const now = new Date();
   const data = now.toISOString().slice(0, 10); // YYYY-MM-DD
@@ -17,11 +17,11 @@ export async function POST(request: Request) {
   await db("Candidato")
     .where("CodIns", id)
     .update({
-      GRUStatus: "Deferido",
+      GRUStatus: "DEFERIDO",
+      isencao: "Deferido",
       GRUData: data,
       GRUHora: hora,
       GRUValor: valor,
-      RegistroGRU: registro,
     });
 
   return new Response(JSON.stringify({ message: "Candidato deferido com sucesso." }), {

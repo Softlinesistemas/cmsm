@@ -64,8 +64,8 @@ const AvaliacaoRecursos = () => {
   const desaprovarRecurso = async (numeroInscricao: number) => {
     setLoadingReprovar(true);
     try {  
-      await api.put(`api/candidato/${numeroInscricao}`, { isencao: "Reprovado" });
-      toast.success(`Pedido de insenção Reprovado para o candidato ${numeroInscricao}`);
+      await api.put(`api/candidato/${numeroInscricao}`, { isencao: "Indeferido" });
+      toast.success(`Pedido de insenção Indeferido para o candidato ${numeroInscricao}`);
       refetch();
     } catch (error: any) {
       toast.error(error.response.data.error || error.response.data.message);;
@@ -110,9 +110,9 @@ const AvaliacaoRecursos = () => {
                 <td className="border px-4 py-2">
                   <span
                     className={`px-2 py-1 rounded text-white text-xs ${
-                      r.isencao === 'Aprovado'
+                      r.isencao === 'Deferido'
                         ? 'bg-green-600'
-                        : r.isencao === 'Reprovado'
+                        : r.isencao === 'Indeferido'
                         ? 'bg-red-600'
                         : 'bg-yellow-600'
                     }`}
