@@ -128,8 +128,8 @@ export default function Inscricoes() {
         >
           <option>Todos</option>
           <option value="DEFERIDO">Deferido</option>
-          <option value="CRIADO">Criado</option>
           <option value="CONCLUIDO">Concluído</option>
+          <option value="CRIADO">Criado</option>
           <option value="INDEFERIDO">Indeferido</option>
         </select>
         <button

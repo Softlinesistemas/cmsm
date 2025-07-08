@@ -99,7 +99,7 @@ const handleDrop = (event: React.DragEvent<HTMLLabelElement>) => {
       onDragLeave={handleDragLeave}
     >
       <div className="flex flex-col items-center justify-center pt-5 pb-6">
-        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mb-2 text-sm text-gray-500">
           <div className="flex flex-col items-center justify-center p-4 w-full">
             {fileData ? (
               <div className="w-full h-auto max-h-[500px] flex justify-center relative">
@@ -131,7 +131,7 @@ const handleDrop = (event: React.DragEvent<HTMLLabelElement>) => {
                <span className="font-bold">Click to send</span> or drop file here.
             </>
           ) : (
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-gray-500">
               {fileData || formState?.CaminhoVenda || formState?.Caminho2
                 ? `${fileName || ""}`
                 : 'JPG, JPEG, PNG'}

@@ -115,7 +115,7 @@ input{
 
 /* Títulos de seções */
 .section-title {
-  @apply text-xl font-bold mb-4 text-blue-800 dark:text-blue-400;
+  @apply text-xl font-bold mb-4 text-blue-800;
 }
 
 /* Alertas */

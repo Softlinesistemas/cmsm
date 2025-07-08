@@ -98,7 +98,7 @@ export default function Relatorios() {
       {relatorioSelecionado && (
         <section className="bg-white p-6 rounded shadow mb-12">
           <h3 className="text-2xl font-semibold mb-4">{relatoriosData[relatorioSelecionado].label}</h3>
-          <pre className="bg-gray-100 p-4 rounded text-sm overflow-x-auto mb-4">
+          <pre className="bg-gray-100 p-4 rounded text-sm overflow-x-auto mb-4 text-black">
             {JSON.stringify(relatoriosData[relatorioSelecionado].dados, null, 2)}
           </pre>
           <div className="flex gap-4">
@@ -130,16 +130,16 @@ export default function Relatorios() {
             <tbody>
               {historico.map(item => (
                 <tr key={item.id} className="hover:bg-gray-100">
-                  <td className="border px-4 py-2">{item.id}</td>
-                  <td className="border px-4 py-2">{item.tipo}</td>
-                  <td className="border px-4 py-2">{item.data}</td>
-                  <td className="border px-4 py-2">{item.usuario}</td>
-                  <td className="border px-4 py-2 text-center">
+                  <td className="border px-4 py-2 text-black">{item.id}</td>
+                  <td className="border px-4 py-2 text-black">{item.tipo}</td>
+                  <td className="border px-4 py-2 text-black">{item.data}</td>
+                  <td className="border px-4 py-2 text-black">{item.usuario}</td>
+                  <td className="border px-4 py-2 text-black text-center">
                     <button onClick={() => exportarJSON(item.dados, item.tipo)} className="text-green-700 hover:text-green-900">
                       JSON
                     </button>
                   </td>
-                  <td className="border px-4 py-2 text-center">
+                  <td className="border px-4 py-2 text-black text-center">
                     <button onClick={() => exportarCSV(item.dados, item.tipo)} className="text-yellow-700 hover:text-yellow-900">
                       CSV
                     </button>

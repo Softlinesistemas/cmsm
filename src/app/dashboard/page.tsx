@@ -125,15 +125,15 @@ function ExameCard({ title, data, filtro, setFiltro }: any) {
       </div>
       <div className="grid grid-cols-3 gap-2 text-center text-xl font-bold">
         <div>
-          {data.aprovados || 0}
+          <p className='text-black'>{data.aprovados || 0}</p>
           <div className="text-sm text-green-700">APROVADOS</div>
         </div>
         <div>
-          {data.reprovados || 0}
+          <p className='text-black'>{data.reprovados || 0}</p>        
           <div className="text-sm text-red-600">REPROVADOS</div>
         </div>
         <div>
-          {data.ausentes || 0}
+          <p className='text-black'>{data.ausentes || 0}</p>                
           <div className="text-sm text-yellow-600">AUSENTES</div>
         </div>
       </div>
