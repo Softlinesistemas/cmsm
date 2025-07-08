@@ -164,7 +164,7 @@ export default function Inscricoes() {
         <div>
           <h4 className="font-semibold mb-1">Força Armada:</h4>
           <div className="flex gap-2">
-            {['exercito', 'marinha', 'aeronautica'].map(f => (
+            {['exercito', 'marinha', 'aeronautica', 'civil'].map(f => (
               <button
                 key={f}
                 onClick={() => toggleFiltro('forca', f)}
