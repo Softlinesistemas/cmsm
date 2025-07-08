@@ -10,4 +10,3 @@ const normalizeKey = (key: string): "main" => {
 };
 
 export default normalizeKey;
- 
