@@ -85,6 +85,8 @@ exports.up = function(knex) {
       table.string('CaminhoFoto', 100);
       table.string('CaminhoDoc1', 100);
       table.string('CaminhoDoc2', 100);
+      table.string('forca', 100);
+      table.string('ramoForca', 100);
       table.string('RegistroGRU', 100);
       table.dateTime('GRUData');
       table.decimal('GRUValor', 9, 2);

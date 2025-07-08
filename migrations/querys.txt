@@ -71,6 +71,8 @@ CREATE TABLE Candidato (
     Status              VARCHAR(20)    NULL,
     CaminhoResposta     VARCHAR(100)   NULL,
     CaminhoRedacao      VARCHAR(100)   NULL,
+    forca               VARCHAR(100)   NULL,
+    ramoForca           VARCHAR(100)   NULL,
     RevisaoGabarito     CHAR(1)        NULL,                   -- 'X'
     DataImportacao      DATE           NULL,
     HoraImportacao      CHAR(5)        NULL,
