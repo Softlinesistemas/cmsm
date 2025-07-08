@@ -13,7 +13,7 @@ import { useSession } from 'next-auth/react'
 
 export default function Formulario() {
   const router = useRouter()
-  const dataLimiteEdicao = new Date('2025-06-01')
+  const dataLimiteEdicao = new Date('2026-06-01')
   const [podeEditarExtras, setPodeEditarExtras] = useState(true)
   const [loading, setLoading] = useState(false);
   const [provisoryKey, setProvisoryKey] = useState("");

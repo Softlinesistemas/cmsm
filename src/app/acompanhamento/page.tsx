@@ -16,7 +16,7 @@ import { useQuery } from 'react-query'
 export default function Formulario() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const dataLimiteEdicao = new Date('2025-06-01');
+  const dataLimiteEdicao = new Date('2026-06-01');
   const [podeEditarExtras, setPodeEditarExtras] = useState(true);
   const [provisoryKey, setProvisoryKey] = useState("");
   const [provisoryUser, setProvisoryUser] = useState("");

@@ -1,111 +1,104 @@
-'use client'
+"use client";
 
 import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import { FaCheck, FaTimes, FaFilter } from "react-icons/fa";
+import api from "@/utils/api";
 
 // Tipagem dos candidatos
 interface Candidato {
   id: number;
   nome: string;
   cpf: string;
-  numeroInscricao?: string; // Só para deferidos
   status: "Em Análise" | "Deferido" | "Indeferido" | "Isento";
+  numeroInscricao?: string;
 }
 
-const BaixaPagamentos = () => {
-  // Lista inicial de candidatos (todos em análise)
-  const [candidatos, setCandidatos] = useState<Candidato[]>([
-    { id: 1, nome: "Carlos Santos", cpf: "123.456.789-00", status: "Em Análise" },
-    { id: 2, nome: "Ana Lima", cpf: "987.654.321-00", status: "Em Análise" },
-    { id: 3, nome: "Mariana Souza", cpf: "456.789.123-00", status: "Em Análise" },
-  ]);
-
-  // Estado para filtro
+export default function BaixaPagamentos() {
+  const queryClient = useQueryClient();
   const [filtro, setFiltro] = useState<"Todos" | "Deferido" | "Indeferido" | "Em Análise" | "Isento">("Todos");
 
-  // Função para deferir um candidato individualmente
-  const deferir = (id: number) => {
-    setCandidatos(candidatos.map(c => {
-      if (c.id === id) {
-        return { ...c, status: "Deferido", numeroInscricao: gerarNumeroInscricao(c.id) };
-      }
-      return c;
-    }));
-  };
-
-  // Função para indeferir um candidato individualmente
-  const indeferir = (id: number) => {
-    setCandidatos(candidatos.map(c => {
-      if (c.id === id) {
-        return { ...c, status: "Indeferido", numeroInscricao: undefined };
-      }
-      return c;
-    }));
-  };
-
-    // Função para indeferir um candidato individualmente
-  const isento = (id: number) => {
-    setCandidatos(candidatos.map(c => {
-      if (c.id === id) {
-        return { ...c, status: "Isento", numeroInscricao: undefined };
-      }
-      return c;
-    }));
-  };
-
-  // Gera um número de inscrição simples baseado no ID
+  // Função para gerar número de inscrição
   const gerarNumeroInscricao = (id: number) => `INS-${id.toString().padStart(4, '0')}`;
 
-  // Função para deferir todos
+  // Busca candidatos
+  const { data: candidatos = [], isLoading } = useQuery<Candidato[]>(
+    ['candidatos'],
+    async () => {
+      const res = await api.get("/api/candidato/deferimento");
+      return res.data.candidatos.map((c: any) => ({
+        id: c.id,
+        nome: c.nome,
+        cpf: c.cpf,
+        status: c.status,
+        numeroInscricao: c.status === 'Deferido' ? gerarNumeroInscricao(c.id) : undefined,
+      }));
+    }
+  );
+
+  // Mutations
+  const deferirMutation = useMutation(
+    ({ id }: { id: number }) => {
+      const registro = gerarNumeroInscricao(id);
+      const payload = { valor: 0, registro };
+      return api.post(`/api/candidato/deferimento/${id}/deferir`, payload);
+    },
+    { onSuccess: () => queryClient.invalidateQueries(['candidatos']) }
+  );
+
+  const indeferirMutation = useMutation(
+    ({ id }: { id: number }) => api.post(`/api/candidato/deferimento/${id}/indeferir`),
+    { onSuccess: () => queryClient.invalidateQueries(['candidatos']) }
+  );
+
+  const isentoMutation = useMutation(
+    ({ id }: { id: number }) => api.post(`/api/candidato/deferimento/${id}/isento`),
+    { onSuccess: () => queryClient.invalidateQueries(['candidatos']) }
+  );
+
+  // Ações em massa
   const deferirTodos = () => {
-    setCandidatos(candidatos.map(c => ({
-      ...c,
-      status: "Deferido",
-      numeroInscricao: gerarNumeroInscricao(c.id)
-    })));
+    candidatos.forEach(c => deferirMutation.mutate({ id: c.id }));
   };
 
-  // Função para indeferir todos
   const indeferirTodos = () => {
-    setCandidatos(candidatos.map(c => ({
-      ...c,
-      status: "Indeferido",
-      numeroInscricao: undefined
-    })));
+    candidatos.forEach(c => indeferirMutation.mutate({ id: c.id }));
   };
 
-  // Filtra a lista com base no filtro selecionado
-  const listaFiltrada = filtro === "Todos"
+  // Lista filtrada
+  const listaFiltrada = filtro === 'Todos'
     ? candidatos
     : candidatos.filter(c => c.status === filtro);
 
-  // Contadores por status
-  const totalDeferido = candidatos.filter(c => c.status === "Deferido").length;
-  const totalIndeferido = candidatos.filter(c => c.status === "Indeferido").length;
-  const totalEmAnalise = candidatos.filter(c => c.status === "Em Análise").length;
-  const totalIsentos = candidatos.filter(c => c.status === "Isento").length;
+  // Contadores
+  const totalDeferido = candidatos.filter(c => c.status === 'Deferido').length;
+  const totalIndeferido = candidatos.filter(c => c.status === 'Indeferido').length;
+  const totalEmAnalise = candidatos.filter(c => c.status === 'Em Análise').length;
+  const totalIsentos = candidatos.filter(c => c.status === 'Isento').length;
+
+  if (isLoading) return <div>Carregando...</div>;
 
   return (
     <div className="p-4 bg-blue-50 rounded-xl text-black">
       <h2 className="text-2xl font-bold mb-4 text-blue-800">Avaliação de Pagamentos</h2>
 
-      {/* Botões de ação em massa */}
+      {/* Ações em massa */}
       <div className="flex flex-wrap gap-2 mb-4">
         <button
           onClick={deferirTodos}
           className="flex items-center gap-1 bg-blue-800 text-white px-3 py-1 rounded hover:bg-blue-700"
         >
-          <FaCheck /> Deferir 100
+          <FaCheck /> Deferir Todos
         </button>
         <button
           onClick={indeferirTodos}
           className="flex items-center gap-1 bg-red-800 text-white px-3 py-1 rounded hover:bg-red-700"
         >
-          <FaTimes /> Indeferir 100
+          <FaTimes /> Indeferir Todos
         </button>
       </div>
 
-      {/* Filtro por status */}
+      {/* Filtro */}
       <div className="flex items-center gap-2 mb-4">
         <FaFilter className="text-blue-800" />
         <select
@@ -117,17 +110,19 @@ const BaixaPagamentos = () => {
           <option value="Deferido">Deferido</option>
           <option value="Indeferido">Indeferido</option>
           <option value="Em Análise">Em Análise</option>
+          <option value="Isento">Isento</option>
         </select>
       </div>
 
-      {/* Quantitativo de status */}
+      {/* Status counts */}
       <div className="mb-4 text-sm">
         <p><strong className="text-blue-800">Total Deferidos:</strong> {totalDeferido}</p>
         <p><strong className="text-red-800">Total Indeferidos:</strong> {totalIndeferido}</p>
         <p><strong className="text-gray-800">Total Em Análise:</strong> {totalEmAnalise}</p>
+        <p><strong className="text-yellow-800">Total Isentos:</strong> {totalIsentos}</p>
       </div>
 
-      {/* Tabela de candidatos */}
+      {/* Tabela */}
       <table className="w-full text-sm border rounded overflow-hidden">
         <thead className="bg-blue-800 text-white">
           <tr>
@@ -146,37 +141,37 @@ const BaixaPagamentos = () => {
               <td className="p-2">{c.nome}</td>
               <td className="p-2">{c.cpf}</td>
               <td className="p-2">
-                <span
-                  className={
-                    c.status === "Deferido"
-                      ? "text-green-600 font-semibold"
-                      : c.status === "Indeferido"
-                      ? "text-red-600 font-semibold"
-                      : "text-gray-600 font-semibold"
-                  }
-                >
+                <span className={
+                  c.status === "Deferido" ? "text-green-600 font-semibold" :
+                  c.status === "Indeferido" ? "text-red-600 font-semibold" :
+                  c.status === "Isento" ? "text-yellow-600 font-semibold" :
+                  "text-gray-600 font-semibold"
+                }>
                   {c.status}
                 </span>
               </td>
               <td className="p-2">{c.numeroInscricao || "-"}</td>
               <td className="p-2 flex gap-2">
                 <button
-                  onClick={() => deferir(c.id)}
+                  onClick={() => deferirMutation.mutate({ id: c.id })}
+                  disabled={deferirMutation.isLoading}
                   className="flex items-center gap-1 bg-blue-800 text-white px-2 py-1 rounded hover:bg-blue-700"
                 >
-                  <FaCheck /> Deferir
+                  <FaCheck />
                 </button>
                 <button
-                  onClick={() => indeferir(c.id)}
+                  onClick={() => indeferirMutation.mutate({ id: c.id })}
+                  disabled={indeferirMutation.isLoading}
                   className="flex items-center gap-1 bg-red-800 text-white px-2 py-1 rounded hover:bg-red-700"
                 >
-                  <FaTimes /> Indeferir
+                  <FaTimes />
                 </button>
-                                <button
-                  onClick={() => indeferir(c.id)}
+                <button
+                  onClick={() => isentoMutation.mutate({ id: c.id })}
+                  disabled={isentoMutation.isLoading}
                   className="flex items-center gap-1 bg-yellow-800 text-white px-2 py-1 rounded hover:bg-yellow-700"
                 >
-                  <FaTimes /> Isento
+                  Isento
                 </button>
               </td>
             </tr>
@@ -185,6 +180,4 @@ const BaixaPagamentos = () => {
       </table>
     </div>
   );
-};
-
-export default BaixaPagamentos;
+}

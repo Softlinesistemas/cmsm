@@ -62,6 +62,7 @@ CREATE TABLE Candidato (
     GRUData             DATETIME       NULL,
     GRUValor            DECIMAL(9,2)   NULL,
     GRUHora             CHAR(5)        NULL,
+    GRUStatus           VARCHAR(255)   NULL,
     CodSala             INT            NULL,
     DataEnsalamento     DATETIME       NULL,
     HoraEnsalamento     CHAR(6)        NULL,
