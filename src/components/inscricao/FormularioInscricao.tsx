@@ -4,9 +4,11 @@ import api from '@/utils/api'
 import { useQuery } from 'react-query' 
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { useSession } from 'next-auth/react'
 
 const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, checkboxMarcado, setCheckboxMarcado, provisoryKey, loading, provisoryUser, paymentButton, podeEditarExtras, handleSubmit, setFormData, formData, handleChange }) => {
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   const einCpfMask = (value: string) => {
     let cleaned = value.replace(/\D/g, "");
@@ -120,7 +122,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
               {/* Linha 1 */}
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">CPF</label>
-                <input disabled={isAcompanhamento} readOnly={isAcompanhamento} maxLength={14} value={einCpfMask(formData.cpf || "")} name="cpf" onChange={handleChange} required className={baseInput}  />
+                <input disabled={isAcompanhamento || session?.user?.cpf} readOnly={isAcompanhamento} maxLength={14} value={einCpfMask(formData.cpf || "")} name="cpf" onChange={handleChange} required className={baseInput}  />
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Data de Nasc.</label>
@@ -458,7 +460,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Email Candidato</label>
-                <input type="email" name="emailCandidato" value={formData.emailCandidato} onChange={handleChange} className={baseInput} disabled={isAcompanhamento} readOnly={isAcompanhamento} />
+                <input type="email" name="emailCandidato" value={formData.emailCandidato} onChange={handleChange} className={baseInput} disabled={isAcompanhamento || session?.user?.email} readOnly={isAcompanhamento} />
               </div>
               {primeiroCad && (
                 <div className="col-span-12 md:col-span-4">
