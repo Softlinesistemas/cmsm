@@ -44,10 +44,11 @@ export async function POST(request: NextRequest) {
     // Iniciar transação
     await db.transaction(async (trx) => {
       // Buscar candidatos sem sala, ordenados por inscrições mais antigas
-      const candidatos = await trx('Candidato')
-        .select('CodIns', 'PortadorNec')
-        .whereNull('CodSala')
-        .orderBy('CodIns', 'asc');
+    const candidatos = await trx('Candidato') 
+      .select('CodIns', 'PortadorNec')
+      .whereIn('GRUStatus', ['DEFERIDO', 'CONCLUIDO'])
+      .whereNull('CodSala')
+      .orderBy('CodIns', 'asc');
 
       // Buscar salas ativas com reserva para PNE
       const salas = await trx('Sala')
