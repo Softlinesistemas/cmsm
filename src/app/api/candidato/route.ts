@@ -10,118 +10,16 @@ const toNumber = z.preprocess((val) => {
   return val;
 }, z.number().int());
 
-const toBoolean = z.preprocess((val) => {
-  if (val === null || val === undefined || val === "") return undefined;
-  if (typeof val === "string") return val === 'true' || val === '1';
-  return Boolean(val);
-}, z.boolean());
-
 const candidatoSchema = z.object({
-  CodIns: toNumber.optional(),
-  CodUsu: toNumber.optional(),
   Nome: z.string().min(3, "O nome deve ter ao menos 3 caracteres."),
-  CPF: z.string()
-    .regex(/^\d{3}\.?\d{3}\.?\d{3}\-?\d{2}$/, "CPF inválido."),
+  CPF: z.string().regex(/^\d{3}\.?\d{3}\.?\d{3}\-?\d{2}$/, "CPF inválido."),
   Nasc: z.string()
     .refine(s => !isNaN(Date.parse(s)), { message: "Data de nascimento inválida." })
     .transform(s => new Date(s))
     .refine(d => d <= new Date(), { message: "Data de nascimento não pode ser no futuro." }),
-  Sexo: z.enum(["masculino", "feminino"]),
+  CodIns: toNumber.optional(),
+  CodUsu: toNumber.optional(),
   Email: z.string().email("Formato de e-mail inválido.").optional(),
-  Cep: z.string()
-    .regex(/^\d{5}-?\d{3}$/, "CEP inválido.")
-    .optional()
-    .nullable(),
-  Endereco: z.string().max(60).optional(),
-  Complemento: z.string().max(30).optional(),
-  Bairro: z.string().max(30).optional(),
-  Cidade: z.string().max(30).optional(),
-  UF: z.string().length(2, "UF deve ter 2 caracteres.").optional(),
-  CodCot1: toNumber.optional(),
-  CodCot2: toNumber.optional(),
-  CodCot3: toNumber.optional(),
-  CodCot4: toNumber.optional(),
-  CodCot5: toNumber.optional(),
-  CodCot6: toNumber.optional(),
-  CodCot7: toNumber.optional(),
-  CodCot8: toNumber.optional(),
-  CodCot9: toNumber.optional(),
-  CodCot10: toNumber.optional(),
-  PortadorNec: toBoolean.optional(),
-  AtendimentoEsp: toBoolean.optional(),
-  Responsavel: z.string().max(100).optional(),
-  CPFResp: z.string()
-    .transform(s => s ? s.replace(/\D/g, "") : s)
-    .refine(s => !s || /^\d{11}$/.test(s), { message: "CPF do responsável inválido." })
-    .optional()
-    .nullable(),
-  NascResp: z.string()
-    .refine(s => !s || !isNaN(Date.parse(s)), { message: "Data de nascimento do responsável inválida." })
-    .transform(s => s ? new Date(s) : s)
-    .optional()
-    .nullable(),
-  SexoResp: z.enum(["masculino", "feminino"]).optional(),
-  CepResp: z.string()
-    .regex(/^\d{5}-?\d{3}$/, "CEP do responsável inválido.")
-    .optional()
-    .nullable(),
-  EnderecoResp: z.string().max(60).optional(),
-  ComplementoResp: z.string().max(30).optional(),
-  BairroResp: z.string().max(30).optional(),
-  CidadeResp: z.string().max(30).optional(),
-  UFResp: z.string().length(2).optional(),
-  ProfissaoResp: z.string().max(100).optional(),
-  EmailResp: z.string().email("Formato de e-mail inválido.").optional(),
-  TelResp: z.string()
-    .transform(s => s ? s.replace(/\D/g, "") : s)
-    .optional()
-    .nullable(),
-  Parentesco: z.string().max(20).optional(),
-  PertenceFA: z.string().max(20).optional(),
-  CaminhoFoto: z.string().optional(),
-  CaminhoDoc1: z.string().optional(),
-  CaminhoDoc2: z.string().optional(),
-  RegistroGRU: z.string().optional(),
-  GRUData: z.string()
-    .transform(s => s ? new Date(s) : s)
-    .optional()
-    .nullable(),
-  GRUValor: toNumber.optional(),
-  GRUHora: z.string().optional(),
-  CodSala: toNumber.optional(),
-  DataEnsalamento: z.string()
-    .transform(s => s ? new Date(s) : s)
-    .optional()
-    .nullable(),
-  HoraEnsalamento: z.string().optional(),
-  CodUsuEnsalamento: toNumber.optional(),
-  Status: z.string().max(20).optional(),
-  CaminhoResposta: z.string().optional(),
-  CaminhoRedacao: z.string().optional(),
-  RevisaoGabarito: toBoolean.optional(),
-  DataImportacao: z.string()
-    .transform(s => s ? new Date(s) : s)
-    .optional()
-    .nullable(),
-  HoraImportacao: z.string().optional(),
-  CodUsuImportacao: toNumber.optional(),
-  NotaMatematica: z.preprocess((val) => {
-    if (val === null || val === undefined || val === "") return undefined;
-    return typeof val === "string" ? parseFloat(val) : val;
-  }, z.number()).optional(),
-  NotaPortugues: z.preprocess((val) => {
-    if (val === null || val === undefined || val === "") return undefined;
-    return typeof val === "string" ? parseFloat(val) : val;
-  }, z.number()).optional(),
-  NotaRedacao: z.string().optional(),
-  DataRevisao: z.string()
-    .transform(s => s ? new Date(s) : s)
-    .optional()
-    .nullable(),
-  CodUsuRev: toNumber.optional(),
-  Seletivo: z.string().max(10, "Seletivo inválido.").optional(),
-  isencao: z.string().max(12).optional(),
-  observacao: z.string().max(255).optional(),
 });
 
 export async function GET(request: Request) {
@@ -160,12 +58,14 @@ export async function POST(request: Request) {
     const body = await request.json();
     let { CodIns } = body;    
 
-    try {
+   try {
       data = candidatoSchema.parse(body);
     } catch (err) {
       if (err instanceof ZodError) {
+        // Retorna apenas a primeira mensagem de erro
+        const first = err.errors[0];
         return NextResponse.json(
-          { errors: err.errors.map(e => ({ field: e.path.join("."), message: e.message })) },
+          { error: first.message },
           { status: 400 }
         );
       }

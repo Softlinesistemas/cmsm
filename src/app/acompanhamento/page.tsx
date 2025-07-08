@@ -288,22 +288,8 @@ export default function Formulario() {
       toast.success("Inscrição realizada!");
       setPaymentButton(true);
     } catch (error: any) {
-        const resp = error.response;
-  if (resp) {
-      if (resp.status === 400 && Array.isArray(resp.data.errors)) {
-        resp.data.errors.forEach((e: { field: string; message: string }) => {
-          toast.error(`${e.field}: ${e.message}`);
-        });
-      }
-      else if (resp.status === 409 && resp.data.error) {
-        toast.error(resp.data.error);
-      }
-      else {
-        toast.error(resp.data.error || resp.data.message || 'Erro desconhecido');
-      }
-      } else {
-        toast.error('Não foi possível conectar ao servidor.');
-      }
+      toast.error(error.response.data.error || error.response.data.message)
+      console.error("Erro ao enviar dados:", error);
     }
     setLoading(false);
   };
