@@ -11,7 +11,7 @@ interface Inscricao {
   cpf: string;
   numeroInscricao: string;
   status: 'CONCLUIDO' | 'DEFERIDO' | 'INDEFERIDO' | 'CRIADO';
-  sexo: 'Masculino' | 'Feminino';
+  sexo: 'M' | 'F';
   forca: 'exercito' | 'marinha' | 'aeronautica';
   sala: string;
   telefone: string;
@@ -201,7 +201,7 @@ export default function Inscricoes() {
                   {i.status || "PENDENTE"}
                 </span>
               </p>
-              <p><strong>Sexo:</strong> {i.sexo}</p>
+              <p><strong>Sexo:</strong> {i.sexo === "F" ? "Feminino" : "Masculino"}</p>
               <p><strong>Força:</strong> {i.forca}</p>
               <p><strong>Sala:</strong> {i.sala}</p>
             </div>
