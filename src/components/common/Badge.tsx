@@ -15,3 +15,4 @@ export function Badge({ variant = "success", children }: BadgeProps) {
 
   return <span className={cn(baseStyle, variants[variant])}>{children}</span>;
 }
+ 
