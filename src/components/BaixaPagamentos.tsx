@@ -11,7 +11,7 @@ interface Candidato {
   nome: string;
   cpf: string;
   status: "Pendente" | "Deferido" | "Indeferido" | "Isento";
-  numeroInscricao?: string;
+  numeroInscricao: number;
 }
 
 export default function BaixaPagamentos() {
@@ -149,14 +149,14 @@ export default function BaixaPagamentos() {
               <td className="p-2">{c.numeroInscricao || "-"}</td>
               <td className="p-2 flex gap-2">
                 <button
-                  onClick={() => deferirMutation.mutate({ id: c.id })}
+                  onClick={() => deferirMutation.mutate({ id: c.numeroInscricao })}
                   disabled={deferirMutation.isLoading}
                   className="flex items-center gap-1 bg-blue-800 text-white px-2 py-1 rounded hover:bg-blue-700"
                 >
                   Deferir <FaCheck />
                 </button>
                 <button
-                  onClick={() => indeferirMutation.mutate({ id: c.id })}
+                  onClick={() => indeferirMutation.mutate({ id: c.numeroInscricao })}
                   disabled={indeferirMutation.isLoading}
                   className="flex items-center gap-1 bg-red-800 text-white px-2 py-1 rounded hover:bg-red-700"
                 >
