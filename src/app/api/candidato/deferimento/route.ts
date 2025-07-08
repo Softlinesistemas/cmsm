@@ -5,8 +5,8 @@ import dbConfig from "@/db/dbConfig";
 export async function GET(request: Request) {
   const db = getDBConnection(dbConfig());
   const candidatos = await db<any>("Candidato")
-    .select("CodIns as id", "Nome as nome", "CPF as cpf", "GRUStatus as status")
-    .where("GRUStatus", "Em Análise");
+    .select("CodIns as id", "Nome as nome", "CPF as cpf", "isencao as status")
+    .where("isencao", "Pendente");
 
   return new Response(JSON.stringify({ candidatos }), {
     status: 200,

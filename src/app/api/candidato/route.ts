@@ -197,8 +197,13 @@ export async function POST(request: Request) {
         });
       return NextResponse.json({ message: "Candidato atualizado com sucesso." });
     } else {
+      const lastCodUsu = await db("Candidato")
+        .max("CodUsu as maxCodUsu")
+        .first();
+      const CodUsu = (lastCodUsu?.maxCodUsu || 0) + 1;
+
       await db("Candidato").insert({
-        CodUsu,
+        CodUsu: CodUsu,
         CodIns,
         Nome,
         Seletivo,
