@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
  * Função para enviar email de recuperação de senha
  * @param emailDestino - email do usuário
  * @param linkRecuperacao - link para redefinir senha
- */
+ */ 
 export async function enviarEmailRecuperacao(emailDestino: string, linkRecuperacao: string) {
   // Cria o transporte SMTP
   const transporter = nodemailer.createTransport({
