@@ -1,3 +1,4 @@
+// app/api/candidato/[id]/isento/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import getDBConnection from "@/db/conn";
 import dbConfig from "@/db/dbConfig";
@@ -11,14 +12,14 @@ export async function POST(request: Request) {
   await db("Candidato")
     .where("CodIns", id)
     .update({
-      GRUStatus: "Indeferido",
+      GRUStatus: "Isento",
       RegistroGRU: null,
       GRUValor: null,
       GRUData: null,
       GRUHora: null,
     });
 
-  return new Response(JSON.stringify({ message: "Candidato indeferido com sucesso." }), {
+  return new Response(JSON.stringify({ message: "Candidato marcado como isento." }), {
     status: 200,
     headers: { "Content-Type": "application/json" },
   });
