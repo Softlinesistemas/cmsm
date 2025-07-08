@@ -9,7 +9,7 @@ export async function GET() {
     db = getDBConnection(dbConfig());
 
     const candidato = await db("Candidato as c")
-        .select("c.Nome as nome", "c.CodIns as numeroInscricao", "c.Status as status", "c.CPF as cpf", "c.Sexo as sexo", "s.Sala", "c.ramoForca as forca", "c.TelResp as telefone")
+        .select("c.Nome as nome", "c.CodIns as numeroInscricao", "c.GRUStatus as status", "c.CPF as cpf", "c.Sexo as sexo", "s.Sala", "c.ramoForca as forca", "c.TelResp as telefone")
         .leftJoin("Sala as s", "c.CodSala", "s.CodSala")
 
     return NextResponse.json(candidato);
