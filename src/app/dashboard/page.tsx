@@ -122,12 +122,6 @@ function ExameCard({ title, data, filtro, setFiltro }: any) {
     <div className="bg-white rounded-xl shadow-lg p-4 border-2 border-gray-300">
       <div className="flex justify-between items-center mb-2">
         <div className="text-sm font-bold text-gray-600">{title}</div>
-        <input
-          className="border px-2 py-1 rounded text-sm"
-          placeholder="Filtrar..."
-          value={filtro}
-          onChange={(e) => setFiltro(e.target.value)}
-        />
       </div>
       <div className="grid grid-cols-3 gap-2 text-center text-xl font-bold">
         <div>

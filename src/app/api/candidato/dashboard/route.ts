@@ -42,18 +42,19 @@ export async function GET() {
 
     // agrupamento por forca e sexo
     const barrasForcaSexoRaw = await db('Candidato')
-      .select('ramoForca as name')
+      .select(db.raw("COALESCE(NULLIF(ramoForca, ''), 'N/A') as name"))
       .select(
         db.raw("SUM(case when Sexo = 'M' then 1 else 0 end) as Masculino"),
         db.raw("SUM(case when Sexo = 'F' then 1 else 0 end) as Feminino")
       )
-      .groupBy('ramoForca')
+      .groupByRaw("COALESCE(NULLIF(ramoForca, ''), 'N/A')")
+
 
     // distribuição geral (pie)
     const pieDataRaw = await db('Candidato')
-      .select('ramoForca as name')
+      .select(db.raw("COALESCE(NULLIF(ramoForca, ''), 'N/A') as name"))
       .count({ value: '*' })
-      .groupBy('ramoForca')
+      .groupByRaw("COALESCE(NULLIF(ramoForca, ''), 'N/A')")
 
     return NextResponse.json({
       total: Number(total),
