@@ -271,7 +271,7 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     console.error("Erro ao salvar candidato:", error);
-    return NextResponse.json({ message: "Erro ao salvar candidato." }, { status: 500 });
+    return NextResponse.json({ message: "Erro ao salvar formulário." }, { status: 500 });
   } finally {
     if (db) await db.destroy();
   }
