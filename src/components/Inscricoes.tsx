@@ -10,7 +10,7 @@ interface Inscricao {
   nome: string;
   cpf: string;
   numeroInscricao: string;
-  status: 'PENDENTE' | 'APROVADO' | 'REPROVADO';
+  status: 'CONCLUIDO' | 'DEFERIDO' | 'INDEFERIDO' | 'CRIADO';
   sexo: 'Masculino' | 'Feminino';
   forca: 'exercito' | 'marinha' | 'aeronautica';
   sala: string;
@@ -21,12 +21,11 @@ interface Inscricao {
 }
 
 export default function Inscricoes() {
-  const { data: inscricoes = [], isLoading, isError } = useQuery<Inscricao[]>(
-    'inscricoes',
-    () => api.get('api/candidato/inscricao').then(res => res.data)
-  );
-
   const [pesquisa, setPesquisa] = useState('');
+  const { data: inscricoes = [], isLoading, isError } = useQuery<Inscricao[]>(
+    ['inscricoes', pesquisa],
+    () => api.get(`api/candidato/inscricao?pesquisa=${pesquisa}`).then(res => res.data)
+  );
   const [filtroStatus, setFiltroStatus] = useState<'Todos' | Inscricao['status']>('Todos');
   const [filtroSexo, setFiltroSexo] = useState<Inscricao['sexo'][]>([]);
   const [filtroForca, setFiltroForca] = useState<Inscricao['forca'][]>([]);
@@ -49,34 +48,34 @@ export default function Inscricoes() {
   };
 
   // loading / error
-  if (isLoading) return <p>Carregando inscrições...</p>;
   if (isError) {
     toast.error('Não foi possível carregar as inscrições.');
     return <p>Erro ao carregar dados.</p>;
   }
 
   // aplica filtros
-  const filtradas = inscricoes.filter(i => {
-    const lower = pesquisa.toLowerCase();
+  const filtradas = inscricoes?.filter(i => {
+    const lower = pesquisa?.toLowerCase();
     const condPesquisa =
-      i.nome.toLowerCase().includes(lower) ||
-      i.numeroInscricao.includes(pesquisa);
+      i.nome?.toLowerCase()?.includes(lower) ||
+      i.numeroInscricao?.includes(pesquisa);
     const condStatus =
       filtroStatus === 'Todos' || i.status === filtroStatus;
     const condSexo =
-      filtroSexo.length === 0 || filtroSexo.includes(i.sexo);
+      filtroSexo?.length === 0 || filtroSexo?.includes(i.sexo);
     const condForca =
-      filtroForca.length === 0 || filtroForca.includes(i.forca);
+      filtroForca?.length === 0 || filtroForca?.includes(i.forca);
     return condPesquisa && condStatus && condSexo && condForca;
   });
 
   const getCorTextoStatus = (status: Inscricao['status']) => {
     switch (status) {
-      case 'APROVADO':
+      case 'CONCLUIDO':
+      case 'DEFERIDO':
         return 'text-green-600 font-semibold';
-      case 'REPROVADO':
+      case 'INDEFERIDO':
         return 'text-red-600 font-semibold';
-      case 'PENDENTE':
+      case 'CRIADO':
         return 'text-yellow-600 font-semibold';
       default:
         return 'text-yellow-600 font-semibold';
@@ -128,9 +127,10 @@ export default function Inscricoes() {
           }
         >
           <option>Todos</option>
-          <option value="PENDENTE">Pendente</option>
-          <option value="APROVADO">Aprovado</option>
-          <option value="REPROVADO">Reprovado</option>
+          <option value="DEFERIDO">Deferido</option>
+          <option value="CRIADO">Criado</option>
+          <option value="CONCLUIDO">Concluído</option>
+          <option value="INDEFERIDO">Indeferido</option>
         </select>
         <button
           onClick={exportarCSV}
