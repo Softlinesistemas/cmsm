@@ -20,7 +20,7 @@ const AvaliacaoRecursos = () => {
   });
 
   // Controle do modal
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalAberto, setModalAberto] = useState<number | null>(null);
   const [observacao, setObservacao] = useState("");
   const [loadingAprovar, setLoadingAprovar] = useState(false);
   const [loadingReprovar, setLoadingReprovar] = useState(false);
@@ -29,9 +29,9 @@ const AvaliacaoRecursos = () => {
    * Abre o modal para adicionar/visualizar observações.
    * @param recurso Recurso selecionado
    */
-  const abrirModal = (recurso: any) => {
+  const abrirModal = (id: any) => {
     setObservacao(""); // Limpa o campo para nova observação
-    setModalAberto(true);
+    setModalAberto(id);
   };
 
   /**
@@ -135,14 +135,14 @@ const AvaliacaoRecursos = () => {
                     {loadingReprovar ? <LoadingIcon /> : <FaTimes />} Reprovar
                   </button>
                   <button
-                    onClick={() => abrirModal(r)}
+                    onClick={() => abrirModal(r.CodIns)}
                     className="flex items-center gap-1 bg-gray-300 text-black px-2 py-1 rounded hover:bg-gray-400"
                   >
                     <FaComment /> Observações
                   </button>
                 </td>
-                {modalAberto && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                {modalAberto ===  r.CodIns && (
+                  <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-4 rounded shadow-lg w-full max-w-md">
                       {/* Título do Modal */}
                       <h3 className="text-lg font-bold mb-2 text-blue-800">
@@ -175,7 +175,7 @@ const AvaliacaoRecursos = () => {
                       {/* Botões do modal */}
                       <div className="flex justify-end gap-2">
                         <button
-                          onClick={() => setModalAberto(false)}
+                          onClick={() => setModalAberto(null)}
                           className="px-3 py-1 bg-gray-300 text-black rounded hover:bg-gray-400"
                         >
                           Cancelar
