@@ -79,7 +79,7 @@ export default function Processo() {
                 <strong>Referente a:</strong> {solicitacoes.processoSel}
               </p>
               <p className="text-sm text-gray-600 mb-1">
-                <strong>Data da Solicitação:</strong> {moment(item.DataCad).tz("America/Sao_Paulo").format("DD-MM-YYYY")} {item.HoraCad}
+                <strong>Data da Solicitação:</strong> {moment(item.DataCad).tz("America/Sao_Paulo").format("DD/MM/YYYY")} {item.HoraCad}
               </p>
 
               {item.observacoes && (
@@ -105,7 +105,7 @@ export default function Processo() {
                     <p className="mb-2 text-black"><strong>Tipo:</strong>Isenção</p>
                     <p className="mb-2 text-black"><strong>Candidato:</strong> {item.Nome} - CodIns: {item.CodIns}</p>
                     <p className="mb-2 text-black"><strong>Status:</strong> {item.isencao}</p>
-                    <p className="mb-2 text-black"><strong>Data da Solicitação:</strong> {moment(item.DataCad).tz("America/Sao_Paulo").format("DD-MM-YYYY")} {item.HoraCad}</p>
+                    <p className="mb-2 text-black"><strong>Data da Solicitação:</strong> {moment(item.DataCad).tz("America/Sao_Paulo").format("DD/MM/YYYY")} {item.HoraCad}</p>
                     {item.observacao && (
                       <p className="mb-2 text-red-600"><strong>Observações:</strong> {item.observacao}</p>
                     )}                 

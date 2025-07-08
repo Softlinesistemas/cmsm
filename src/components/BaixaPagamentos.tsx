@@ -79,7 +79,7 @@ export default function BaixaPagamentos() {
       <h2 className="text-2xl font-bold mb-4 text-blue-800">Avaliação de Pagamentos</h2>
 
       {/* Ações em massa */}
-      <div className="flex flex-wrap gap-2 mb-4">
+      {/* <div className="flex flex-wrap gap-2 mb-4">
         <button
           onClick={deferirTodos}
           className="flex items-center gap-1 bg-blue-800 text-white px-3 py-1 rounded hover:bg-blue-700"
@@ -92,7 +92,7 @@ export default function BaixaPagamentos() {
         >
           <FaTimes /> Indeferir Todos
         </button>
-      </div>
+      </div> */}
 
       {/* Filtro */}
       <div className="flex items-center gap-2 mb-4">
