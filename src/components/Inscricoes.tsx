@@ -128,9 +128,9 @@ export default function Inscricoes() {
           }
         >
           <option>Todos</option>
-          <option>Pendente</option>
-          <option>Aprovado</option>
-          <option>Rejeitado</option>
+          <option value="PENDENTE">Pendente</option>
+          <option value="APROVADO">Aprovado</option>
+          <option value="REPROVADO">Reprovado</option>
         </select>
         <button
           onClick={exportarCSV}
@@ -145,7 +145,7 @@ export default function Inscricoes() {
         <div>
           <h4 className="font-semibold mb-1">Sexo:</h4>
           <div className="flex gap-2">
-            {['Masculino', 'Feminino'].map(sexo => (
+            {['M', 'F'].map(sexo => (
               <button
                 key={sexo}
                 onClick={() => toggleFiltro('sexo', sexo)}
@@ -155,7 +155,7 @@ export default function Inscricoes() {
                     : 'bg-white text-gray-700 border-gray-300'
                 } transition`}
               >
-                {sexo}
+                {sexo === "F" ? "Feminino" : "Masculino"}
               </button>
             ))}
           </div>
@@ -164,7 +164,7 @@ export default function Inscricoes() {
         <div>
           <h4 className="font-semibold mb-1">Força Armada:</h4>
           <div className="flex gap-2">
-            {['Exército', 'Marinha', 'Aeronáutica'].map(f => (
+            {['exercito', 'marinha', 'aeronautica'].map(f => (
               <button
                 key={f}
                 onClick={() => toggleFiltro('forca', f)}
@@ -174,7 +174,7 @@ export default function Inscricoes() {
                     : 'bg-white text-gray-700 border-gray-300'
                 } transition`}
               >
-                {f}
+                {f === "marinha" ? "Marinha" : f === "aeronautica" ? "Aeronautica" : f === "exercito" ? "Exercito" : "Civil"}
               </button>
             ))}
           </div>
