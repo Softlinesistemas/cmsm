@@ -2,7 +2,6 @@
 import React, { createContext, useState, useEffect, useMemo, ReactNode } from "react";
 import Processo from '@/components/Processo'
 import Inscricoes from '@/components/Inscricoes'
-// import Pagamentos from "@/components/Pagamentos";
 import BaixaPagamentos from '@/components/BaixaPagamentos'
 import UploadArquivos from '@/components/UploadArquivos'
 import Relatorios from '@/components/Relatorios'
@@ -10,12 +9,10 @@ import AvaliacaoRecursos from '@/components/AvaliacaoRecursos'
 import Resultados from '@/components/Resultados'
 import Gabarito from '@/components/Gabarito'
 import CadastroEditais from '@/components/CadastroEditais'
-import Comunicados from '@/components/Comunicados'
 import EmailMassa from '@/components/EmailMassa'
 import GestaoAdmins from '@/components/GestaoAdmins'
 import LogsAcesso from '@/components/LogsAcesso'
 import Backup from '@/components/Backup'
-import Configuracoes from '@/components/Configuracoes'
 
 const LOCAL_STORAGE_KEY = "appSettings";
 
@@ -53,9 +50,6 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
       case 'Inscricoes':
         setComponent(<Inscricoes />);
         break;
-      // case 'Pagamentos':
-      //   setComponent(<Pagamentos />);
-      //   break;
       case 'BaixaPagamentos':
         setComponent(<BaixaPagamentos />);
         break;
@@ -91,9 +85,6 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
         break;
       case 'Backup':
         setComponent(<Backup />);
-        break;
-      case 'Configuracoes':
-        setComponent(<Configuracoes />);
         break;
       default:
         setComponent(<div>Selecione um item no menu</div>);
