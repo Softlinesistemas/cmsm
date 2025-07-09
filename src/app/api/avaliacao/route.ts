@@ -43,12 +43,12 @@ export async function POST(request: Request) {
 
     const govUser = process.env.GOVBR_AVALIACAO_USER
     const govPass = process.env.GOVBR_AVALIACAO_PASS
-    const govBaseUrl = process.env.GOVBR_AVALIACAO_URL
+    const govAvaliacaoUrl = process.env.GOVBR_AVALIACAO_URL
     const authHeader = 'Basic ' + Buffer
         .from(`${govUser}:${govPass}`)
         .toString('base64')
 
-    const apiRes = await fetch(`${govBaseUrl}/avaliacao`, {
+    const apiRes = await fetch(`${govAvaliacaoUrl}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
