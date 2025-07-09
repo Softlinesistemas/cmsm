@@ -161,7 +161,7 @@ export default function PagamentoPage() {
           </div>
         )}
 
-        <div className="text-center my-6 max-w-3xl mx-auto">
+        {candidato?.GRUStatus !==  "CONCLUIDO" || candidato?.GRUStatus !== "DEFERIDO" && <div className="text-center my-6 max-w-3xl mx-auto">
           {candidato?.isencao === "Pendente" && <h1 className="text-center text-2xl font-bold text-green-900 mb-2">Favor comparecer a unidade do Colégio Militar de Santa Maria para apresentar a documentação compobratória.</h1>}
           {!gerado ? (
             <button
@@ -180,7 +180,7 @@ export default function PagamentoPage() {
               />
             </div>
           )}
-        </div>
+        </div>}
       </main>
 
       <Footer />

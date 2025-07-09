@@ -64,12 +64,12 @@ export default function LocalHorarioPage() {
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm  text-black">
-            <div><strong>Nome do Candidato:</strong> {candidato?.Nome}</div>
-            <div><strong>Número de Inscrição:</strong> {candidato?.CodIns}</div>
-            <div><strong>Data de Nascimento:</strong> {moment(candidato?.Nasc).tz("America/Sao_Paulo").format("DD/MM/YYYY")}</div>
-            <div><strong>Sexo:</strong> {candidato?.Sexo === "F" ? "Feminino" : "Masculino"}</div>
-            <div><strong>Doc. ID:</strong> {candidato?.CodIns}</div>
-            <div className="md:col-span-2"><strong>Candidato ao:</strong> {dataConfiguracao?.ProcessoSel} {candidato?.Seletivo}</div>
+            <div className='text-black'><strong>Nome do Candidato:</strong> {candidato?.Nome}</div>
+            <div className='text-black'><strong>Número de Inscrição:</strong> {candidato?.CodIns}</div>
+            <div className='text-black'><strong>Data de Nascimento:</strong> {moment(candidato?.Nasc).tz("America/Sao_Paulo").format("DD/MM/YYYY")}</div>
+            <div className='text-black'><strong>Sexo:</strong> {candidato?.Sexo === "F" ? "Feminino" : "Masculino"}</div>
+            <div className='text-black'><strong>Doc. ID:</strong> {candidato?.CodIns}</div>
+            <div className="md:col-span-2 text-black"><strong>Candidato ao:</strong> {dataConfiguracao?.ProcessoSel} {candidato?.Seletivo}</div>
           </div>
         </div>
 
