@@ -1,4 +1,4 @@
-import { IndicatorSeparatorProps, components, DropdownIndicatorProps } from 'react-select';
+import { IndicatorSeparatorProps, components, DropdownIndicatorProps } from 'react-select'; 
 import ArrowDown from './ArrowDown';
 
 const indicatorSeparatorStyle = {
