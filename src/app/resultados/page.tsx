@@ -67,6 +67,7 @@ export default function BoletimResultado() {
               </div>
             </div>
           )}
+          <h1 className="text-lg font-semibold text-black">{candidato?.Status || "Aguardando divulgação dos resultados."}</h1>
         </div>
       </main>
       <Footer />
