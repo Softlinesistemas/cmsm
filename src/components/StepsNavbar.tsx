@@ -32,6 +32,14 @@ const fullSteps = [
   'Sair',
 ]
 
+const finalSteps = [
+  'Dados da Inscrição',
+  'Resultados',
+  'Local e Horário',
+  'Pagamento',
+  'Sair',
+]
+
 const routeMap: Record<string, string> = {
   "Dados da Inscrição": "/acompanhamento",
   "Local e Horário": "/local",
@@ -71,6 +79,10 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
         setActivePath("/pagamento")
         router.push('/pagamento')
         break
+        case "Resultados":
+        setActivePath("/Resultados")
+        router.push('/Resultados')
+        break
       case "Sair":
         await signOut({ callbackUrl: "/", redirect: true });
         break
@@ -82,7 +94,7 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
   return (
     <nav className="border-b border-gray-300">
       <ul className="max-w-5xl mx-auto flex text-xs uppercase text-gray-500">
-        {(candidato?.GRUStatus === "CONCLUIDO" ? fullSteps : candidato?.Responsavel && candidato?.GRUStatus !== "CONCLUIDO" ? middleSteps : initialSteps).map((label, idx) => (
+        {(candidato?.DataRevisao ? finalSteps : candidato?.GRUStatus === "CONCLUIDO" || candidato?.GRUStatus === "DEFERIDO" ? fullSteps : candidato?.Responsavel && candidato?.GRUStatus !== "CONCLUIDO" && candidato?.GRUStatus !== "DEFERIDO" ? middleSteps : initialSteps).map((label, idx) => (
           <li
             key={label}
             onClick={() => handleClick(label)}
