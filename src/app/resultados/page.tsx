@@ -6,6 +6,7 @@ import api from '@/utils/api';
 import Header from '../../components/HeaderAdm';
 import Footer from '../../components/FooterAdm';
 import StepsNavbar from '@/components/StepsNavbar'
+import moment from 'moment-timezone';
 
 export default function BoletimResultado() {
   const { data: session, status } = useSession();
@@ -33,36 +34,36 @@ export default function BoletimResultado() {
           {isLoading && <p>Carregando dados do candidato...</p>}
           {isError && <p className="text-red-600">Erro ao carregar dados.</p>}
 
-          {candidato && (
+          {candidato?.DataRevisao && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <p className="text-sm text-gray-600">Nome</p>
-                <p className="text-lg font-semibold">{candidato.nome}</p>
+                <p className="text-lg font-semibold text-black">{candidato.Nome}</p>
               </div>
 
               <div>
                 <p className="text-sm text-gray-600">CPF</p>
-                <p className="text-lg font-semibold">{candidato.cpf}</p>
+                <p className="text-lg font-semibold text-black">{candidato.CPF}</p>
               </div>
 
               <div>
                 <p className="text-sm text-gray-600">Nota de Redação</p>
-                <p className="text-lg font-semibold">{candidato.NotaRedacao}</p>
+                <p className="text-lg font-semibold text-black">{candidato.NotaRedacao}</p>
               </div>
 
               <div>
                 <p className="text-sm text-gray-600">Nota de Matemática</p>
-                <p className="text-lg font-semibold">{candidato.NotaMatematica}</p>
+                <p className="text-lg font-semibold text-black">{candidato.NotaMatematica}</p>
               </div>
 
               <div>
                 <p className="text-sm text-gray-600">Nota de Português</p>
-                <p className="text-lg font-semibold">{candidato.NotaPortugues}</p>
+                <p className="text-lg font-semibold text-black">{candidato.NotaPortugues}</p>
               </div>
 
               <div>
                 <p className="text-sm text-gray-600">Data de Revisão</p>
-                <p className="text-lg font-semibold">{candidato.DataRevisao}</p>
+                <p className="text-lg font-semibold text-black">{moment(candidato.DataRevisao).tz("America/Sao_Paulo").format("DD/MM/YYYY HH:mm")}</p>
               </div>
             </div>
           )}
