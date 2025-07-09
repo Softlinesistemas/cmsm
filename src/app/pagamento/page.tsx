@@ -136,21 +136,21 @@ export default function PagamentoPage() {
 
         <section className="max-w-3xl mx-auto space-y-6 mb-8">
             <LabelField label="Nome do Candidato" value={candidato?.Nome || ''} full />
-            <div><strong>Número de Inscrição:</strong> {candidato?.CodIns}</div>
-            <div><strong>Data de Nascimento:</strong> {moment(candidato?.Nasc).tz("America/Sao_Paulo").format("DD/MM/YYYY")}</div>
-            <div><strong>Sexo:</strong> {candidato?.Sexo === "F" ? "Feminino" : "Masculino"}</div>
-            <div><strong>Doc. ID:</strong> {candidato?.CodIns}</div>
-            <div className="md:col-span-2"><strong>Candidato ao:</strong> {config?.ProcessoSel} {candidato?.Seletivo}</div>
+            <div className='font-bold text-black'>Número de Inscrição: {candidato?.CodIns}</div>
+            <div className='font-bold text-black'>Data de Nascimento: {moment(candidato?.Nasc).tz("America/Sao_Paulo").format("DD/MM/YYYY")}</div>
+            <div className='font-bold text-black'>Sexo: {candidato?.Sexo === "F" ? "Feminino" : "Masculino"}</div>
+            <div className='font-bold text-black'>Doc. ID: {candidato?.CodIns}</div>
+            <div className="md:col-span-2 font-bold text-black">Candidato ao: {config?.ProcessoSel} {candidato?.Seletivo}</div>
         </section>
 
         {statusInfo && !gruUrl && (
           <div className="bg-white border border-gray-200 p-4 rounded-lg shadow-lg max-w-3xl mx-auto space-y-6">
-            <h3 className="text-lg font-semibold mb-2">Detalhes do Pagamento</h3>
-            <p><strong>ID Pagamento:</strong>{statusInfo.idPagamento}</p>
-            <p><strong>Tipo:</strong>{statusInfo.tipoPagamentoEscolhido}</p>
-            <p><strong>Valor:</strong>R$ {statusInfo.valor.toFixed(2)}</p>
-            <p><strong>Status:</strong>{statusInfo.situacao.codigo}</p>
-            <p><strong>Data:</strong>{moment(statusInfo.situacao.data).tz('America/Sao_Paulo').format('DD/MM/YYYY')}</p>
+            <h3 className="text-lg font-semibold mb-2 text-black">Detalhes do Pagamento</h3>
+            <p className='font-bold text-black'>ID Pagamento:{statusInfo.idPagamento}</p>
+            <p className='font-bold text-black'>Tipo:{statusInfo.tipoPagamentoEscolhido}</p>
+            <p className='font-bold text-black'>Valor:R$ {statusInfo.valor.toFixed(2)}</p>
+            <p className='font-bold text-black'>Status:{statusInfo.situacao.codigo}</p>
+            <p className='font-bold text-black'>Data:{moment(statusInfo.situacao.data).tz('America/Sao_Paulo').format('DD/MM/YYYY')}</p>
             <button
               onClick={() => checkStatus()}
               disabled={checkingStatus}

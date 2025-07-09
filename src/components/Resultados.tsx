@@ -81,11 +81,11 @@ const Resultados = () => {
                 {mostrar.length ? (
                   mostrar.map(c => (
                     <tr key={c.CodIns} className="hover:bg-gray-100">
-                      <td className="border px-4 py-2">{c.CodIns}</td>
-                      <td className="border px-4 py-2">{c.Nome}</td>
-                      <td className="border px-4 py-2">{c.CPF}</td>
-                      <td className="border px-4 py-2">
-                        <span className={`px-2 py-1 rounded-md font-semibold text-xs
+                      <td className="border px-4 py-2 text-black">{c.CodIns}</td>
+                      <td className="border px-4 py-2 text-black">{c.Nome}</td>
+                      <td className="border px-4 py-2 text-black">{c.CPF}</td>
+                      <td className="border px-4 py-2 text-black">
+                        <span className={`text-black px-2 py-1 rounded-md font-semibold text-xs
                           ${c.NotaMatematica + c.NotaPortugues + 0 >= 80 ? 'bg-green-200 text-green-800'
                             : c.NotaMatematica + c.NotaPortugues + 0 < 60 ? 'bg-red-200 text-red-800'
                             : 'bg-yellow-200 text-yellow-800'}
@@ -93,7 +93,7 @@ const Resultados = () => {
                           {c.Status}
                         </span>
                       </td>
-                      <td className="border px-4 py-2">{((c.NotaMatematica ?? 0) + (c.NotaPortugues ?? 0)).toFixed(1)}</td>
+                      <td className="border px-4 py-2 text-black">{((c.NotaMatematica ?? 0) + (c.NotaPortugues ?? 0)).toFixed(1)}</td>
                     </tr>
                   ))
                 ) : (

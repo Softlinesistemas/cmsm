@@ -2,10 +2,10 @@
 
 import { useSession } from 'next-auth/react';
 import { useQuery } from 'react-query';
-import { useEffect, useState } from 'react';
 import api from '@/utils/api';
 import Header from '../../components/HeaderAdm';
 import Footer from '../../components/FooterAdm';
+import StepsNavbar from '@/components/StepsNavbar'
 
 export default function BoletimResultado() {
   const { data: session, status } = useSession();
@@ -21,6 +21,7 @@ export default function BoletimResultado() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
+      <StepsNavbar activeStep={7} />      
       <main className="flex-grow px-4 py-8">
         <h2 className="text-2xl font-bold text-center text-blue-800 mb-8">
           RESULTADO DO PROCESSO SELETIVO

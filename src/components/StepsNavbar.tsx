@@ -80,8 +80,8 @@ export default function StepsNavbar({ activeStep }: StepsNavbarProps) {
         router.push('/pagamento')
         break
         case "Resultados":
-        setActivePath("/Resultados")
-        router.push('/Resultados')
+        setActivePath("/resultados")
+        router.push('/resultados')
         break
       case "Sair":
         await signOut({ callbackUrl: "/", redirect: true });
