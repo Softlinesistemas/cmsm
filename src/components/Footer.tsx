@@ -44,6 +44,7 @@ const Footer: React.FC = () => {
               <li>Histórico da OM</li>
               <li>Legislação</li>
               <li>Projeto Pedagógico</li>
+              <li><a className='text-white' href="/avaliar">Avaliação de serviço</a></li>
             </ul>
           </div>
 

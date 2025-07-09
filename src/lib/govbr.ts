@@ -24,7 +24,7 @@ export async function fetchGovBrFullProfile(
 
   // 1) Dados básicos (OpenID Connect)
   const { data: basic } = await axios.get(
-    `${process.env.NEXT_PUBLIC_GOVBR_URL}userinfo`,
+    `${process.env.GOVBR_URL}userinfo`,
     { headers }
   );
 

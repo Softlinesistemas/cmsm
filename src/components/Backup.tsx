@@ -47,7 +47,6 @@ const Backup = () => {
         const texto = e.target?.result;
         if (typeof texto === "string") {
           const dadosImportados = JSON.parse(texto);
-          console.log("Dados importados:", dadosImportados);
           alert("Backup importado com sucesso!");
           // Aqui você pode enviar os dados para seu backend para restaurar
         }
@@ -70,28 +69,6 @@ const Backup = () => {
       >
         <FaDownload /> Exportar Backup
       </button>
-
-      {/* Área para importar backup
-      <div className="mt-4">
-        <label
-          className="block mb-2 font-semibold text-black"
-          htmlFor="importBackup"
-        >
-          Importar Backup (arquivo JSON)
-        </label>
-        <div className="flex items-center gap-2">
-          <input
-            type="file"
-            accept=".json,application/json"
-            id="importBackup"
-            onChange={importarBackup}
-            className="border rounded p-2 flex-1 text-black"
-          />
-          <span className="text-blue-800">
-            <FaUpload />
-          </span>
-        </div>
-      </div> */}
 
       {/* Exibição do JSON exportado (opcional) */}
       {backupData && (

@@ -12,14 +12,6 @@ export default function DashboardAdmin() {
   // Usa o contexto que já está provido pelo RootLayout
   const { selectedComponent, setSelectedComponent, Component } = useContext(MainContext);
 
-  useEffect(() => {
-    console.log('PainelAdm selectedComponent:', selectedComponent);
-  }, [selectedComponent]);
-
-  useEffect(() => {
-    console.log(Component);
-  }, [Component]);
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       {/* Header */}

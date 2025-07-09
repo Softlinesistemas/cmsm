@@ -13,8 +13,8 @@ export async function GET() {
       .count({ pagos: '*' })
       .where({ Seletivo: '6° ano', GRUStatus: 'CONCLUIDO' })
       .first()
-    console.log(sel6)
-    const pend6 = await db('Candidato')
+
+      const pend6 = await db('Candidato')
       .count({ pendentes: '*' })
       .where({ Seletivo: '6° ano' })
       .whereNot({ GRUStatus: 'CONCLUIDO' })

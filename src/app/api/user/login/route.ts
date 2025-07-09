@@ -50,7 +50,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ user: user.user, id: user.id, admin: user.admin });
 
   } catch (error: any) {
-    console.log(error)
     if (
       error.code === "ETIMEOUT" ||
       error.code === "ESOCKET" ||

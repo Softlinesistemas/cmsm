@@ -77,9 +77,6 @@ export async function POST(request: NextRequest) {
     const rawBody = await response.text()
     const parsedBody = JSON.parse(rawBody);
 
-    // Ajuda a diagnosticar
-    console.log('Resposta bruta PagTesouro:', rawBody)
-
     if (!response.ok) {
       return NextResponse.json({ error: rawBody }, { status: response.status })
     }
@@ -162,7 +159,6 @@ export async function GET(request: NextRequest) {
           GRUStatus: "CONCLUIDO"
         });
     }
-    console.log(data);
     if (!response.ok) {
       return NextResponse.json({ error: data }, { status: response.status })
     }

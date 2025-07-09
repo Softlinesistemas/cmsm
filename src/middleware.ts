@@ -17,12 +17,17 @@ export async function middleware(request: NextRequest) {
 
   if (token?.cpf) {
     const candidatoUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}api/candidato/${token.cpf}`;
+    
+    if (!token?.cpf && request.nextUrl.pathname === "/acompanhamento" || request.nextUrl.pathname === "/formulario") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
 
     try {
       const res = await fetch(candidatoUrl, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
+
 
       if (request.nextUrl.pathname === "/acompanhamento") {
         if (!res.ok) {
