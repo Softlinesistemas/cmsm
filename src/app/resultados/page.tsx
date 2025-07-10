@@ -49,6 +49,16 @@ export default function BoletimResultado() {
               <div>
                 <p className="text-sm text-gray-600">Nota de Redação</p>
                 <p className="text-lg font-semibold text-black">{candidato.NotaRedacao}</p>
+                {candidato.NotaRedacao && (
+                  <p>
+                    <a
+                      href={`mailto:cmsm.mail@gmail.com?subject=Solicitação de cópia da redação corrigida para CPF: ${session?.user.id}`}
+                      className="text-blue-600 underline hover:text-blue-800"
+                    >
+                      Solicitar cópia da redação corrigida
+                    </a>
+                  </p>
+                )}
               </div>
 
               <div>
@@ -67,7 +77,9 @@ export default function BoletimResultado() {
               </div>
             </div>
           )}
-          <h1 className="text-lg font-semibold text-black">{candidato?.Status || "Aguardando divulgação dos resultados."}</h1>
+          <div className='w-full flex justify-center'>
+            <h1 className="text-center text-lg font-semibold text-black">{candidato?.Status || "Aguardando divulgação dos resultados."}</h1>
+          </div>
         </div>
       </main>
       <Footer />
