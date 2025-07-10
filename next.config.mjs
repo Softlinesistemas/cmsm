@@ -1,5 +1,3 @@
-import withPWA from "next-pwa";
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -13,29 +11,21 @@ const nextConfig = {
       fs: false,
       tls: false,
       dns: false,
-      child_process: false
+      child_process: false,
     };
-    
+
     config.module = config.module || {};
     config.module.exprContextCritical = false;
-    
+
     return config;
   },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "cmsm.s3.us-east-005.backblazeb2.com" },
-      { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "sso.staging.acesso.gov.br" },
-      { protocol: "https", hostname: "sso.acesso.gov.br" }
+      { protocol: "https", hostname: "sso.acesso.gov.br" },
     ],
   },
 };
 
-const withPWAConfig = withPWA({
-  dest: "public",
-  disable: process.env.NODE_ENV === "development",
-  register: true,
-  skipWaiting: true,
-});
-
-export default withPWAConfig(nextConfig);
+export default nextConfig;
