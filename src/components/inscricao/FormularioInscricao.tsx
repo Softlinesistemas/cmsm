@@ -314,8 +314,8 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
             </div>
           </div>
 
-          {/* DADOS DA VAGA - status automático */}
-          <div>
+          {/* DADOS DA VAGA */}
+          {isAcompanhamento && <div>
             <h3 className="font-semibold border-b border-gray-200 pb-1 mb-4">
               Dados da Vaga
             </h3>
@@ -329,7 +329,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
               onChange={handleChange}
               className="w-full bg-red-800 rounded px-8 py-5 shadown text-md text-center placeholder:text-white text-xl"
             />
-          </div>
+          </div>}
 
           {/* DADOS DO RESPONSÁVEL */}
           <div className="space-y-4">
