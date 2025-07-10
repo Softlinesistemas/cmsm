@@ -141,6 +141,51 @@ export async function POST(request: Request) {
     } = body;
 
     db = getDBConnection(dbConfig());
+
+    const [configuracao] = await db('Funcao')
+      .select('NascIniEF', 'NascFimEF', 'NascIniEM', 'NascFimEM') 
+      .orderBy([
+        { column: 'GRUDataFim', order: 'desc' },
+        { column: 'GRUHoraFim', order: 'desc' },
+      ])
+      .limit(1);
+
+    if (!configuracao) {
+      return NextResponse.json(
+        { error: 'Configuração de idade não disponível' },
+        { status: 500 }
+      );
+    }
+
+    const birthDate = new Date(Nasc);
+    let minDate: Date, maxDate: Date;
+
+    if (Seletivo === '1° ano') {
+      minDate = new Date(configuracao.NascIniEF);
+      maxDate = new Date(configuracao.NascFimEF);
+    } else if (Seletivo === '6° ano') {
+      minDate = new Date(configuracao.NascIniEM);
+      maxDate = new Date(configuracao.NascFimEM);
+    } else {
+      return NextResponse.json(
+        { error: `Seletivo '${Seletivo}' desconhecido` },
+        { status: 400 }
+      );
+    }
+
+    if (birthDate < minDate || birthDate > maxDate) {
+      return NextResponse.json(
+        {
+          error: 'Candidato fora da faixa etária permitida',
+          faixaPermitida: {
+            inicio: minDate.toISOString().split('T')[0],
+            fim: maxDate.toISOString().split('T')[0],
+          },
+          nascimentoCandidato: Nasc,
+        },
+        { status: 400 }
+      );
+    }
     
     if (!CodIns) {
       const maxCodInsRow = await db("Candidato").max("CodIns as maxCodIns").first();

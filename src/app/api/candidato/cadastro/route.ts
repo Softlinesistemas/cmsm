@@ -11,18 +11,6 @@ export async function POST(request: Request) {
 
     db = getDBConnection(dbConfig());
 
-    // Verifica se o usuário já existe
-    const existingUser = await db("Senha")
-      .where("Usuario", userName)
-      .first();
-
-    // if (existingUser) {
-    //   return NextResponse.json(
-    //     { message: "Usuário já existe." },
-    //     { status: 400 }
-    //   );
-    // }
-
     // Busca o maior CodUsu atual
     const lastUser = await db("Senha")
       .max("CodUsu as maxCodUsu")
@@ -47,7 +35,6 @@ export async function POST(request: Request) {
       admin,
     });
   } catch (error: any) {
-    console.error(error);
 
     if (
       error.code === "ETIMEOUT" ||
