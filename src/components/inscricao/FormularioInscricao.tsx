@@ -131,7 +131,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Sexo</label>
                 <select name="sexo" value={formData.sexo} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
-                  <option value="">Selecione</option>
+                  <option value="">{isAcompanhamento ? formData.sexo : "Selecione"}</option>
                   <option value="masculino">Masculino</option>
                   <option value="feminino">Feminino</option>
                 </select>
@@ -277,7 +277,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
                   disabled={!podeEditarExtras || isAcompanhamento}
                   className={`${baseInput} ${!podeEditarExtras ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
-                  <option value="">Selecione</option>
+                  <option value="">{isAcompanhamento ? formData.tipoCota || "" : "Selecione"}</option>
 
                   {cotas
                     ?.filter((cota: any) => cota.Status === 'Ativo')
@@ -290,7 +290,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
               </div>
 
               {/* Condições na Prova */}
-              <div>
+              {!isAcompanhamento && <div>
                 <label className="text-blue-800 font-medium mb-1 block">Condições Especiais na Prova?</label>
                 <select
                   name="necessitaCondicoes"
@@ -310,7 +310,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
                     <option value="acompanhante">Acompanhante</option>  
                   </select>
                 )}
-              </div>
+              </div>}
             </div>
           </div>
 
@@ -429,7 +429,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Parentesco</label>
                 <select name="parentesco" value={formData.parentesco} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
-                  <option value="">Selecione</option>
+                  <option value="">{isAcompanhamento ? formData.parentesco : "Selecione"}</option>
                   <option value="pai">Pai</option>
                   <option value="mãe">Mãe</option>
                   <option value="responsável">Responsável</option>
@@ -439,7 +439,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
               <div className="col-span-12 md:col-span-4">
                 <label className="text-blue-800 font-medium mb-1 block">Forças Armadas?</label>
                 <select name="forcas" value={formData.forcas} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
-                  <option value="">Selecione</option>
+                  <option value="">{isAcompanhamento ? formData.ramoForcas : "Selecione"}</option>
                   <option value="">Não</option>
                   <option value="X">Sim</option>
                 </select>
