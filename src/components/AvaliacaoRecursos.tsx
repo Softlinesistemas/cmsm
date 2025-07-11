@@ -167,12 +167,12 @@ const AvaliacaoRecursos = () => {
   
                       {/* Campo de observação */}
                       <textarea
-                        value={observacao || r?.observacao}
+                        value={observacao}
                         onChange={(e) => setObservacao(e.target.value)}
                         className="w-full border border-gray-300 rounded p-2 mb-2 text-black"
                         rows={3}
                         maxLength={255}
-                        placeholder="Digite a observação"
+                        placeholder={r?.observacao || "Digite a observação"}
                       />
   
                       {/* Botões do modal */}
@@ -181,7 +181,7 @@ const AvaliacaoRecursos = () => {
                           onClick={() => setModalAberto(null)}
                           className="px-3 py-1 bg-gray-300 text-black rounded hover:bg-gray-400"
                         >
-                          Cancelar
+                          Fechar
                         </button>
                         <button
                           onClick={() => adicionarObservacao(r.CodIns)}
