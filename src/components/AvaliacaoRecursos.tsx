@@ -32,8 +32,8 @@ const AvaliacaoRecursos = () => {
    * Abre o modal para adicionar/visualizar observações.
    * @param recurso Recurso selecionado
    */
-  const abrirModal = (id: any) => {
-    setObservacao(""); // Limpa o campo para nova observação
+  const abrirModal = (id: number, observacaoAtual: string) => {
+    setObservacao(observacaoAtual || "");
     setModalAberto(id);
   };
 
@@ -138,7 +138,7 @@ const AvaliacaoRecursos = () => {
                     {loadingReprovar ? <LoadingIcon /> : <FaTimes />} Reprovar
                   </button>
                   <button
-                    onClick={() => abrirModal(r.CodIns)}
+                    onClick={() => abrirModal(r.CodIns, r.observacao)}
                     className="flex items-center gap-1 bg-gray-300 text-black px-2 py-1 rounded hover:bg-gray-400"
                   >
                     <FaComment /> Observações
@@ -172,7 +172,7 @@ const AvaliacaoRecursos = () => {
                         className="w-full border border-gray-300 rounded p-2 mb-2 text-black"
                         rows={3}
                         maxLength={255}
-                        placeholder={r?.observacao || "Digite a observação"}
+                        placeholder={"Digite a observação"}
                       />
   
                       {/* Botões do modal */}
