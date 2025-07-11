@@ -8,7 +8,7 @@ import moment from "moment-timezone";
 export default function Processo() {
   const [filtroTipo, setFiltroTipo] = useState<string>('Todos');
   const [filtroStatus, setFiltroStatus] = useState<string>('Todos');
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalAberto, setModalAberto] = useState<number | null>(null);
 
   const { data: solicitacoes, isLoading, refetch } = useQuery(
     ['recursos', filtroStatus],
@@ -21,12 +21,12 @@ export default function Processo() {
     }
   );
 
-  function abrirModal(solicitacao: any) {
-    setModalAberto(true);
+  function abrirModal(id: number) {
+    setModalAberto(id);
   }
 
   function fecharModal() {
-    setModalAberto(false);
+    setModalAberto(null);
   }
 
   return (
@@ -55,9 +55,9 @@ export default function Processo() {
         <div className="grid gap-4">
           {solicitacoes?.resultados?.length ? solicitacoes.resultados.map((item: any) => (
             <div
-              key={item.id}
+              key={item.CodIns}
               className="bg-white p-5 rounded-xl shadow-md border border-gray-200 hover:shadow-lg cursor-pointer transition"
-              onClick={() => abrirModal(item)}
+              onClick={() => abrirModal(item.CodIns)}
             >
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-semibold text-blue-700">Isenção</h2>
@@ -88,7 +88,7 @@ export default function Processo() {
                 </p>
               )}
               {/* MODAL - HISTÓRICO */}
-              {modalAberto && (
+              {modalAberto === item?.CodIns && (
                 <div
                   className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
                   onClick={fecharModal}

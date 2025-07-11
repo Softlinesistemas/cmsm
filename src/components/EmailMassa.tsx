@@ -14,7 +14,7 @@ const CampoTexto = ({ label, value, onChange, placeholder, textarea = false } : 
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="border rounded w-full p-2 h-32"
+        className="border rounded w-full p-2 h-32 text-black"
       />
     ) : (
       <input
@@ -22,7 +22,7 @@ const CampoTexto = ({ label, value, onChange, placeholder, textarea = false } : 
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="border rounded w-full p-2"
+        className="border rounded w-full p-2 text-black"
       />
     )}
   </div>
