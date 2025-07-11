@@ -6,8 +6,8 @@ import Footer from '@/components/FooterAdm'
 import api from '@/utils/api'
 import { useQuery } from 'react-query'
 import LoadingIcon from '@/components/common/LoadingIcon';
-import toast from 'react-hot-toast'
 import Image from 'next/image'
+import toast from 'react-hot-toast'
 
 export default function AdminEditarCandidato() {
   const [busca, setBusca] = useState('')
@@ -163,18 +163,20 @@ export default function AdminEditarCandidato() {
     setErro('');
 
     if (!motivoAlteracao.trim()) {
+      toast.error('Informe o motivo da alteração.')
       setErro('Informe o motivo da alteração.');
       return;
     }
-
+    
     if (!formData) {
+      toast.error('Nenhum candidato selecionado para salvar.')
       setErro('Nenhum candidato selecionado para salvar.');
       return;
     }
 
     try {
       setLoading(true);
-      const res = await api.put(`api/candidato/${formData?.numeroInscricao}`, {
+      const res = await api.post(`api/candidato/${formData?.numeroInscricao}`, {
         ...formData,
         motivoAlteracao,
       });
@@ -353,8 +355,8 @@ export default function AdminEditarCandidato() {
                   </div>
                   <div className="col-span-12 md:col-span-4">
                     <label className="block text-blue-800 font-medium mb-1">Sexo</label>
-                    <select name="sexo" value={formData?.sexo} onChange={handleChange} className={baseInput}>
-                      <option value="">Selecione</option>
+                    <select name="sexo" value={formData?.sexo === "M" ? "masculino" : "feminino"} onChange={handleChange} className={baseInput}>
+                      <option value="">{formData?.sexo || "Selecione"}</option>
                       <option value="masculino">Masculino</option>
                       <option value="feminino">Feminino</option>
                     </select>

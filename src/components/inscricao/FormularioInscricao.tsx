@@ -130,7 +130,7 @@ const FormularioInscricao: React.FC<any> = ({ isAcompanhamento, primeiroCad, che
               </div>
               <div className="col-span-12 md:col-span-4">
                 <label className="block text-blue-800 font-medium mb-1">Sexo</label>
-                <select name="sexo" value={formData.sexo} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
+                <select name="sexo" value={formData?.sexo === "M" ? "masculino" : "feminino"} onChange={handleChange} className={baseInput} disabled={isAcompanhamento}>
                   <option value="">{isAcompanhamento ? formData.sexo : "Selecione"}</option>
                   <option value="masculino">Masculino</option>
                   <option value="feminino">Feminino</option>
