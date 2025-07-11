@@ -15,8 +15,11 @@ import LoadingIcon from "./common/LoadingIcon";
 const AvaliacaoRecursos = () => {
   // Estado inicial com lista de recursos
   const { data: candidatosRecursos, isLoading, refetch } = useQuery('candidatosRecursos', async () => {
-    const response = await api.get('api/candidato/recurso')
+    const response = await api.get('api/candidato/recurso');
     return response.data
+  }, {
+    retry: 5,
+    refetchOnWindowFocus: false,
   });
 
   // Controle do modal

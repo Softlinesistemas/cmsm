@@ -4,6 +4,7 @@ import { useState } from "react";
 import api from "@/utils/api";
 import { useQuery } from "react-query";
 import moment from "moment-timezone";
+import LoadingIcon from '@/components/common/LoadingIcon';
 
 export default function Processo() {
   const [filtroTipo, setFiltroTipo] = useState<string>('Todos');
@@ -120,7 +121,9 @@ export default function Processo() {
                 </div>
               )}
             </div>
-          )) : <p className="text-center text-gray-600">Nenhuma solicitação encontrada para os filtros selecionados.</p>}
+          )) : !isLoading && !solicitacoes?.resultados?.length ? <p className="text-center text-gray-600">Nenhuma solicitação encontrada para os filtros selecionados.</p> :
+            <LoadingIcon />
+          }
         </div>
       </div>
 
