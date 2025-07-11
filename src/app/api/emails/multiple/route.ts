@@ -1,19 +1,25 @@
 import { NextResponse } from 'next/server';
 import transporter from '@/services/nodeMailer';
+import getDBConnection from "@/db/conn";
+import dbConfig from "@/db/dbConfig";
 
 export async function POST(request: Request) {
+  let db;
   try {
-    const { subject, message, recipients } = await request.json();
+    db = getDBConnection(dbConfig());
 
-    if (!subject || !message || !recipients || !Array.isArray(recipients)) {
+    const { subject, message } = await request.json();
+
+
+    if (!subject || !message) {
       return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 });
     }
+    const recipients = await db("Candidato").select("Email");
 
-    // Enviar e-mails em paralelo
-    const sendAll = recipients.map((to) =>
+    const sendAll = recipients.map(({ Email }) =>
       transporter.sendMail({
         from: process.env.EMAIL_USER,
-        to,
+        to: Email,
         subject,
         html: `<p>${message}</p>`,
       })
