@@ -25,7 +25,7 @@ export default function Relatorios() {
   if (error) return <div>Erro ao carregar dados de relatórios.</div>
 
   const relatoriosData: Record<string, { label: string; dados: any }> = {
-    total: { label: 'Total de Inscritos', dados: data.total },
+    total: { label: 'Inscritos', dados: data.total },
     pagamentos6: { label: 'Pagamentos 6º Ano', dados: data.pagamentos['6'] },
     pagamentos1: { label: 'Pagamentos 1º Ano', dados: data.pagamentos['1'] },
     exames6: { label: 'Exames 6º Ano', dados: data.exames.find((e: any) => e.Seletivo === '6º ano') },

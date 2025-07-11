@@ -6,7 +6,7 @@ export async function GET() {
   const db = getDBConnection(dbConfig())
   try {
     // total
-    const [{ count: total }] = await db('Candidato').count({ count: '*' })
+    const inscritos = await db('Candidato').select("CodIns", "Nome", "Seletivo", "CPF", "Sexo", "Email", "Cidade", "Status", "GRUStatus", "ramoForca")
 
     // pagamentos e pendentes por seletivo
     const sel6 = await db('Candidato')
@@ -57,7 +57,7 @@ export async function GET() {
       .groupByRaw("COALESCE(NULLIF(ramoForca, ''), 'civil')")
 
     return NextResponse.json({
-      total: Number(total),
+      total: inscritos,
       pagamentos: {
         '6': { pagos: Number(sel6?.pagos || 0), pendentes: Number(pend6?.pendentes || 0) },
         '1': { pagos: Number(sel1?.pagos || 0), pendentes: Number(pend1?.pendentes || 0) }
