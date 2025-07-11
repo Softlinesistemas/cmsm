@@ -128,14 +128,14 @@ const AvaliacaoRecursos = () => {
                     onClick={() => aprovarRecurso(r.CodIns)}
                     className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 rounded hover:bg-green-500"
                   >
-                    {loadingAprovar ? <LoadingIcon /> : <FaCheck />} Aprovar
+                    {loadingAprovar ? <LoadingIcon /> : <FaCheck />} Deferir
                   </button>
 
                   <button
                     onClick={() => desaprovarRecurso(r.CodIns)}
                     className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 rounded hover:bg-red-500"
                   >
-                    {loadingReprovar ? <LoadingIcon /> : <FaTimes />} Reprovar
+                    {loadingReprovar ? <LoadingIcon /> : <FaTimes />} Indeferir
                   </button>
                   <button
                     onClick={() => abrirModal(r.CodIns, r.observacao)}
