@@ -174,10 +174,79 @@ export default function AdminEditarCandidato() {
       return;
     }
 
+     const payload = {
+        CodIns: Number(formData.numeroInscricao),
+        Nome: formData.nome,
+        CPF: formData.cpf,
+        Nasc: formData.dataNascimento || null,
+        Sexo: formData.sexo || null,
+        Cep: formData.cep || null,
+        Endereco: formData.endereco || null,
+        Complemento: formData.complemento || null,
+        Bairro: null,
+        Cidade: formData.cidade || null,
+        UF: formData.uf || null,
+        CodCot1: formData?.tipoCota || null,
+        CodCot2: null,
+        CodCot3: null,
+        CodCot4: null,
+        CodCot5: null,
+        CodCot6: null,
+        CodCot7: null,
+        CodCot8: null,
+        CodCot9: null,
+        CodCot10: null,
+        PortadorNec: formData.necessidades || null,
+        AtendimentoEsp: formData.atendimentoEspecial || null,
+        Responsavel: formData.nomeResponsavel || null,
+        CPFResp: formData.cpfResponsavel || null,
+        NascResp: formData.dataNascimentoResponsavel || null,
+        SexoResp: formData.sexoResponsavel || null,
+        CepResp: formData.cep_Resp || null,
+        EnderecoResp: formData.endereco_Resp || null,
+        ComplementoResp: formData.complemento_Resp || null,
+        BairroResp: null,
+        CidadeResp: formData.cidade_Resp || null,
+        UFResp: formData.uf_Resp || null,
+        ProfissaoResp: formData.profissao || null,
+        EmailResp: formData.emailResponsavel || null,
+        TelResp: formData.celular || null,
+        Parentesco: formData.parentesco || null,
+        Email: formData.emailCandidato || null,
+        CaminhoFoto: formData.fotoPreview || null,
+        Seletivo: formData.Seletivo,
+        isencao:  formData.isencao,
+        observacao:  formData.observacao,
+  
+        // Campos nulos:
+        DataCad: null, // backend
+        HoraCad: null, // backend
+        RegistroGRU: null,
+        GRUData: null,
+        GRUValor: null,
+        GRUHora: null,
+        CodSala: null,
+        DataEnsalamento: null,
+        HoraEnsalamento: null,
+        CodUsuEnsalamento: null,
+        Status: null,
+        CaminhoResposta: null,
+        CaminhoRedacao: null,
+        RevisaoGabarito: null,
+        DataImportacao: null,
+        HoraImportacao: null,
+        CodUsuImportacao: null,
+        NotaMatematica: null,
+        NotaPortugues: null,
+        NotaRedacao: null,
+        DataRevisao: null,
+        CodUsuRev: null,
+      };
+
     try {
       setLoading(true);
       const res = await api.put(`api/candidato/${formData?.numeroInscricao}`, {
-        ...formData,
+        ...payload,
         motivoAlteracao,
       });
 
@@ -313,7 +382,7 @@ export default function AdminEditarCandidato() {
                 <div className="col-span-12 md:col-span-2">
                   <label className="text-blue-800 font-medium mb-1 block">Foto</label>
                   <div className="w-24 h-24 border-2 border-dashed border-blue-300 rounded-md relative">
-                    <Image src="/api/candidato/foto" height={undefined} width={undefined} alt='Foto do candidato' className="w-full h-full object-cover" unoptimized/>
+                    <Image src="/api/candidato/foto" fill alt='Foto do candidato' className="w-full h-full object-cover" unoptimized/>
                   </div>
                 </div>
                 <div className="col-span-12 md:col-span-4">
@@ -355,8 +424,8 @@ export default function AdminEditarCandidato() {
                   </div>
                   <div className="col-span-12 md:col-span-4">
                     <label className="block text-blue-800 font-medium mb-1">Sexo</label>
-                    <select name="sexo" value={formData?.sexo === "M" ? "masculino" : "feminino"} onChange={handleChange} className={baseInput}>
-                      <option value="">{formData?.sexo || "Selecione"}</option>
+                    <select name="sexo" value={formData?.sexo} onChange={handleChange} className={baseInput}>
+                      <option value="">Selecione</option>
                       <option value="masculino">Masculino</option>
                       <option value="feminino">Feminino</option>
                     </select>

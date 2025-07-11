@@ -99,9 +99,8 @@ export default function Formulario() {
       }
       if (loading) return;
       setLoading(true);
-      // Mapeando formData para o objeto esperado pela API
       const payload = {
-        CodIns: Number(formData.numeroInscricao), // supondo que seja number
+        CodIns: Number(formData.numeroInscricao),
         Nome: formData.nome,
         CPF: formData.cpf,
         Nasc: formData.dataNascimento || null,
@@ -109,10 +108,9 @@ export default function Formulario() {
         Cep: formData.cep || null,
         Endereco: formData.endereco || null,
         Complemento: formData.complemento || null,
-        Bairro: null,      // Se você tiver, pode preencher
+        Bairro: null,
         Cidade: formData.cidade || null,
         UF: formData.uf || null,
-        // Campos que não tem no seu formData, podem ficar nulos
         CodCot1: formData?.tipoCota || null,
         CodCot2: null,
         CodCot3: null,
