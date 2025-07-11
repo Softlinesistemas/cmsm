@@ -10,25 +10,22 @@ export async function GET() {
 
     // pagamentos e pendentes por seletivo
     const sel6 = await db('Candidato')
-      .count({ pagos: '*' })
+      .select('Nome', 'GruRef', 'GruValor', 'GruData', 'RegistroGru')
       .where({ Seletivo: '6° ano', GRUStatus: 'CONCLUIDO' })
-      .first()
 
-      const pend6 = await db('Candidato')
-      .count({ pendentes: '*' })
+    const pend6 = await db('Candidato')
+      .select('Nome', 'GruRef', 'GruValor', 'GruData', 'RegistroGru')
       .where({ Seletivo: '6° ano' })
       .whereNot({ GRUStatus: 'CONCLUIDO' })
-      .first()
 
     const sel1 = await db('Candidato')
-      .count({ pagos: '*' })
+      .select('Nome', 'GruRef', 'GruValor', 'GruData', 'RegistroGru')
       .where({ Seletivo: '1° ano', GRUStatus: 'CONCLUIDO' })
-      .first()
+
     const pend1 = await db('Candidato')
-      .count({ pendentes: '*' })
+      .select('Nome', 'GruRef', 'GruValor', 'GruData', 'RegistroGru')
       .where({ Seletivo: '1° ano' })
       .whereNot({ GRUStatus: 'CONCLUIDO' })
-      .first()
 
     // resultados de exame
     const exames = await db('Candidato')
@@ -59,8 +56,14 @@ export async function GET() {
     return NextResponse.json({
       total: inscritos,
       pagamentos: {
-        '6': { pagos: Number(sel6?.pagos || 0), pendentes: Number(pend6?.pendentes || 0) },
-        '1': { pagos: Number(sel1?.pagos || 0), pendentes: Number(pend1?.pendentes || 0) }
+        '6': {
+          pagos: sel6,
+          pendentes: pend6
+        },
+        '1': {
+          pagos: sel1,
+          pendentes: pend1
+        }
       },
       exames,
       barrasForcaSexo: barrasForcaSexoRaw,
