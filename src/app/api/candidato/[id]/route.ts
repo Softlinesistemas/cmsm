@@ -224,7 +224,7 @@ export async function PUT(request: NextRequest) {
         CodUsuRev,
         Seletivo
       });
-
+    
     return NextResponse.json({ message: "Candidato atualizado com sucesso." });
   } catch (error) {
     console.error("Erro ao atualizar candidato:", error);

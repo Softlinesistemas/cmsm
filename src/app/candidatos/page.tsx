@@ -176,7 +176,7 @@ export default function AdminEditarCandidato() {
 
     try {
       setLoading(true);
-      const res = await api.post(`api/candidato/${formData?.numeroInscricao}`, {
+      const res = await api.put(`api/candidato/${formData?.numeroInscricao}`, {
         ...formData,
         motivoAlteracao,
       });
