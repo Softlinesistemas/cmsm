@@ -214,7 +214,7 @@ export async function POST(request: Request) {
         .update({         
           Nome,
           Nasc,
-          Sexo: Sexo === "masculino" ? "M" : "F",
+          Sexo: Sexo === "masculino" || Sexo === "M"  ? "M" : "F",
           Email,
           Cep: Cep.replace("-", ""),
           Endereco,
@@ -291,7 +291,7 @@ export async function POST(request: Request) {
         HoraCad: moment().tz("America/Sao_Paulo").format("HH:mm"),
         CPF: cpfFormatado,
         Nasc,
-        Sexo: Sexo === "masculino" ? "M" : "F",
+        Sexo: Sexo === "masculino" || Sexo === "M"  ? "M" : "F",
         Email,
         Cep: Cep.replace("-", ""),
         Endereco,

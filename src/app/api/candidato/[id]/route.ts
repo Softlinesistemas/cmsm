@@ -163,7 +163,7 @@ export async function PUT(request: NextRequest) {
         Nome,
         CPF: cpfFormatado,
         Nasc,
-        Sexo: Sexo === "masculino" ? "M" : "F",
+        Sexo: Sexo === "masculino" || Sexo === "M"  ? "M" : "F",
         Email,
         Cep,
         Endereco,
