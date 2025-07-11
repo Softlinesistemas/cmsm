@@ -36,6 +36,28 @@ export default function GestaoUsuarios() {
     }));
   };
 
+  function validarCPF(cpf: string) {
+    cpf = cpf.replace(/\D/g, "");
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
+      return false;
+    }
+
+    const calcDigito = (base: any) => {
+      let soma = 0;
+      for (let i = 0; i < base.length; i++) {
+        soma += parseInt(base.charAt(i), 10) * (base.length + 1 - i);
+      }
+      const resto = (soma * 10) % 11;
+      return resto === 10 ? 0 : resto;
+    };
+
+    const digito1 = calcDigito(cpf.substr(0, 9));
+    const digito2 = calcDigito(cpf.substr(0, 10));
+
+    return digito1 === parseInt(cpf.charAt(9), 10)
+        && digito2 === parseInt(cpf.charAt(10), 10);
+  }
+
   const adicionarUsuario = async () => {
     const { nome, cpf, modulos, senha } = novoUsuario;
 
@@ -46,6 +68,11 @@ export default function GestaoUsuarios() {
 
     if (!cpf.trim()) {
       toast.error("Preencha o CPF!");
+      return;
+    }
+
+    if (!validarCPF(cpf)) {
+      toast.error("CPF inválido!");
       return;
     }
 
@@ -80,17 +107,7 @@ export default function GestaoUsuarios() {
     
     try {
       await api.post("api/user/novo", {...payload });
-     
-      setUsuarios((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          nome,
-          cpf,
-          modulos,
-          ativo: true,
-        },
-      ]);
+      refetch();      
     } catch (error: any) {
       toast.error(error.response.data.error || error.response.data.message);
     }
@@ -98,15 +115,17 @@ export default function GestaoUsuarios() {
     setShowModal(false);
   };
 
-  const desativarUsuario = (id: number) => {
-    setUsuarios((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, ativo: !u.ativo } : u))
-    );
-  };
-
-  const excluirUsuario = (id: number) => {
+  const excluirUsuario = async (id: number) => {
     if (confirm('Tem certeza que deseja excluir?')) {
-      setUsuarios((prev) => prev.filter((u) => u.id !== id));
+      try {
+        await api.delete("api/user/delete", {
+          data: { id: id }
+        });
+        toast.success("Usuário excluído.");
+        refetch();
+      } catch (error) {
+        toast.error("Erro ao excluir usuário.");
+      }
     }
   };
 
@@ -145,7 +164,7 @@ export default function GestaoUsuarios() {
             </tr>
           </thead>
           <tbody>
-            {usuarios.map((u) => (
+            {usuarios?.map((u) => (
               <tr
                 key={u.id}
                 className="border-t hover:bg-gray-100 transition-colors"
@@ -165,13 +184,6 @@ export default function GestaoUsuarios() {
                   </span>
                 </td>
                 <td className="px-4 py-2 flex items-center justify-center gap-3">
-                  {/* <button
-                    onClick={() => desativarUsuario(u.id)}
-                    className="text-yellow-600 hover:text-yellow-800"
-                    title="Ativar/Desativar"
-                  >
-                    <FaUserSlash />
-                  </button> */}
                   <button
                     onClick={() => excluirUsuario(u.id)}
                     className="text-red-600 hover:text-red-800"
