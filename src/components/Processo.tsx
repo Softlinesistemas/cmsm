@@ -122,7 +122,9 @@ export default function Processo() {
               )}
             </div>
           )) : !isLoading && !solicitacoes?.resultados?.length ? <p className="text-center text-gray-600">Nenhuma solicitação encontrada para os filtros selecionados.</p> :
-            <LoadingIcon />
+            <div className="w-full flex justify-center">
+              <LoadingIcon />
+            </div>
           }
         </div>
       </div>
