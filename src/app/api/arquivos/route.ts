@@ -4,9 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import uploadImagensEdge from "@/helpers/uploadImagesEdge";
 
-export async function PUT(
-  request: NextRequest) {
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+export async function PUT(request: NextRequest) {
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
   if (!token) {
     return NextResponse.json({ message: "Access denied." }, { status: 401 });
   }
@@ -21,31 +23,48 @@ export async function PUT(
   if (edital && edital.size > 0) arquivos.push(edital);
   if (cronograma && cronograma.size > 0) arquivos.push(cronograma);
   if (documentos && documentos.size > 0) arquivos.push(documentos);
-  
+
+  if (arquivos.length === 0) {
+    return NextResponse.json(
+      { message: "Nenhum arquivo enviado." },
+      { status: 200 }
+    );
+  }
+
   const result = await uploadImagensEdge(arquivos);
 
-  const caminhosSalvos = {
-    edital: edital ? result.fileContents?.[arquivos.indexOf(edital)] || null : null,
-    cronograma: cronograma ? result.fileContents?.[arquivos.indexOf(cronograma)] || null : null,
-    documentos: documentos ? result.fileContents?.[arquivos.indexOf(documentos)] || null : null,
-  };
+  const caminhosSalvos: Record<string, string | null> = {};
+  if (edital && edital.size > 0) {
+    caminhosSalvos.EditalCaminho =
+      result.fileContents?.[arquivos.indexOf(edital)] || null;
+  }
+  if (cronograma && cronograma.size > 0) {
+    caminhosSalvos.CronogramaCaminho =
+      result.fileContents?.[arquivos.indexOf(cronograma)] || null;
+  }
+  if (documentos && documentos.size > 0) {
+    caminhosSalvos.DocumentosCaminho =
+      result.fileContents?.[arquivos.indexOf(documentos)] || null;
+  }
 
   const db = getDBConnection(dbConfig());
 
   try {
     const funcao = await db("Funcao").first("ProcessoSel");
-    
-    await db("Funcao")
-    .where("ProcessoSel", funcao.ProcessoSel)
-    .update({
-      EditalCaminho: caminhosSalvos.edital,
-      CronogramaCaminho: caminhosSalvos.cronograma, 
-      DocumentosCaminho: caminhosSalvos.documentos
-    });
 
-    return NextResponse.json({ message: "Arquivos atualizados." }, { status: 200 });
+    await db("Funcao")
+      .where("ProcessoSel", funcao.ProcessoSel)
+      .update(caminhosSalvos);
+
+    return NextResponse.json(
+      { message: "Arquivos atualizados." },
+      { status: 200 }
+    );
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ message: "Internal server error." }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error." },
+      { status: 500 }
+    );
   }
 }
