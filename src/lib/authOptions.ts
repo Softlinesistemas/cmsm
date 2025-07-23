@@ -9,7 +9,7 @@ export const authOptions: AuthOptions = {
     signIn: "/login",
   },
   providers: [
-     {
+    {
       id: "govbr",
       name: "Gov.br",
       type: "oauth",
@@ -34,7 +34,7 @@ export const authOptions: AuthOptions = {
           birthdate: profile.birthdate,
           phone: profile.phone_number,
           image: profile.picture,
-          admin: false
+          admin: false,
         };
       },
     },
@@ -43,7 +43,11 @@ export const authOptions: AuthOptions = {
     CredentialsProvider({
       name: "Usuário / Senha",
       credentials: {
-        user: { label: "Usuário", type: "text", placeholder: "Digite seu usuário" },
+        user: {
+          label: "Usuário",
+          type: "text",
+          placeholder: "Digite seu usuário",
+        },
         password: { label: "Senha", type: "password" },
       },
       async authorize(credentials) {
@@ -69,7 +73,9 @@ export const authOptions: AuthOptions = {
           if (axios.isAxiosError(err)) {
             const status = err.response?.status;
             if (status === 503) {
-              throw new Error("Banco de dados indisponível. Tente novamente mais tarde.");
+              throw new Error(
+                "Banco de dados indisponível. Tente novamente mais tarde."
+              );
             }
             if (status === 500) {
               throw new Error("Erro interno no servidor. Contate o suporte.");
@@ -96,7 +102,9 @@ export const authOptions: AuthOptions = {
 
       // Login com Gov.br
       if (account?.access_token && !token._govbrFetched) {
-        const full: GovBrFullProfile = await fetchGovBrFullProfile(account.access_token);
+        const full: GovBrFullProfile = await fetchGovBrFullProfile(
+          account.access_token
+        );
 
         token = {
           ...token,
@@ -121,11 +129,11 @@ export const authOptions: AuthOptions = {
           id: token.id,
           name: session.user?.name || "",
           admin: token.admin,
-          cpf:       token.cpf as string,
+          cpf: token.cpf as string,
           birthdate: token.birthdate as string,
-          image:     token.picture as string,
+          image: token.picture as string,
           phone: token.phone_number as string,
-          access_token: token.access_token as string, 
+          access_token: token.access_token as string,
         };
       }
       return session;

@@ -1,10 +1,9 @@
 "use client";
 import axios from "axios";
 import Cookies from "js-cookie";
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: "/",
 });
 
 // Adiciona o token ao cabeçalho de autorização em todas as requisições

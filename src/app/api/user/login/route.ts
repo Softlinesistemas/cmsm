@@ -8,8 +8,12 @@ const einCpfMask = (value: string) => {
 
   if (cleaned.length <= 3) return cleaned;
   if (cleaned.length <= 6) return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
-  if (cleaned.length <= 9) return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
-  return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`;
+  if (cleaned.length <= 9)
+    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
+  return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(
+    6,
+    9
+  )}-${cleaned.slice(9, 11)}`;
 };
 
 export async function POST(request: Request) {
@@ -25,13 +29,15 @@ export async function POST(request: Request) {
         "S.CodUsu as id",
         "S.Usuario as user",
         "S.Senha as password",
-        "S.ADM as admin",
+        "S.ADM as admin"
       )
       .where((builder) => {
-        builder.where("S.Usuario", userName).orWhere("S.CPF", einCpfMask(userName));
+        builder
+          .where("S.Usuario", userName)
+          .orWhere("S.CPF", einCpfMask(userName));
       })
       .first();
-      
+
     if (!user) {
       return NextResponse.json(
         { message: "Invalid credentials." },
@@ -47,8 +53,11 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({ user: user.user, id: user.id, admin: user.admin });
-
+    return NextResponse.json({
+      user: user.user,
+      id: user.id,
+      admin: user.admin,
+    });
   } catch (error: any) {
     if (
       error.code === "ETIMEOUT" ||
@@ -72,8 +81,5 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  return NextResponse.json(
-    { message: "Method not allowed." },
-    { status: 405 }
-  );
+  return NextResponse.json({ message: "Method not allowed." }, { status: 405 });
 }
