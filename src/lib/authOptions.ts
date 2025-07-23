@@ -61,7 +61,7 @@ export const authOptions: AuthOptions = {
               password: credentials.password,
             }
           );
-
+          console.log(data);
           if (data) {
             return {
               id: data.id,
@@ -71,6 +71,7 @@ export const authOptions: AuthOptions = {
           }
           return null;
         } catch (err: any) {
+          console.log(err);
           if (axios.isAxiosError(err)) {
             const status = err.response?.status;
             if (status === 503) {
