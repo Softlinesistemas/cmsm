@@ -50,6 +50,13 @@ export default function Home() {
         .isBefore(moment.tz("America/Sao_Paulo"))
     : true;
 
+  const prazoNaoComecou = dataConfiguracao
+    ? moment
+        .utc(dataConfiguracao.DataIniEF)
+        .tz("America/Sao_Paulo")
+        .isAfter(moment.tz("America/Sao_Paulo"))
+    : true;
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <Header />
@@ -101,28 +108,32 @@ export default function Home() {
 
           <div className="px-6 py-4 flex flex-col items-center">
             <h3 className="font-bold text-lg text-red-900 mb-4">Inscrições</h3>
-            {!prazoTerminou ? (
+            {prazoNaoComecou ? (
+              <p className="mb-3 text-sm text-yellow-600 font-bold">
+                Inscrição ainda não disponível
+              </p>
+            ) : !prazoTerminou ? (
               <p className="mb-3 text-sm text-green-900">Fazer inscrição</p>
             ) : (
-              dataConfiguracao && (
-                <p className="mb-3 text-sm text-red-900 font-bold">
-                  Inscrição indisponível
-                </p>
-              )
+              <p className="mb-3 text-sm text-red-900 font-bold">
+                Inscrição indisponível
+              </p>
             )}
-            <button
-              onClick={handleGovLogin}
-              className="flex items-center space-x-2 bg-white border border-gray-300 rounded px-4 py-2 hover:scale-105 transition-transform"
-            >
-              <img
-                src="https://www.gov.br/++theme++padrao_govbr/img/govbr-colorido-b.png"
-                alt="gov.br"
-                className="h-6"
-              />
-              <span className="text-gray-700 font-medium">
-                Entrar com gov.br
-              </span>
-            </button>
+            {!prazoNaoComecou && (
+              <button
+                onClick={handleGovLogin}
+                className="flex items-center space-x-2 bg-white border border-gray-300 rounded px-4 py-2 hover:scale-105 transition-transform"
+              >
+                <img
+                  src="https://www.gov.br/++theme++padrao_govbr/img/govbr-colorido-b.png"
+                  alt="gov.br"
+                  className="h-6"
+                />
+                <span className="text-gray-700 font-medium">
+                  Entrar com gov.br
+                </span>
+              </button>
+            )}
             <div className="w-full">
               {/* <Link href={status !== "authenticated" ? "/formulario" : session?.user?.admin ? "/dashboard" :"/acompanhamento"} className='mt-1 text-sm text-blue-500 hover:underline hover:text-blue-700 cursor-pointer'>Pular etapa (provisório)</Link> */}
             </div>
