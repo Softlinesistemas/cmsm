@@ -10,7 +10,13 @@ interface Inscricao {
   nome: string;
   cpf: string;
   numeroInscricao: string;
-  status: "CONCLUIDO" | "DEFERIDO" | "INDEFERIDO" | "CRIADO";
+  status:
+    | "CONCLUIDO"
+    | "DEFERIDO"
+    | "INDEFERIDO"
+    | "CRIADO"
+    | "Deferido"
+    | "Pendente";
   sexo: "M" | "F";
   forca: "exercito" | "marinha" | "aeronautica";
   Sala: string;
@@ -18,6 +24,7 @@ interface Inscricao {
   turno?: string;
   responsavel?: string;
   fotoUrl?: string;
+  isencao?: string;
 }
 
 export default function Inscricoes() {
@@ -66,7 +73,10 @@ export default function Inscricoes() {
     const condPesquisa =
       i.nome?.toLowerCase()?.includes(lower) ||
       i.numeroInscricao?.includes(pesquisa);
-    const condStatus = filtroStatus === "Todos" || i.status === filtroStatus;
+    const condStatus =
+      filtroStatus === "Todos" ||
+      i.status === filtroStatus ||
+      i.isencao === filtroStatus;
     const condSexo = filtroSexo?.length === 0 || filtroSexo?.includes(i.sexo);
     const condForca =
       filtroForca?.length === 0 || filtroForca?.includes(i.forca);
@@ -77,6 +87,7 @@ export default function Inscricoes() {
     switch (status) {
       case "CONCLUIDO":
       case "DEFERIDO":
+      case "Deferido":
         return "text-green-600 font-semibold";
       case "INDEFERIDO":
         return "text-red-600 font-semibold";
@@ -234,7 +245,7 @@ export default function Inscricoes() {
               <p>
                 <strong>Status:</strong>{" "}
                 <span className={getCorTextoStatus(i.status)}>
-                  {i.status || "PENDENTE"}
+                  {i.status || i.isencao?.toUpperCase() || "PENDENTE"}
                 </span>
               </p>
               <p>

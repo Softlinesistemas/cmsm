@@ -19,12 +19,13 @@ export async function GET(req: NextRequest) {
         "c.Sexo as sexo",
         "s.Sala",
         "c.ramoForca as forca",
-        "c.TelResp as telefone"
+        "c.TelResp as telefone",
+        "c.isencao"
       )
       .leftJoin("Sala as s", "c.CodSala", "s.CodSala");
 
     if (pesquisa) {
-      query.where(builder =>
+      query.where((builder) =>
         builder
           .where("c.Nome", "like", `%${pesquisa}%`)
           .orWhere("c.CodIns", "like", `%${pesquisa}%`)
@@ -36,7 +37,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(resultado);
   } catch (error) {
     console.error("Erro ao buscar inscrições:", error);
-    return NextResponse.json({ message: "Erro ao buscar inscrições." }, { status: 500 });
+    return NextResponse.json(
+      { message: "Erro ao buscar inscrições." },
+      { status: 500 }
+    );
   } finally {
     if (db) await db.destroy();
   }
