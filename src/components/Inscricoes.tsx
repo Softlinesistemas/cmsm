@@ -109,29 +109,76 @@ export default function Inscricoes() {
         "Nº Inscrição",
         "Status",
         "Sexo",
-        "Força",
-        "Sala",
+        "Nascimento",
+        "Email",
         "Telefone",
-        "Ano",
+        "CEP",
+        "Endereço",
+        "Complemento",
+        "Bairro",
+        "Cidade",
+        "UF",
+        "Força",
+        "Ramo Força",
+        "Isenção",
+        "Responsável",
+        "CPF Resp",
+        "Tel Resp",
+        "Parentesco",
+        "Pertence FA",
+        "Sala",
+        "Seletivo",
+        "Nota Matemática",
+        "Nota Português",
+        "Nota Redação",
+        "Status GRU",
+        "GRU Ref",
+        "GRU Valor",
+        "GRU Data",
+        "Data Cadastro",
       ],
-      ...filtradas.map((i) => [
-        i.nome,
-        i.cpf,
-        i.numeroInscricao,
-        i.status,
-        i.sexo,
+      ...filtradas.map((i: any) => [
+        i.Nome,
+        i.CPF,
+        i.CodIns,
+        i.Status,
+        i.Sexo,
+        i.Nasc,
+        i.Email,
+        i.TelResp,
+        i.Cep,
+        i.Endereco,
+        i.Complemento,
+        i.Bairro,
+        i.Cidade,
+        i.UF,
         i.forca,
+        i.ramoForca,
+        i.isencao,
+        i.Responsavel,
+        i.CPFResp,
+        i.TelResp,
+        i.Parentesco,
+        i.PertenceFA,
         i.Sala,
-        i.telefone,
-        i.seletivo || "",
+        i.Seletivo,
+        i.NotaMatematica,
+        i.NotaPortugues,
+        i.NotaRedacao,
+        i.GRUStatus,
+        i.GRURef,
+        i.GRUValor,
+        i.GRUData,
+        i.DataCad,
       ]),
     ];
+
     const csv = rows.map((r) => r.join(";")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "inscricoes.csv";
+    link.download = "inscricoes_completas.csv";
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -273,8 +320,8 @@ export default function Inscricoes() {
               </p>
               <p>
                 <strong>Status:</strong>{" "}
-                <span className={getCorTextoStatus(i.status)}>
-                  {i.status || i.isencao?.toUpperCase() || "PENDENTE"}
+                <span className={getCorTextoStatus(i.status || i?.isencao)}>
+                  {i.status || i?.isencao?.toUpperCase() || "PENDENTE"}
                 </span>
               </p>
               <p>

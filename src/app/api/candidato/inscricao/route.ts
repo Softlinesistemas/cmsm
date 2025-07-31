@@ -12,15 +12,14 @@ export async function GET(req: NextRequest) {
 
     const query = db("Candidato as c")
       .select(
+        "c.*",
         "c.Nome as nome",
         "c.CodIns as numeroInscricao",
         "c.GRUStatus as status",
         "c.CPF as cpf",
         "c.Sexo as sexo",
-        "s.Sala",
         "c.ramoForca as forca",
         "c.TelResp as telefone",
-        "c.isencao",
         "c.Seletivo as seletivo"
       )
       .leftJoin("Sala as s", "c.CodSala", "s.CodSala");
