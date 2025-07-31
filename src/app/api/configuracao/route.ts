@@ -16,13 +16,19 @@ export async function GET() {
       .limit(1);
 
     if (!configuracao) {
-      return NextResponse.json({ message: "Nenhuma configuração encontrada." }, { status: 404 });
+      return NextResponse.json(
+        { message: "Nenhuma configuração encontrada." },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(configuracao);
   } catch (error) {
     console.error("Erro ao buscar configuração:", error);
-    return NextResponse.json({ message: "Erro ao buscar configuração." }, { status: 500 });
+    return NextResponse.json(
+      { message: "Erro ao buscar configuração." },
+      { status: 500 }
+    );
   } finally {
     if (db) await db.destroy();
   }
@@ -50,13 +56,13 @@ export async function POST(request: Request) {
       HoraFimEM,
       NotaMinMat,
       NotaMinPor,
+      VagasEF,
+      VagasEM,
     } = body;
 
     db = getDBConnection(dbConfig());
 
-    const existing = await db("Funcao")
-      .where({ ProcessoSel })
-      .first();
+    const existing = await db("Funcao").where({ ProcessoSel }).first();
 
     if (existing) {
       await db("Funcao")
@@ -76,8 +82,12 @@ export async function POST(request: Request) {
           HoraFimEM,
           NotaMinMat: NotaMinMat || null,
           NotaMinPor: NotaMinPor || null,
+          VagasEF,
+          VagasEM,
         });
-      return NextResponse.json({ message: "Configuração atualizada com sucesso." });
+      return NextResponse.json({
+        message: "Configuração atualizada com sucesso.",
+      });
     } else {
       await db("Funcao").insert({
         ProcessoSel,
@@ -95,6 +105,8 @@ export async function POST(request: Request) {
         HoraFimEM,
         NotaMinMat: NotaMinMat || null,
         NotaMinPor: NotaMinPor || null,
+        VagasEF,
+        VagasEM,
       });
       return NextResponse.json({ message: "Configuração salva com sucesso." });
     }

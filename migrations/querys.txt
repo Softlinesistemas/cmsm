@@ -118,6 +118,8 @@ CREATE TABLE Funcao (
     EditalCaminho  VARCHAR(100)   NULL,
     CronogramaCaminho  VARCHAR(100) NULL,
     DocumentosCaminho  VARCHAR(100) NULL,
+    VagasEM           INT            NULL,
+    VagasEF           INT            NULL,
 );
 
 CREATE TABLE Cota (

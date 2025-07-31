@@ -63,18 +63,26 @@ export default function Home() {
           <div className="px-6 py-4 flex flex-col items-center">
             <h3 className="font-bold text-lg text-red-900 mb-4">Vagas</h3>
             <div className="space-y-3 w-full">
-              <div className="mx-auto flex items-center justify-between bg-gray-200 rounded-full px-4 py-2 w-40">
-                <span className="text-sm text-blue-700 text-bold">6° ano</span>
-                <span className="text-sm font-bold text-green-800">
-                  700 vagas
-                </span>
-              </div>
-              <div className="mx-auto flex items-center justify-between bg-gray-200 rounded-full px-4 py-2 w-40">
-                <span className="text-sm text-blue-700 text-bold">1° ano</span>
-                <span className="text-sm font-bold text-green-800">
-                  1000 vagas
-                </span>
-              </div>
+              {dataConfiguracao?.VagasEF && (
+                <div className="mx-auto flex items-center justify-between bg-gray-200 rounded-full px-4 py-2 w-40">
+                  <span className="text-sm text-blue-700 text-bold">
+                    6° ano
+                  </span>
+                  <span className="text-sm font-bold text-green-800">
+                    {dataConfiguracao?.VagasEF} vagas
+                  </span>
+                </div>
+              )}
+              {dataConfiguracao?.VagasEM && (
+                <div className="mx-auto flex items-center justify-between bg-gray-200 rounded-full px-4 py-2 w-40">
+                  <span className="text-sm text-blue-700 text-bold">
+                    1° ano
+                  </span>
+                  <span className="text-sm font-bold text-green-800">
+                    {dataConfiguracao?.VagasEM} vagas
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
