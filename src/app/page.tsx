@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import { useRouter } from 'next/navigation'
-import { useEditais } from "@/context/EditalContext"; 
-import { useQuery } from 'react-query';
-import api from '@/utils/api';
-import moment from 'moment-timezone';
-import { signIn } from 'next-auth/react';
-import Link from 'next/link';
-import { useSession } from 'next-auth/react'
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { useRouter } from "next/navigation";
+import { useEditais } from "@/context/EditalContext";
+import { useQuery } from "react-query";
+import api from "@/utils/api";
+import moment from "moment-timezone";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
   const router = useRouter();
-  const { editais } = useEditais(); 
+  const { editais } = useEditais();
   const { data: session, status } = useSession();
 
   const handleGovLogin = async () => {
@@ -22,25 +22,33 @@ export default function Home() {
 
   const fetchConfig = async () => {
     try {
-      const response = await api.get('api/configuracao');
+      const response = await api.get("api/configuracao");
       const configuracao = response?.data;
       return configuracao;
     } catch (error) {
       // Não retorna nada pois é um fetch
     }
-  }
+  };
 
-  const {
-    data: dataConfiguracao,
-    isLoading: configLoading
-  } = useQuery(
-    ['configuracao'],
-      fetchConfig,
+  const { data: dataConfiguracao, isLoading: configLoading } = useQuery(
+    ["configuracao"],
+    fetchConfig,
     {
       retry: 5,
       refetchOnWindowFocus: false,
     }
   );
+
+  const ajustaFuso = (dataStr: string) => {
+    return moment.utc(dataStr).add(3, "hours").format("DD/MM/YYYY");
+  };
+
+  const prazoTerminou = dataConfiguracao
+    ? moment
+        .utc(dataConfiguracao.GRUDataFim)
+        .tz("America/Sao_Paulo")
+        .isBefore(moment.tz("America/Sao_Paulo"))
+    : true;
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -57,25 +65,43 @@ export default function Home() {
             <div className="space-y-3 w-full">
               <div className="mx-auto flex items-center justify-between bg-gray-200 rounded-full px-4 py-2 w-40">
                 <span className="text-sm text-blue-700 text-bold">6° ano</span>
-                <span className="text-sm font-bold text-green-800">700 vagas</span>
+                <span className="text-sm font-bold text-green-800">
+                  700 vagas
+                </span>
               </div>
               <div className="mx-auto flex items-center justify-between bg-gray-200 rounded-full px-4 py-2 w-40">
                 <span className="text-sm text-blue-700 text-bold">1° ano</span>
-                <span className="text-sm font-bold text-green-800">1000 vagas</span>
+                <span className="text-sm font-bold text-green-800">
+                  1000 vagas
+                </span>
               </div>
             </div>
           </div>
 
           <div className="px-6 py-4 flex flex-col items-center">
-            <h3 className="font-bold text-lg text-red-900 mb-4">Período de inscrição</h3>
-            <p className="text-green-900 font-semibold text-lg">
-              {moment(dataConfiguracao?.DataIniEF).tz("America/Sao_Paulo").format("DD/MM/YYYY")} <span className="mx-2">à</span> {moment(dataConfiguracao?.GRUDataFim).tz("America/Sao_Paulo").format("DD/MM/YYYY")}
-            </p>
+            <h3 className="font-bold text-lg text-red-900 mb-4">
+              Período de inscrição
+            </h3>
+            {dataConfiguracao && (
+              <p className="text-green-900 font-semibold text-lg">
+                {ajustaFuso(dataConfiguracao?.DataIniEF)}{" "}
+                <span className="mx-2">à</span>{" "}
+                {ajustaFuso(dataConfiguracao?.GRUDataFim)}
+              </p>
+            )}
           </div>
 
           <div className="px-6 py-4 flex flex-col items-center">
             <h3 className="font-bold text-lg text-red-900 mb-4">Inscrições</h3>
-            <p className="mb-3 text-sm">Fazer inscrição</p>
+            {!prazoTerminou ? (
+              <p className="mb-3 text-sm text-green-900">Fazer inscrição</p>
+            ) : (
+              dataConfiguracao && (
+                <p className="mb-3 text-sm text-red-900 font-bold">
+                  Inscrição indisponível
+                </p>
+              )
+            )}
             <button
               onClick={handleGovLogin}
               className="flex items-center space-x-2 bg-white border border-gray-300 rounded px-4 py-2 hover:scale-105 transition-transform"
@@ -85,9 +111,11 @@ export default function Home() {
                 alt="gov.br"
                 className="h-6"
               />
-              <span className="text-gray-700 font-medium">Entrar com gov.br</span>
+              <span className="text-gray-700 font-medium">
+                Entrar com gov.br
+              </span>
             </button>
-            <div className='w-full'>            
+            <div className="w-full">
               {/* <Link href={status !== "authenticated" ? "/formulario" : session?.user?.admin ? "/dashboard" :"/acompanhamento"} className='mt-1 text-sm text-blue-500 hover:underline hover:text-blue-700 cursor-pointer'>Pular etapa (provisório)</Link> */}
             </div>
           </div>
@@ -99,7 +127,7 @@ export default function Home() {
           </h2>
 
           <div className="space-y-4">
-            {editais.map(edital => (
+            {editais.map((edital) => (
               <div
                 key={edital.id}
                 className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow mb-2"
@@ -107,7 +135,7 @@ export default function Home() {
                 <a
                   href={`${process.env.NEXT_PUBLIC_IMAGE_URL}${dataConfiguracao?.EditalCaminho}`}
                   download
-                  target='_blank'
+                  target="_blank"
                   className="bg-blue-900 text-white font-semibold px-4 py-2 rounded hover:bg-blue-800 transition-colors"
                 >
                   {edital.titulo}
@@ -118,17 +146,18 @@ export default function Home() {
               </div>
             ))}
 
-           <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow">
               <a
                 href={`${process.env.NEXT_PUBLIC_IMAGE_URL}${dataConfiguracao?.CronogramaCaminho}`}
                 download
-                target='_blank'
+                target="_blank"
                 className="bg-yellow-700 text-white font-semibold px-4 py-2 rounded hover:bg-gray-800 transition-colors"
               >
                 Cronograma
               </a>
               <p className="mt-2 md:mt-0 md:ml-4 text-sm text-gray-800">
-                Lista todas as datas importantes: inscrição, provas, resultados e matrícula.
+                Lista todas as datas importantes: inscrição, provas, resultados
+                e matrícula.
               </p>
             </div>
 
@@ -136,13 +165,14 @@ export default function Home() {
               <a
                 href={`${process.env.NEXT_PUBLIC_IMAGE_URL}${dataConfiguracao?.DocumentosCaminho}`}
                 download
-                target='_blank'
+                target="_blank"
                 className="bg-green-800 text-white font-semibold px-4 py-2 rounded hover:bg-green-700 transition-colors"
               >
                 Documentos
               </a>
               <p className="mt-2 md:mt-0 md:ml-4 text-sm text-gray-800">
-                Documentação obrigatória para inscrição e matrícula dos candidatos.
+                Documentação obrigatória para inscrição e matrícula dos
+                candidatos.
               </p>
             </div>
           </div>
