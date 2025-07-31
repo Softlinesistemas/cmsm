@@ -20,7 +20,8 @@ export async function GET(req: NextRequest) {
         "s.Sala",
         "c.ramoForca as forca",
         "c.TelResp as telefone",
-        "c.isencao"
+        "c.isencao",
+        "c.Seletivo as seletivo"
       )
       .leftJoin("Sala as s", "c.CodSala", "s.CodSala");
 

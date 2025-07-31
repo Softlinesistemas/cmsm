@@ -18,17 +18,26 @@ interface Inscricao {
     | "Deferido"
     | "Pendente";
   sexo: "M" | "F";
-  forca: "exercito" | "marinha" | "aeronautica";
+  forca: "exercito" | "marinha" | "aeronautica" | "civil";
   Sala: string;
   telefone: string;
   turno?: string;
   responsavel?: string;
   fotoUrl?: string;
   isencao?: string;
+  seletivo?: string; // ADICIONADO
 }
 
 export default function Inscricoes() {
   const [pesquisa, setPesquisa] = useState("");
+  const [filtroStatus, setFiltroStatus] = useState<
+    "Todos" | Inscricao["status"]
+  >("Todos");
+  const [filtroSexo, setFiltroSexo] = useState<Inscricao["sexo"][]>([]);
+  const [filtroForca, setFiltroForca] = useState<Inscricao["forca"][]>([]);
+  const [filtroSeletivo, setFiltroSeletivo] = useState<string[]>([]); // ADICIONADO
+  const [cardAberto, setCardAberto] = useState<number | null>(null);
+
   const {
     data: inscricoes = [],
     isLoading,
@@ -38,12 +47,6 @@ export default function Inscricoes() {
       .get(`api/candidato/inscricao?pesquisa=${pesquisa}`)
       .then((res) => res.data)
   );
-  const [filtroStatus, setFiltroStatus] = useState<
-    "Todos" | Inscricao["status"]
-  >("Todos");
-  const [filtroSexo, setFiltroSexo] = useState<Inscricao["sexo"][]>([]);
-  const [filtroForca, setFiltroForca] = useState<Inscricao["forca"][]>([]);
-  const [cardAberto, setCardAberto] = useState<number | null>(null);
 
   const toggleFiltro = (filtro: "sexo" | "forca", valor: string) => {
     if (filtro === "sexo") {
@@ -61,13 +64,11 @@ export default function Inscricoes() {
     }
   };
 
-  // loading / error
   if (isError) {
     toast.error("Não foi possível carregar as inscrições.");
     return <p>Erro ao carregar dados.</p>;
   }
 
-  // aplica filtros
   const filtradas = inscricoes?.filter((i) => {
     const lower = pesquisa?.toLowerCase();
     const condPesquisa =
@@ -80,7 +81,9 @@ export default function Inscricoes() {
     const condSexo = filtroSexo?.length === 0 || filtroSexo?.includes(i.sexo);
     const condForca =
       filtroForca?.length === 0 || filtroForca?.includes(i.forca);
-    return condPesquisa && condStatus && condSexo && condForca;
+    const condSeletivo =
+      filtroSeletivo.length === 0 || filtroSeletivo.includes(i.seletivo || ""); // ADICIONADO
+    return condPesquisa && condStatus && condSexo && condForca && condSeletivo;
   });
 
   const getCorTextoStatus = (status: Inscricao["status"]) => {
@@ -98,7 +101,6 @@ export default function Inscricoes() {
     }
   };
 
-  // exportação CSV
   const exportarCSV = () => {
     const rows = [
       [
@@ -110,6 +112,7 @@ export default function Inscricoes() {
         "Força",
         "Sala",
         "Telefone",
+        "Ano",
       ],
       ...filtradas.map((i) => [
         i.nome,
@@ -120,6 +123,7 @@ export default function Inscricoes() {
         i.forca,
         i.Sala,
         i.telefone,
+        i.seletivo || "",
       ]),
     ];
     const csv = rows.map((r) => r.join(";")).join("\n");
@@ -222,6 +226,31 @@ export default function Inscricoes() {
             ))}
           </div>
         </div>
+
+        <div>
+          <h4 className="font-semibold mb-1">Ano / Seletivo:</h4>
+          <div className="flex gap-2">
+            {["6° ano", "1° ano"].map((ano) => (
+              <button
+                key={ano}
+                onClick={() =>
+                  setFiltroSeletivo((prev) =>
+                    prev.includes(ano)
+                      ? prev.filter((v) => v !== ano)
+                      : [...prev, ano]
+                  )
+                }
+                className={`px-3 py-1 rounded-full border ${
+                  filtroSeletivo.includes(ano)
+                    ? "bg-orange-500 text-white border-orange-500"
+                    : "bg-white text-gray-700 border-gray-300"
+                } transition`}
+              >
+                {ano}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* cards */}
@@ -254,6 +283,9 @@ export default function Inscricoes() {
               </p>
               <p>
                 <strong>Força:</strong> {i.forca}
+              </p>
+              <p>
+                <strong>Ano:</strong> {i.seletivo}
               </p>
               <p>
                 <strong>Sala:</strong> {i.Sala}
