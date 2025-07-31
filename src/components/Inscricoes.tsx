@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { useQuery } from "react-query";
@@ -10,10 +10,10 @@ interface Inscricao {
   nome: string;
   cpf: string;
   numeroInscricao: string;
-  status: 'CONCLUIDO' | 'DEFERIDO' | 'INDEFERIDO' | 'CRIADO';
-  sexo: 'M' | 'F';
-  forca: 'exercito' | 'marinha' | 'aeronautica';
-  sala: string;
+  status: "CONCLUIDO" | "DEFERIDO" | "INDEFERIDO" | "CRIADO";
+  sexo: "M" | "F";
+  forca: "exercito" | "marinha" | "aeronautica";
+  Sala: string;
   telefone: string;
   turno?: string;
   responsavel?: string;
@@ -21,108 +21,134 @@ interface Inscricao {
 }
 
 export default function Inscricoes() {
-  const [pesquisa, setPesquisa] = useState('');
-  const { data: inscricoes = [], isLoading, isError } = useQuery<Inscricao[]>(
-    ['inscricoes', pesquisa],
-    () => api.get(`api/candidato/inscricao?pesquisa=${pesquisa}`).then(res => res.data)
+  const [pesquisa, setPesquisa] = useState("");
+  const {
+    data: inscricoes = [],
+    isLoading,
+    isError,
+  } = useQuery<Inscricao[]>(["inscricoes", pesquisa], () =>
+    api
+      .get(`api/candidato/inscricao?pesquisa=${pesquisa}`)
+      .then((res) => res.data)
   );
-  const [filtroStatus, setFiltroStatus] = useState<'Todos' | Inscricao['status']>('Todos');
-  const [filtroSexo, setFiltroSexo] = useState<Inscricao['sexo'][]>([]);
-  const [filtroForca, setFiltroForca] = useState<Inscricao['forca'][]>([]);
+  const [filtroStatus, setFiltroStatus] = useState<
+    "Todos" | Inscricao["status"]
+  >("Todos");
+  const [filtroSexo, setFiltroSexo] = useState<Inscricao["sexo"][]>([]);
+  const [filtroForca, setFiltroForca] = useState<Inscricao["forca"][]>([]);
   const [cardAberto, setCardAberto] = useState<number | null>(null);
 
-  const toggleFiltro = (filtro: 'sexo' | 'forca', valor: string) => {
-    if (filtro === 'sexo') {
-      setFiltroSexo(prev =>
-        prev.includes(valor as Inscricao['sexo'])
-          ? prev.filter(v => v !== valor)
-          : [...prev, valor as Inscricao['sexo']]
+  const toggleFiltro = (filtro: "sexo" | "forca", valor: string) => {
+    if (filtro === "sexo") {
+      setFiltroSexo((prev) =>
+        prev.includes(valor as Inscricao["sexo"])
+          ? prev.filter((v) => v !== valor)
+          : [...prev, valor as Inscricao["sexo"]]
       );
     } else {
-      setFiltroForca(prev =>
-        prev.includes(valor as Inscricao['forca'])
-          ? prev.filter(v => v !== valor)
-          : [...prev, valor as Inscricao['forca']]
+      setFiltroForca((prev) =>
+        prev.includes(valor as Inscricao["forca"])
+          ? prev.filter((v) => v !== valor)
+          : [...prev, valor as Inscricao["forca"]]
       );
     }
   };
 
   // loading / error
   if (isError) {
-    toast.error('Não foi possível carregar as inscrições.');
+    toast.error("Não foi possível carregar as inscrições.");
     return <p>Erro ao carregar dados.</p>;
   }
 
   // aplica filtros
-  const filtradas = inscricoes?.filter(i => {
+  const filtradas = inscricoes?.filter((i) => {
     const lower = pesquisa?.toLowerCase();
     const condPesquisa =
       i.nome?.toLowerCase()?.includes(lower) ||
       i.numeroInscricao?.includes(pesquisa);
-    const condStatus =
-      filtroStatus === 'Todos' || i.status === filtroStatus;
-    const condSexo =
-      filtroSexo?.length === 0 || filtroSexo?.includes(i.sexo);
+    const condStatus = filtroStatus === "Todos" || i.status === filtroStatus;
+    const condSexo = filtroSexo?.length === 0 || filtroSexo?.includes(i.sexo);
     const condForca =
       filtroForca?.length === 0 || filtroForca?.includes(i.forca);
     return condPesquisa && condStatus && condSexo && condForca;
   });
 
-  const getCorTextoStatus = (status: Inscricao['status']) => {
+  const getCorTextoStatus = (status: Inscricao["status"]) => {
     switch (status) {
-      case 'CONCLUIDO':
-      case 'DEFERIDO':
-        return 'text-green-600 font-semibold';
-      case 'INDEFERIDO':
-        return 'text-red-600 font-semibold';
-      case 'CRIADO':
-        return 'text-yellow-600 font-semibold';
+      case "CONCLUIDO":
+      case "DEFERIDO":
+        return "text-green-600 font-semibold";
+      case "INDEFERIDO":
+        return "text-red-600 font-semibold";
+      case "CRIADO":
+        return "text-yellow-600 font-semibold";
       default:
-        return 'text-yellow-600 font-semibold';
+        return "text-yellow-600 font-semibold";
     }
   };
 
   // exportação CSV
   const exportarCSV = () => {
     const rows = [
-      ['Nome', 'CPF', 'Nº Inscrição', 'Status', 'Sexo', 'Força', 'Sala', 'Telefone'],
-      ...filtradas.map(i => [
+      [
+        "Nome",
+        "CPF",
+        "Nº Inscrição",
+        "Status",
+        "Sexo",
+        "Força",
+        "Sala",
+        "Telefone",
+      ],
+      ...filtradas.map((i) => [
         i.nome,
         i.cpf,
         i.numeroInscricao,
         i.status,
         i.sexo,
         i.forca,
-        i.sala,
-        i.telefone
-      ])
+        i.Sala,
+        i.telefone,
+      ]),
     ];
-    const csv = rows.map(r => r.join(';')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const csv = rows.map((r) => r.join(";")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = 'inscricoes.csv';
+    link.download = "inscricoes.csv";
     link.click();
     URL.revokeObjectURL(url);
   };
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Controle de Inscrições</h2>
+      <h2 className="text-2xl font-bold">Controle de Inscrições</h2>
+
+      <p className="text-sm text-gray-600 my-4">
+        <strong>Legenda de Status:</strong> <br />
+        <span className="text-yellow-600 font-semibold">CRIADO</span>: Pagamento
+        gerado (GRU emitida) <br />
+        <span className="text-red-600 font-semibold">INDEFERIDO</span>:
+        Pagamento recusado <br />
+        <span className="text-green-600 font-semibold">CONCLUIDO</span>:
+        Pagamento confirmado <br />
+        <span className="text-green-600 font-semibold">DEFERIDO</span>:
+        Inscrição aceita
+      </p>
 
       <div className="flex flex-col sm:flex-row gap-2 mb-4">
         <input
           type="text"
           placeholder="Pesquisar por nome ou nº de inscrição"
           value={pesquisa}
-          onChange={e => setPesquisa(e.target.value)}
+          onChange={(e) => setPesquisa(e.target.value)}
           className="border rounded p-2 flex-1"
         />
         <select
           className="border rounded p-2"
           value={filtroStatus}
-          onChange={e =>
+          onChange={(e) =>
             setFiltroStatus(e.target.value as typeof filtroStatus)
           }
         >
@@ -145,14 +171,14 @@ export default function Inscricoes() {
         <div>
           <h4 className="font-semibold mb-1">Sexo:</h4>
           <div className="flex gap-2">
-            {['M', 'F'].map(sexo => (
+            {["M", "F"].map((sexo) => (
               <button
                 key={sexo}
-                onClick={() => toggleFiltro('sexo', sexo)}
+                onClick={() => toggleFiltro("sexo", sexo)}
                 className={`px-3 py-1 rounded-full border ${
-                  filtroSexo.includes(sexo as Inscricao['sexo'])
-                    ? 'bg-blue-500 text-white border-blue-500'
-                    : 'bg-white text-gray-700 border-gray-300'
+                  filtroSexo.includes(sexo as Inscricao["sexo"])
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-white text-gray-700 border-gray-300"
                 } transition`}
               >
                 {sexo === "F" ? "Feminino" : "Masculino"}
@@ -164,17 +190,23 @@ export default function Inscricoes() {
         <div>
           <h4 className="font-semibold mb-1">Força Armada:</h4>
           <div className="flex gap-2">
-            {['exercito', 'marinha', 'aeronautica', 'civil'].map(f => (
+            {["exercito", "marinha", "aeronautica", "civil"].map((f) => (
               <button
                 key={f}
-                onClick={() => toggleFiltro('forca', f)}
+                onClick={() => toggleFiltro("forca", f)}
                 className={`px-3 py-1 rounded-full border ${
-                  filtroForca.includes(f as Inscricao['forca'])
-                    ? 'bg-purple-600 text-white border-purple-600'
-                    : 'bg-white text-gray-700 border-gray-300'
+                  filtroForca.includes(f as Inscricao["forca"])
+                    ? "bg-purple-600 text-white border-purple-600"
+                    : "bg-white text-gray-700 border-gray-300"
                 } transition`}
               >
-                {f === "marinha" ? "Marinha" : f === "aeronautica" ? "Aeronautica" : f === "exercito" ? "Exercito" : "Civil"}
+                {f === "marinha"
+                  ? "Marinha"
+                  : f === "aeronautica"
+                  ? "Aeronautica"
+                  : f === "exercito"
+                  ? "Exercito"
+                  : "Civil"}
               </button>
             ))}
           </div>
@@ -186,36 +218,53 @@ export default function Inscricoes() {
         {filtradas.map((i, idx) => (
           <div
             key={idx}
-            onClick={() =>
-              setCardAberto(cardAberto === idx ? null : idx)
-            }
+            onClick={() => setCardAberto(cardAberto === idx ? null : idx)}
             className="relative p-4 rounded-xl cursor-pointer shadow-md border hover:shadow-lg transition-all bg-white"
           >
             <div className="text-blue-800">
-              <p><strong>Nome:</strong> {i.nome}</p>
-              <p><strong>CPF:</strong> {i.cpf}</p>
-              <p><strong>Inscrição:</strong> {i.numeroInscricao}</p>
               <p>
-                <strong>Status:</strong>{' '}
+                <strong>Nome:</strong> {i.nome}
+              </p>
+              <p>
+                <strong>CPF:</strong> {i.cpf}
+              </p>
+              <p>
+                <strong>Inscrição:</strong> {i.numeroInscricao}
+              </p>
+              <p>
+                <strong>Status:</strong>{" "}
                 <span className={getCorTextoStatus(i.status)}>
                   {i.status || "PENDENTE"}
                 </span>
               </p>
-              <p><strong>Sexo:</strong> {i.sexo === "F" ? "Feminino" : "Masculino"}</p>
-              <p><strong>Força:</strong> {i.forca}</p>
-              <p><strong>Sala:</strong> {i.sala}</p>
+              <p>
+                <strong>Sexo:</strong>{" "}
+                {i.sexo === "F" ? "Feminino" : "Masculino"}
+              </p>
+              <p>
+                <strong>Força:</strong> {i.forca}
+              </p>
+              <p>
+                <strong>Sala:</strong> {i.Sala}
+              </p>
             </div>
 
             {cardAberto === idx && (
               <div className="mt-4 pt-2 border-t text-sm text-gray-700">
                 {i.responsavel && (
-                  <p><strong>Responsável:</strong> {i.responsavel}</p>
+                  <p>
+                    <strong>Responsável:</strong> {i.responsavel}
+                  </p>
                 )}
                 {i.telefone && (
-                  <p><strong>Telefone:</strong> {i.telefone}</p>
+                  <p>
+                    <strong>Telefone:</strong> {i.telefone}
+                  </p>
                 )}
                 {i.turno && (
-                  <p><strong>Turno:</strong> {i.turno}</p>
+                  <p>
+                    <strong>Turno:</strong> {i.turno}
+                  </p>
                 )}
               </div>
             )}

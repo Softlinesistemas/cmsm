@@ -16,11 +16,13 @@ interface Candidato {
 
 export default function BaixaPagamentos() {
   const queryClient = useQueryClient();
-  const [filtro, setFiltro] = useState<"Todos" | "Deferido" | "Indeferido" | "Pendente" | "Isento">("Todos");
+  const [filtro, setFiltro] = useState<
+    "Todos" | "Deferido" | "Indeferido" | "Pendente" | "Isento"
+  >("Todos");
 
   // Busca candidatos
   const { data: candidatos = [], isLoading } = useQuery<Candidato[]>(
-    ['candidatos'],
+    ["candidatos"],
     async () => {
       const res = await api.get("/api/candidato/deferimento");
       return res.data.candidatos.map((c: any) => ({
@@ -39,44 +41,55 @@ export default function BaixaPagamentos() {
       const payload = { valor: 0 };
       return api.post(`/api/candidato/deferimento/${id}/deferir`, payload);
     },
-    { onSuccess: () => queryClient.invalidateQueries(['candidatos']) }
+    { onSuccess: () => queryClient.invalidateQueries(["candidatos"]) }
   );
 
   const indeferirMutation = useMutation(
-    ({ id }: { id: number }) => api.post(`/api/candidato/deferimento/${id}/indeferir`),
-    { onSuccess: () => queryClient.invalidateQueries(['candidatos']) }
+    ({ id }: { id: number }) =>
+      api.post(`/api/candidato/deferimento/${id}/indeferir`),
+    { onSuccess: () => queryClient.invalidateQueries(["candidatos"]) }
   );
 
   const isentoMutation = useMutation(
-    ({ id }: { id: number }) => api.post(`/api/candidato/deferimento/${id}/isento`),
-    { onSuccess: () => queryClient.invalidateQueries(['candidatos']) }
+    ({ id }: { id: number }) =>
+      api.post(`/api/candidato/deferimento/${id}/isento`),
+    { onSuccess: () => queryClient.invalidateQueries(["candidatos"]) }
   );
 
   // Ações em massa
   const deferirTodos = () => {
-    candidatos.forEach(c => deferirMutation.mutate({ id: c.id }));
+    candidatos.forEach((c) => deferirMutation.mutate({ id: c.id }));
   };
 
   const indeferirTodos = () => {
-    candidatos.forEach(c => indeferirMutation.mutate({ id: c.id }));
+    candidatos.forEach((c) => indeferirMutation.mutate({ id: c.id }));
   };
 
   // Lista filtrada
-  const listaFiltrada = filtro === 'Todos'
-    ? candidatos
-    : candidatos.filter(c => c.status === filtro);
+  const listaFiltrada =
+    filtro === "Todos"
+      ? candidatos
+      : candidatos.filter((c) => c.status === filtro);
 
   // Contadores
-  const totalDeferido = candidatos.filter(c => c.status === 'Deferido').length;
-  const totalIndeferido = candidatos.filter(c => c.status === 'Indeferido').length;
-  const totalEmAnalise = candidatos.filter(c => c.status === 'Pendente').length;
-  const totalIsentos = candidatos.filter(c => c.status === 'Isento').length;
+  const totalDeferido = candidatos.filter(
+    (c) => c.status === "Deferido"
+  ).length;
+  const totalIndeferido = candidatos.filter(
+    (c) => c.status === "Indeferido"
+  ).length;
+  const totalEmAnalise = candidatos.filter(
+    (c) => c.status === "Pendente"
+  ).length;
+  const totalIsentos = candidatos.filter((c) => c.status === "Isento").length;
 
   if (isLoading) return <div>Carregando...</div>;
 
   return (
     <div className="p-4 bg-blue-50 rounded-xl text-black">
-      <h2 className="text-2xl font-bold mb-4 text-blue-800">Avaliação de Pagamentos</h2>
+      <h2 className="text-2xl font-bold mb-4 text-blue-800">
+        Avaliação de Pagamentos e Isenções
+      </h2>
 
       {/* Ações em massa */}
       {/* <div className="flex flex-wrap gap-2 mb-4">
@@ -99,7 +112,7 @@ export default function BaixaPagamentos() {
         <FaFilter className="text-blue-800" />
         <select
           value={filtro}
-          onChange={e => setFiltro(e.target.value as any)}
+          onChange={(e) => setFiltro(e.target.value as any)}
           className="border rounded p-2 text-black"
         >
           <option value="Todos">Todos</option>
@@ -112,10 +125,18 @@ export default function BaixaPagamentos() {
 
       {/* Status counts */}
       <div className="mb-4 text-sm">
-        <p><strong className="text-blue-800">Total Deferidos:</strong> {totalDeferido}</p>
-        <p><strong className="text-red-800">Total Indeferidos:</strong> {totalIndeferido}</p>
-        <p><strong className="text-gray-800">Total Pendente:</strong> {totalEmAnalise}</p>
-        <p><strong className="text-yellow-800">Total Isentos:</strong> {totalIsentos}</p>
+        <p>
+          <strong className="text-blue-800">Total Deferidos:</strong>{" "}
+          {totalDeferido}
+        </p>
+        <p>
+          <strong className="text-red-800">Total Indeferidos:</strong>{" "}
+          {totalIndeferido}
+        </p>
+        <p>
+          <strong className="text-gray-800">Total Pendente:</strong>{" "}
+          {totalEmAnalise}
+        </p>
       </div>
 
       {/* Tabela */}
@@ -131,32 +152,41 @@ export default function BaixaPagamentos() {
           </tr>
         </thead>
         <tbody>
-          {listaFiltrada.map(c => (
-            <tr key={c.id} className="border-b hover:bg-blue-100">
+          {listaFiltrada?.map((c: any, index: number) => (
+            <tr key={index} className="border-b hover:bg-blue-100">
               <td className="p-2">{c.id}</td>
               <td className="p-2">{c.nome}</td>
               <td className="p-2">{c.cpf}</td>
               <td className="p-2">
-                <span className={
-                  c.status === "Deferido" ? "text-green-600 font-semibold" :
-                  c.status === "Indeferido" ? "text-red-600 font-semibold" :
-                  c.status === "Pendente" ? "text-yellow-600 font-semibold" :
-                  "text-gray-600 font-semibold"
-                }>
+                <span
+                  className={
+                    c.status === "Deferido"
+                      ? "text-green-600 font-semibold"
+                      : c.status === "Indeferido"
+                      ? "text-red-600 font-semibold"
+                      : c.status === "Pendente"
+                      ? "text-yellow-600 font-semibold"
+                      : "text-gray-600 font-semibold"
+                  }
+                >
                   {c.status}
                 </span>
               </td>
               <td className="p-2">{c.numeroInscricao || "-"}</td>
               <td className="p-2 flex gap-2">
                 <button
-                  onClick={() => deferirMutation.mutate({ id: c.numeroInscricao })}
+                  onClick={() =>
+                    deferirMutation.mutate({ id: c.numeroInscricao })
+                  }
                   disabled={deferirMutation.isLoading}
                   className="flex items-center gap-1 bg-blue-800 text-white px-2 py-1 rounded hover:bg-blue-700"
                 >
                   Deferir <FaCheck />
                 </button>
                 <button
-                  onClick={() => indeferirMutation.mutate({ id: c.numeroInscricao })}
+                  onClick={() =>
+                    indeferirMutation.mutate({ id: c.numeroInscricao })
+                  }
                   disabled={indeferirMutation.isLoading}
                   className="flex items-center gap-1 bg-red-800 text-white px-2 py-1 rounded hover:bg-red-700"
                 >
@@ -174,6 +204,12 @@ export default function BaixaPagamentos() {
           ))}
         </tbody>
       </table>
+      <p className="text-sm text-red-700">
+        Ao efetuar o pagamento pela plataforma, o candidato automaticamente
+        atualiza seu status de inscrição para 'CONCLUIDO', casos de insenção ou
+        de falha na comunicação de pagamento, é possível deferir manualmente
+        nesse formulário mediante apresentação do comprovante de pagamento.
+      </p>
     </div>
   );
 }

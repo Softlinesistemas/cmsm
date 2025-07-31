@@ -76,20 +76,24 @@ export default function Dashboard() {
                 label="6° ANO"
                 value={(
                   pagamentos["6"].pagos?.length +
-                  pagamentos["6"].pendentes?.length
+                  pagamentos["6"].pendentes?.length +
+                  pagamentos["6"].isentos
                 ).toLocaleString()}
                 sub1={`Pagos ${pagamentos["6"].pagos?.length}`}
                 sub2={`Pendente ${pagamentos["6"].pendentes?.length}`}
+                sub3={`Isentos: ${pagamentos["6"].isentos}`}
                 green
               />
               <Card
                 label="1° ANO"
                 value={(
                   pagamentos["1"].pagos?.length +
-                  pagamentos["1"].pendentes?.length
+                  pagamentos["1"].pendentes?.length +
+                  pagamentos["1"].isentos
                 ).toLocaleString()}
                 sub1={`Pagos ${pagamentos["1"].pagos?.length}`}
                 sub2={`Pendente ${pagamentos["1"].pendentes?.length}`}
+                sub3={`Isentos: ${pagamentos["1"].isentos}`}
                 green
               />
             </div>
@@ -160,7 +164,7 @@ export default function Dashboard() {
   );
 }
 
-function Card({ label, value, sub1, sub2, green, center }: any) {
+function Card({ label, value, sub1, sub2, sub3, green, center }: any) {
   return (
     <div
       className={`bg-white rounded-xl shadow-lg p-4 text-center border-2 ${
@@ -172,6 +176,7 @@ function Card({ label, value, sub1, sub2, green, center }: any) {
       {(sub1 || sub2) && (
         <div className="flex justify-between text-xs font-semibold">
           <span className="text-green-700">{sub1}</span>
+          <span className="text-yellow-600">{sub3}</span>
           <span className="text-red-600">{sub2}</span>
         </div>
       )}
