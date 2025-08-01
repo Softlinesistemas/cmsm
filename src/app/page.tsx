@@ -108,16 +108,18 @@ export default function Home() {
 
           <div className="px-6 py-4 flex flex-col items-center">
             <h3 className="font-bold text-lg text-red-900 mb-4">Inscrições</h3>
-            {prazoNaoComecou ? (
+            {dataConfiguracao && prazoNaoComecou ? (
               <p className="mb-3 text-sm text-yellow-600 font-bold">
                 Inscrição ainda não disponível
               </p>
-            ) : !prazoTerminou ? (
+            ) : dataConfiguracao && !prazoTerminou ? (
               <p className="mb-3 text-sm text-green-900">Fazer inscrição</p>
             ) : (
-              <p className="mb-3 text-sm text-red-900 font-bold">
-                Inscrição indisponível
-              </p>
+              dataConfiguracao && (
+                <p className="mb-3 text-sm text-red-900 font-bold">
+                  Inscrição indisponível
+                </p>
+              )
             )}
             {!prazoNaoComecou && (
               <button

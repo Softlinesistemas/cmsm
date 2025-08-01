@@ -122,6 +122,21 @@ CREATE TABLE Funcao (
     VagasEF           INT            NULL,
 );
 
+CREATE TABLE DocCategoria (
+    CodCategoria INT PRIMARY KEY,
+    CategoriaNome NVARCHAR(255),
+    CategoriaCor NVARCHAR(7),
+    CategoriaDescricao NVARCHAR(MAX) 
+);
+
+CREATE TABLE Docs (
+    CodDoc INT PRIMARY KEY,
+    DocNome NVARCHAR(255),
+    DocCaminho NVARCHAR(50),
+    DocCategoria INT,
+    FOREIGN KEY (DocCategoria) REFERENCES DocCategoria(CodCategoria)
+);
+
 CREATE TABLE Cota (
     id          INT           NOT NULL PRIMARY KEY IDENTITY(1,1),  -- chave primária com auto incremento
     Status      VARCHAR(20)   NOT NULL,                            -- Ex: 'Ativa', 'Inativa'

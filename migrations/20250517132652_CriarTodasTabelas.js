@@ -35,6 +35,20 @@ exports.up = function (knex) {
       table.integer("VagasEM");
     })
 
+    .createTable("DocCategoria", function (table) {
+      table.int("CodCategoria").primary();
+      table.string("CategoriaNome", 255);
+      table.string("CategoriaCor", 7); // Cor do botão
+      table.string("CategoriaDescricao");
+    })
+
+    .createTable("Docs", function (table) {
+      table.int("CodDoc").primary();
+      table.string("DocNome", 255); // Vai manter o nome original do documento
+      table.string("DocCaminho", 50); // Caminho hash para armazenamento
+      table.int("DocCategoria"); // Faz referência ao CodCategoria
+    })
+
     .createTable("Cota", function (table) {
       table.increments("id").primary();
       table.string("Status", 1).notNullable();

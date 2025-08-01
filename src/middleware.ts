@@ -15,19 +15,26 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  const protectedPaths = [
+    "/acompanhamento",
+    "/resultados",
+    "/local",
+    "/pagamento",
+    "/formulario",
+  ];
+
+  if (!token?.cpf && protectedPaths.includes(request.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   if (token?.cpf) {
     const candidatoUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}api/candidato/${token.cpf}`;
-    
-    if (!token?.cpf && request.nextUrl.pathname === "/acompanhamento" || request.nextUrl.pathname === "/formulario") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
 
     try {
       const res = await fetch(candidatoUrl, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-
 
       if (request.nextUrl.pathname === "/acompanhamento") {
         if (!res.ok) {
@@ -48,20 +55,20 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (request.nextUrl.pathname === "/dashboardAdmin" || request.nextUrl.pathname.startsWith("/dashboardAdmin/")) {
+  if (
+    request.nextUrl.pathname === "/dashboardAdmin" ||
+    request.nextUrl.pathname.startsWith("/dashboardAdmin/")
+  ) {
     if (!token?.admin) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 
   if (!token && !["/", "/login"].includes(request.nextUrl.pathname)) {
-    return new NextResponse(
-      JSON.stringify({ message: "Access denied." }),
-      {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return new NextResponse(JSON.stringify({ message: "Access denied." }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const response = NextResponse.next();
@@ -70,5 +77,12 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboardAdmin/:path*", "/dashboardAdmin", "/login", "/", "/acompanhamento", "/formulario"],
+  matcher: [
+    "/dashboardAdmin/:path*",
+    "/dashboardAdmin",
+    "/login",
+    "/",
+    "/acompanhamento",
+    "/formulario",
+  ],
 };

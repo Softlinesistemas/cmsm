@@ -4,6 +4,8 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import api from "@/utils/api";
 import { useQuery } from "react-query";
+import DocumentForm from "./DocumentForm";
+import DocumentCategoryForm from "./DocumentCategoryForm";
 
 const UploadArquivos = () => {
   const [arquivos, setArquivos] = useState<{
@@ -80,90 +82,12 @@ const UploadArquivos = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Upload de Arquivos</h2>
-
-      {/* Edital */}
-      <div>
-        <h3 className="font-semibold">Edital 01</h3>
-        <p className="text-sm text-gray-600">
-          Contém todas as regras, critérios e informações oficiais do processo
-          seletivo.
-        </p>
-        <input
-          type="file"
-          accept=".txt,.csv,.pdf"
-          onChange={(e) => handleArquivoChange(e, "edital")}
-          className="mt-2"
-        />
-        {arquivos.edital && (
-          <p className="text-sm mt-1">
-            Arquivo selecionado: {arquivos.edital.name}
-          </p>
-        )}
-        {dataConfiguracao?.EditalCaminho && (
-          <p className="text-sm mt-1">
-            Arquivo atual: {dataConfiguracao?.EditalCaminho}
-          </p>
-        )}
+      <div className="w-full text-center">
+        <h2 className="text-2xl font-bold">Upload de Arquivos</h2>
       </div>
 
-      {/* Cronograma */}
-      <div>
-        <h3 className="font-semibold">Cronograma</h3>
-        <p className="text-sm text-gray-600">
-          Lista todas as datas importantes: inscrição, provas, resultados e
-          matrícula.
-        </p>
-        <input
-          type="file"
-          accept=".txt,.csv,.pdf"
-          onChange={(e) => handleArquivoChange(e, "cronograma")}
-          className="mt-2"
-        />
-        {arquivos.cronograma && (
-          <p className="text-sm mt-1">
-            Arquivo selecionado: {arquivos.cronograma.name}
-          </p>
-        )}
-        {dataConfiguracao?.CronogramaCaminho && (
-          <p className="text-sm mt-1">
-            Arquivo atual: {dataConfiguracao?.CronogramaCaminho}
-          </p>
-        )}
-      </div>
-
-      {/* Documentos */}
-      <div>
-        <h3 className="font-semibold">Documentos</h3>
-        <p className="text-sm text-gray-600">
-          Documentação obrigatória para inscrição e matrícula dos candidatos.
-        </p>
-        <input
-          type="file"
-          accept=".txt,.csv,.pdf"
-          onChange={(e) => handleArquivoChange(e, "documentos")}
-          className="mt-2"
-        />
-        {arquivos.documentos && (
-          <p className="text-sm mt-1">Arquivo: {arquivos.documentos.name}</p>
-        )}
-        {dataConfiguracao?.DocumentosCaminho && (
-          <p className="text-sm mt-1">
-            Arquivo atual: {dataConfiguracao?.DocumentosCaminho}
-          </p>
-        )}
-      </div>
-
-      {/* Botão de Salvar */}
-      <div className="pt-4">
-        <button
-          onClick={handleSalvar}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-        >
-          {!loading ? "Salvar" : "Salvando..."}
-        </button>
-        {mensagem && <p className="mt-2 text-sm text-green-600">{mensagem}</p>}
-      </div>
+      <DocumentCategoryForm />
+      <DocumentForm />
     </div>
   );
 };
