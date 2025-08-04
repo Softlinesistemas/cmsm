@@ -3,6 +3,9 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 import type { JWT } from "next-auth/jwt";
 import { fetchGovBrFullProfile, GovBrFullProfile } from "@/lib/govbr";
+import https from "https";
+
+const agent = new https.Agent({ rejectUnauthorized: false });
 
 export const authOptions: AuthOptions = {
   pages: {
@@ -62,6 +65,9 @@ export const authOptions: AuthOptions = {
             {
               user: credentials.user,
               password: credentials.password,
+            },
+            {
+              httpsAgent: agent,
             }
           );
 

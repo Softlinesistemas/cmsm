@@ -14,7 +14,7 @@ export default function DocumentForm() {
   } | null>(null);
 
   useEffect(() => {
-    fetch("/api//arquivos/categorias")
+    fetch("/api/arquivos/categoria")
       .then((res) => res.json())
       .then((data) => setCategorias(data))
       .catch((err) => console.error("Erro ao buscar categorias", err));

@@ -2,6 +2,27 @@ import { NextResponse } from "next/server";
 import getDBConnection from "@/db/conn";
 import dbConfig from "@/db/dbConfig";
 
+export async function GET() {
+  const db = getDBConnection(dbConfig());
+
+  try {
+    const categorias = await db("DocCategoria").select(
+      "CodCategoria",
+      "CategoriaNome",
+      "CategoriaCor",
+      "CategoriaDescricao"
+    );
+
+    return NextResponse.json(categorias, { status: 200 });
+  } catch (error) {
+    console.error("Erro ao buscar categorias:", error);
+    return new NextResponse(
+      JSON.stringify({ error: "Erro ao buscar categorias." }),
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: Request) {
   const db = getDBConnection(dbConfig());
 
