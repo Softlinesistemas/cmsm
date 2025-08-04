@@ -17,7 +17,7 @@ export default function DocumentCategoryForm() {
     setError(null);
 
     try {
-      const res = await fetch("/api/categorias", {
+      const res = await fetch("/api/arquivos/categoria", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

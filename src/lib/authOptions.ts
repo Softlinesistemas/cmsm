@@ -54,7 +54,11 @@ export const authOptions: AuthOptions = {
         if (!credentials) return null;
         try {
           const { data } = await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/login`,
+            `${
+              process.env.NEXTAUTH_URL ||
+              process.env.NEXT_PUBLIC_BACKEND_URL ||
+              "https://processoseletivo.cmsm.eb.mil.br/"
+            }api/user/login`,
             {
               user: credentials.user,
               password: credentials.password,

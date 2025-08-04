@@ -13,10 +13,15 @@ const toNumber = z.preprocess((val) => {
 const candidatoSchema = z.object({
   Nome: z.string().min(3, "O nome deve ter ao menos 3 caracteres."),
   CPF: z.string().regex(/^\d{3}\.?\d{3}\.?\d{3}\-?\d{2}$/, "CPF inválido."),
-  Nasc: z.string()
-    .refine(s => !isNaN(Date.parse(s)), { message: "Data de nascimento inválida." })
-    .transform(s => new Date(s))
-    .refine(d => d <= new Date(), { message: "Data de nascimento não pode ser no futuro." }),
+  Nasc: z
+    .string()
+    .refine((s) => !isNaN(Date.parse(s)), {
+      message: "Data de nascimento inválida.",
+    })
+    .transform((s) => new Date(s))
+    .refine((d) => d <= new Date(), {
+      message: "Data de nascimento não pode ser no futuro.",
+    }),
   CodIns: toNumber.optional(),
   CodUsu: toNumber.optional(),
   Email: z.string().email("Formato de e-mail inválido.").optional(),
@@ -30,7 +35,10 @@ export async function GET(request: Request) {
     const codIns = url.searchParams.get("codIns");
 
     if (!codIns) {
-      return NextResponse.json({ message: "Parâmetro codIns é obrigatório." }, { status: 400 });
+      return NextResponse.json(
+        { message: "Parâmetro codIns é obrigatório." },
+        { status: 400 }
+      );
     }
 
     db = getDBConnection(dbConfig());
@@ -38,13 +46,19 @@ export async function GET(request: Request) {
     const candidato = await db("Candidato").where({ CodIns: codIns }).first();
 
     if (!candidato) {
-      return NextResponse.json({ message: "Candidato não encontrado." }, { status: 404 });
+      return NextResponse.json(
+        { message: "Candidato não encontrado." },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(candidato);
   } catch (error) {
     console.error("Erro ao buscar candidato:", error);
-    return NextResponse.json({ message: "Erro ao buscar candidato." }, { status: 500 });
+    return NextResponse.json(
+      { message: "Erro ao buscar candidato." },
+      { status: 500 }
+    );
   } finally {
     if (db) await db.destroy();
   }
@@ -56,18 +70,15 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    let { CodIns } = body;    
+    let { CodIns } = body;
 
-   try {
+    try {
       data = candidatoSchema.parse(body);
     } catch (err) {
       if (err instanceof ZodError) {
         // Retorna apenas a primeira mensagem de erro
         const first = err.errors[0];
-        return NextResponse.json(
-          { error: first.message },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: first.message }, { status: 400 });
       }
       throw err;
     }
@@ -137,22 +148,22 @@ export async function POST(request: Request) {
       CodUsuRev,
       Seletivo,
       isencao,
-      observacao
+      observacao,
     } = body;
 
     db = getDBConnection(dbConfig());
 
-    const [configuracao] = await db('Funcao')
-      .select('NascIniEF', 'NascFimEF', 'NascIniEM', 'NascFimEM') 
+    const [configuracao] = await db("Funcao")
+      .select("NascIniEF", "NascFimEF", "NascIniEM", "NascFimEM")
       .orderBy([
-        { column: 'GRUDataFim', order: 'desc' },
-        { column: 'GRUHoraFim', order: 'desc' },
+        { column: "GRUDataFim", order: "desc" },
+        { column: "GRUHoraFim", order: "desc" },
       ])
       .limit(1);
 
     if (!configuracao) {
       return NextResponse.json(
-        { error: 'Configuração de idade não disponível' },
+        { error: "Configuração de idade não disponível" },
         { status: 500 }
       );
     }
@@ -160,15 +171,15 @@ export async function POST(request: Request) {
     const birthDate = new Date(Nasc);
     let minDate: Date, maxDate: Date;
 
-    if (Seletivo === '1° ano') {
+    if (Seletivo === "1° ano") {
       minDate = new Date(configuracao.NascIniEF);
       maxDate = new Date(configuracao.NascFimEF);
-    } else if (Seletivo === '6° ano') {
+    } else if (Seletivo === "6° ano") {
       minDate = new Date(configuracao.NascIniEM);
       maxDate = new Date(configuracao.NascFimEM);
     } else {
       return NextResponse.json(
-        { error: `Seletivo '${Seletivo}' desconhecido` },
+        { error: `Processo seletivo '${Seletivo}' desconhecido` },
         { status: 400 }
       );
     }
@@ -176,19 +187,21 @@ export async function POST(request: Request) {
     if (birthDate < minDate || birthDate > maxDate) {
       return NextResponse.json(
         {
-          error: 'Candidato fora da faixa etária permitida',
+          error: "Candidato fora da faixa etária permitida",
           faixaPermitida: {
-            inicio: minDate.toISOString().split('T')[0],
-            fim: maxDate.toISOString().split('T')[0],
+            inicio: minDate.toISOString().split("T")[0],
+            fim: maxDate.toISOString().split("T")[0],
           },
           nascimentoCandidato: Nasc,
         },
         { status: 400 }
       );
     }
-    
+
     if (!CodIns) {
-      const maxCodInsRow = await db("Candidato").max("CodIns as maxCodIns").first();
+      const maxCodInsRow = await db("Candidato")
+        .max("CodIns as maxCodIns")
+        .first();
       const maxCodIns = maxCodInsRow?.maxCodIns ?? 0;
 
       CodIns = maxCodIns >= 10001 ? maxCodIns + 1 : 10001;
@@ -211,10 +224,10 @@ export async function POST(request: Request) {
       // Atualiza
       await db("Candidato")
         .where({ CodIns })
-        .update({         
+        .update({
           Nome,
           Nasc,
-          Sexo: Sexo === "masculino" || Sexo === "M"  ? "M" : "F",
+          Sexo: Sexo === "masculino" || Sexo === "M" ? "M" : "F",
           Email,
           Cep: Cep.replace("-", ""),
           Endereco,
@@ -246,7 +259,7 @@ export async function POST(request: Request) {
           UFResp,
           ProfissaoResp,
           EmailResp,
-          TelResp: TelResp.replace(/\D/g, ''),
+          TelResp: TelResp.replace(/\D/g, ""),
           Parentesco,
           PertenceFA,
           CaminhoFoto,
@@ -273,9 +286,11 @@ export async function POST(request: Request) {
           DataRevisao,
           CodUsuRev,
           isencao,
-          observacao
+          observacao,
         });
-      return NextResponse.json({ message: "Candidato atualizado com sucesso." });
+      return NextResponse.json({
+        message: "Candidato atualizado com sucesso.",
+      });
     } else {
       const lastCodUsu = await db("Candidato")
         .max("CodUsu as maxCodUsu")
@@ -291,7 +306,7 @@ export async function POST(request: Request) {
         HoraCad: moment().tz("America/Sao_Paulo").format("HH:mm"),
         CPF: cpfFormatado,
         Nasc,
-        Sexo: Sexo === "masculino" || Sexo === "M"  ? "M" : "F",
+        Sexo: Sexo === "masculino" || Sexo === "M" ? "M" : "F",
         Email,
         Cep: Cep.replace("-", ""),
         Endereco,
@@ -323,7 +338,7 @@ export async function POST(request: Request) {
         UFResp,
         ProfissaoResp,
         EmailResp,
-        TelResp: TelResp.replace(/\D/g, ''),
+        TelResp: TelResp.replace(/\D/g, ""),
         Parentesco,
         PertenceFA,
         CaminhoFoto,
@@ -350,13 +365,16 @@ export async function POST(request: Request) {
         DataRevisao,
         CodUsuRev,
         isencao,
-        observacao
+        observacao,
       });
       return NextResponse.json({ message: "Candidato inserido com sucesso." });
     }
   } catch (error) {
     console.error("Erro ao salvar candidato:", error);
-    return NextResponse.json({ message: "Erro ao salvar formulário." }, { status: 500 });
+    return NextResponse.json(
+      { message: "Erro ao salvar formulário." },
+      { status: 500 }
+    );
   } finally {
     if (db) await db.destroy();
   }

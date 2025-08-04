@@ -16,8 +16,13 @@ export async function POST(request: Request) {
       );
     }
 
+    const maxResult = await db("DocCategoria").max("CodCategoria as max");
+    const maxCodCategoria = maxResult[0]?.max || 0;
+    const novoCodCategoria = maxCodCategoria + 1;
+
     const [novaCategoria] = await db("DocCategoria")
       .insert({
+        CodCategoria: novoCodCategoria,
         CategoriaNome,
         CategoriaCor,
         CategoriaDescricao: CategoriaDescricao || null,
