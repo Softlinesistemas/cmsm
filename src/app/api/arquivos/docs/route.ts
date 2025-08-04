@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import getDBConnection from "@/db/conn";
 import dbConfig from "@/db/dbConfig";
-import { NextRequest } from "next/server";
+import uploadImagensEdge from "@/helpers/uploadImagesEdge";
 
 export async function GET() {
   const db = getDBConnection(dbConfig());
@@ -61,40 +61,54 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const formData = await request.formData();
+
+  const DocNome = formData.get("DocNome")?.toString();
+  const DocCategoria = formData.get("DocCategoria")?.toString();
+  const file = formData.get("file") as File | null;
+
+  if (!DocNome || !DocCategoria || !file || file.size === 0) {
+    return NextResponse.json(
+      { error: "Campos obrigatórios ausentes ou arquivo inválido." },
+      { status: 400 }
+    );
+  }
+
   const db = getDBConnection(dbConfig());
 
-  try {
-    const body = await request.json();
-    const { DocNome, DocCaminho, DocCategoria } = body;
+  const categoriaExiste = await db("DocCategoria")
+    .where("CodCategoria", DocCategoria)
+    .first();
 
-    if (!DocNome || !DocCaminho || !DocCategoria) {
-      return new NextResponse(
-        JSON.stringify({ error: "Campos obrigatórios ausentes" }),
-        { status: 400 }
-      );
-    }
+  if (!categoriaExiste) {
+    return NextResponse.json(
+      { error: "Categoria não encontrada." },
+      { status: 404 }
+    );
+  }
 
-    const categoriaExiste = await db("DocCategoria")
-      .where("CodCategoria", DocCategoria)
-      .first();
+  // Envia o arquivo
+  const result = await uploadImagensEdge(file);
+  const caminho = result.fileContents?.[0];
 
-    if (!categoriaExiste) {
-      return new NextResponse(
-        JSON.stringify({ error: "Categoria não encontrada" }),
-        { status: 404 }
-      );
-    }
-
-    const [novoDoc] = await db("Docs")
-      .insert({ DocNome, DocCaminho, DocCategoria })
-      .returning(["CodDoc", "DocNome", "DocCaminho", "DocCategoria"]);
-
-    return NextResponse.json(novoDoc, { status: 201 });
-  } catch (error) {
-    console.error("Erro ao criar documento:", error);
-    return new NextResponse(
-      JSON.stringify({ error: "Erro interno ao criar documento" }),
+  if (!caminho) {
+    return NextResponse.json(
+      { error: "Erro ao fazer upload do arquivo." },
       { status: 500 }
     );
   }
+  const maxResult = await db("Docs").max("CodDoc as max");
+  const maxCodDoc = maxResult[0]?.max || 0;
+  const novoCodDoc = maxCodDoc + 1;
+
+  const [novoDoc] = await db("Docs")
+    .insert({
+      CodDoc: novoCodDoc,
+      DocNome,
+      DocCategoria,
+      DocCaminho: caminho,
+    })
+    .returning(["CodDoc", "DocNome", "DocCaminho", "DocCategoria"]);
+
+  return NextResponse.json(novoDoc, { status: 201 });
 }
