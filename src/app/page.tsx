@@ -147,7 +147,7 @@ export default function Home() {
               )
             )}
             {!prazoNaoComecou ||
-              (process.env.PREVIEW_ENV === "homologacao" && (
+              (process.env.NEXT_PUBLIC_PREVIEW_ENV === "homologacao" && (
                 <button
                   onClick={handleGovLogin}
                   className="flex items-center space-x-2 bg-white border border-gray-300 rounded px-4 py-2 hover:scale-105 transition-transform"
