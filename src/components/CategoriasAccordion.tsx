@@ -77,17 +77,17 @@ export default function CategoriasAccordion({ categorias }: Props) {
                       key={doc.CodDoc}
                       className="flex flex-col md:flex-row items-start md:items-center justify-between px-4 py-3 border-b border-gray-200"
                     >
+                      <p className="mt-2 md:mt-0 md:ml-4 text-sm text-gray-800">
+                        {doc.DocNome}
+                      </p>
                       <a
                         href={`${process.env.NEXT_PUBLIC_IMAGE_URL}${doc.DocCaminho}`}
                         target="_blank"
                         download
-                        className="bg-blue-900 text-white font-semibold px-4 py-2 rounded hover:bg-blue-800 transition-colors"
+                        className="text-blue-900 font-semibold px-4 py-2 rounded hover:text-blue-800 transition-colors"
                       >
-                        {doc.DocNome}
+                        Abrir
                       </a>
-                      <p className="mt-2 md:mt-0 md:ml-4 text-sm text-gray-800">
-                        Documento da categoria {categoria.CategoriaNome}
-                      </p>
                     </div>
                   ))
                 ) : (
