@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import getDBConnection from "@/db/conn";
 import dbConfig from "@/db/dbConfig";
-
-// PUT: Atualiza uma categoria
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+// Correto:
+type RouteContext = {
+  params: { id: string };
+};
+export async function PUT(request: NextRequest, context: RouteContext) {
   const db = getDBConnection(dbConfig());
-  const id = parseInt(params.id, 10);
+  const id = parseInt(context.params.id, 10);
 
   if (isNaN(id)) {
     return NextResponse.json({ error: "ID inválido" }, { status: 400 });
@@ -55,13 +54,9 @@ export async function PUT(
   }
 }
 
-// DELETE: Exclui uma categoria
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, context: RouteContext) {
   const db = getDBConnection(dbConfig());
-  const id = parseInt(params.id, 10);
+  const id = parseInt(context.params.id, 10);
 
   if (isNaN(id)) {
     return NextResponse.json({ error: "ID inválido" }, { status: 400 });
@@ -79,7 +74,6 @@ export async function DELETE(
       );
     }
 
-    // Verifica se existem documentos vinculados
     const docsVinculados = await db("Docs")
       .where("DocCategoria", id)
       .count<{ count: string }>("CodDoc as count")
