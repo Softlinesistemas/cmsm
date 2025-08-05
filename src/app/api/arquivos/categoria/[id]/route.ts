@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import getDBConnection from "@/db/conn";
 import dbConfig from "@/db/dbConfig";
-// Correto:
-type RouteContext = {
-  params: { id: string };
-};
-export async function PUT(request: NextRequest, context: RouteContext) {
+
+export async function PUT(request: NextRequest) {
   const db = getDBConnection(dbConfig());
-  const id = parseInt(context.params.id, 10);
+
+  // Extrair o ID manualmente da URL
+  const url = new URL(request.url);
+  const id = parseInt(url.pathname.split("/").pop() || "", 10);
 
   if (isNaN(id)) {
     return NextResponse.json({ error: "ID inválido" }, { status: 400 });
@@ -54,9 +54,11 @@ export async function PUT(request: NextRequest, context: RouteContext) {
   }
 }
 
-export async function DELETE(request: NextRequest, context: RouteContext) {
+export async function DELETE(request: NextRequest) {
   const db = getDBConnection(dbConfig());
-  const id = parseInt(context.params.id, 10);
+
+  const url = new URL(request.url);
+  const id = parseInt(url.pathname.split("/").pop() || "", 10);
 
   if (isNaN(id)) {
     return NextResponse.json({ error: "ID inválido" }, { status: 400 });
