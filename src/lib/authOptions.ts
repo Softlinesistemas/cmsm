@@ -102,6 +102,18 @@ export const authOptions: AuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 dias
   },
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: false,
+        sameSite: "lax",
+        path: "/",
+        secure: false,
+        maxAge: 60 * 60 * 24,
+      },
+    },
+  },
   callbacks: {
     async jwt({ token, user, account }) {
       // Login ADM

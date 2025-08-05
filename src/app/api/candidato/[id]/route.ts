@@ -22,7 +22,10 @@ export async function GET(request: NextRequest) {
     const cpf = getCpfFromRequest(request)?.replace(/\D/g, "");
 
     if (!cpf) {
-      return NextResponse.json({ error: "CPF não fornecido." }, { status: 400 });
+      return NextResponse.json(
+        { error: "CPF não fornecido." },
+        { status: 400 }
+      );
     }
 
     db = getDBConnection(dbConfig());
@@ -53,7 +56,10 @@ export async function PUT(request: NextRequest) {
   try {
     const CodIns = getIdFromRequest(request);
     if (!CodIns) {
-        return NextResponse.json({ success: false, message: "ID inválido." }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "ID inválido." },
+        { status: 400 }
+      );
     }
     const body = await request.json();
     const {
@@ -163,7 +169,7 @@ export async function PUT(request: NextRequest) {
         Nome,
         CPF: cpfFormatado,
         Nasc,
-        Sexo: Sexo === "masculino" || Sexo === "M"  ? "M" : "F",
+        Sexo: Sexo === "masculino" || Sexo === "M" ? "M" : "F",
         Email,
         Cep,
         Endereco,
@@ -222,9 +228,9 @@ export async function PUT(request: NextRequest) {
         NotaRedacao,
         DataRevisao,
         CodUsuRev,
-        Seletivo
+        Seletivo,
       });
-    
+
     return NextResponse.json({ message: "Candidato atualizado com sucesso." });
   } catch (error) {
     console.error("Erro ao atualizar candidato:", error);
