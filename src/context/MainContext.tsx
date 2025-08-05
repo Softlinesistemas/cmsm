@@ -1,18 +1,25 @@
-"use client" 
-import React, { createContext, useState, useEffect, useMemo, ReactNode } from "react";
-import Processo from '@/components/Processo'
-import Inscricoes from '@/components/Inscricoes'
-import BaixaPagamentos from '@/components/BaixaPagamentos'
-import UploadArquivos from '@/components/UploadArquivos'
-import Relatorios from '@/components/Relatorios'
-import AvaliacaoRecursos from '@/components/AvaliacaoRecursos'
-import Resultados from '@/components/Resultados'
-import Gabarito from '@/components/Gabarito'
-import CadastroEditais from '@/components/CadastroEditais'
-import EmailMassa from '@/components/EmailMassa'
-import GestaoAdmins from '@/components/GestaoAdmins'
-import LogsAcesso from '@/components/LogsAcesso'
-import Backup from '@/components/Backup'
+"use client";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useMemo,
+  ReactNode,
+} from "react";
+import Processo from "@/components/Processo";
+import Inscricoes from "@/components/Inscricoes";
+import BaixaPagamentos from "@/components/BaixaPagamentos";
+import UploadArquivos from "@/components/UploadArquivos";
+import Relatorios from "@/components/Relatorios";
+import AvaliacaoRecursos from "@/components/AvaliacaoRecursos";
+import Resultados from "@/components/Resultados";
+import Gabarito from "@/components/Gabarito";
+import CadastroEditais from "@/components/CadastroEditais";
+import EmailMassa from "@/components/EmailMassa";
+import GestaoAdmins from "@/components/GestaoAdmins";
+import LogsAcesso from "@/components/LogsAcesso";
+import Backup from "@/components/Backup";
+import { useRouter, usePathname } from "next/navigation";
 
 const LOCAL_STORAGE_KEY = "appSettings";
 
@@ -24,7 +31,6 @@ export const getStoredSettings = () => {
   return stored ? JSON.parse(stored) : {};
 };
 
-
 const saveSettings = (settings: Partial<Record<string, unknown>>) => {
   if (typeof window !== "undefined") {
     const current = getStoredSettings();
@@ -34,68 +40,75 @@ const saveSettings = (settings: Partial<Record<string, unknown>>) => {
     );
   }
 };
- 
+
 export const MainProvider = ({ children }: { children: ReactNode }) => {
   const stored = getStoredSettings();
+  const router = useRouter();
+  const pathName = usePathname();
 
-  const [selectedComponent, setSelectedComponent] = useState('Inscrição');
+  const [selectedComponent, setSelectedComponent] = useState("Inscrição");
   const [showSidebar, setShowSidebar] = useState(true);
   const [Component, setComponent] = useState<ReactNode | undefined>(undefined);
 
-    useEffect(() => {
+  useEffect(() => {
     switch (selectedComponent) {
-      case 'Processo':
+      case "Processo":
         setComponent(<Processo />);
         break;
-      case 'Inscricoes':
+      case "Inscricoes":
         setComponent(<Inscricoes />);
         break;
-      case 'BaixaPagamentos':
+      case "BaixaPagamentos":
         setComponent(<BaixaPagamentos />);
         break;
-      case 'UploadArquivos':
+      case "UploadArquivos":
         setComponent(<UploadArquivos />);
         break;
-      case 'Relatorios':
+      case "Relatorios":
         setComponent(<Relatorios />);
         break;
-      case 'AvaliacaoRecursos':
+      case "AvaliacaoRecursos":
         setComponent(<AvaliacaoRecursos />);
         break;
-      case 'Resultados':
+      case "Resultados":
         setComponent(<Resultados />);
         break;
-      case 'Gabarito':
+      case "Gabarito":
         setComponent(<Gabarito />);
         break;
-      case 'CadastroEditais':
+      case "CadastroEditais":
         setComponent(<CadastroEditais />);
         break;
-      case 'Comunicados':
+      case "Comunicados":
         setComponent(<EmailMassa />);
         break;
-      case 'EmailMassa':
+      case "EmailMassa":
         setComponent(<EmailMassa />);
         break;
-      case 'GestaoAdmins':
+      case "GestaoAdmins":
         setComponent(<GestaoAdmins />);
         break;
-      case 'LogsAcesso':
+      case "LogsAcesso":
         setComponent(<LogsAcesso />);
         break;
-      case 'Backup':
+      case "Backup":
         setComponent(<Backup />);
         break;
       default:
-        setComponent(<div>Selecione um item no menu</div>);
+        pathName.includes("dashboardAdmin") &&
+          !Component &&
+          router.push("dashboard");
     }
   }, [selectedComponent]);
 
   const value = useMemo(
     () => ({
-      selectedComponent, setSelectedComponent,
-      showSidebar, setShowSidebar,
-      Component, setComponent
+      selectedComponent,
+      setSelectedComponent,
+      showSidebar,
+      setShowSidebar,
+      Component,
+      setComponent,
     }),
     [Component, selectedComponent, showSidebar]
   );

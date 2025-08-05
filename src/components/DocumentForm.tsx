@@ -1,62 +1,55 @@
-import { useEffect, useState } from "react";
+import React from "react";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+
+interface Category {
+  CodCategoria: number;
+  CategoriaNome: string;
+}
+interface DocResponse {
+  DocNome: string;
+}
 
 export default function DocumentForm() {
-  const [formData, setFormData] = useState({
-    DocNome: "",
-    DocCategoria: "",
+  const queryClient = useQueryClient();
+  const {
+    data: categorias = [],
+    isLoading: catsLoading,
+    isError: catsError,
+  } = useQuery("categorias", async () => {
+    const res = await fetch("/api/arquivos/categoria");
+    if (!res.ok) throw new Error("Erro ao buscar categorias");
+    return res.json();
   });
-  const [file, setFile] = useState<File | null>(null);
-  const [categorias, setCategorias] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [msg, setMsg] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
 
-  useEffect(() => {
-    fetch("/api/arquivos/categoria")
-      .then((res) => res.json())
-      .then((data) => setCategorias(data))
-      .catch((err) => console.error("Erro ao buscar categorias", err));
-  }, []);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setMsg(null);
-
-    const data = new FormData();
-    data.append("DocNome", formData.DocNome);
-    data.append("DocCategoria", formData.DocCategoria);
-    if (file) data.append("file", file);
-
-    try {
+  const mutation = useMutation(
+    async (formData: FormData) => {
       const res = await fetch("/api/arquivos/docs", {
         method: "POST",
-        body: data,
+        body: formData,
       });
-
-      const json = await res.json();
-
-      if (!res.ok) {
-        setMsg({
-          type: "error",
-          text: json.error || "Erro ao enviar documento.",
-        });
-      } else {
-        setMsg({
-          type: "success",
-          text: `Documento '${json.DocNome}' enviado com sucesso.`,
-        });
-        setFormData({ DocNome: "", DocCategoria: "" });
-        setFile(null);
-      }
-    } catch {
-      setMsg({ type: "error", text: "Erro inesperado." });
-    } finally {
-      setIsSubmitting(false);
+      if (!res.ok) throw new Error("Erro ao enviar documento");
+      return res.json();
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("docs");
+      },
     }
-  }
+  );
+
+  const [form, setForm] = React.useState({ DocNome: "", DocCategoria: "" });
+  const [file, setFile] = React.useState<File | null>(null);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append("DocNome", form.DocNome);
+    data.append("DocCategoria", form.DocCategoria);
+    if (file) data.append("file", file);
+    mutation.mutate(data, {
+      onSettled: () => setForm({ DocNome: "", DocCategoria: "" }),
+    });
+  };
 
   return (
     <form
@@ -67,6 +60,9 @@ export default function DocumentForm() {
       <h2 className="text-2xl font-bold text-blue-800 mb-4">
         Envio de Documento
       </h2>
+
+      {catsLoading && <p className="text-black">Carregando categorias...</p>}
+      {catsError && <p className="text-red-600">Erro ao carregar categorias</p>}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
@@ -88,29 +84,28 @@ export default function DocumentForm() {
           <input
             type="text"
             placeholder="Ex: Contrato de aluguel"
-            value={formData.DocNome}
+            value={form.DocNome}
             onChange={(e) =>
-              setFormData((prev) => ({ ...prev, DocNome: e.target.value }))
+              setForm((prev) => ({ ...prev, DocNome: e.target.value }))
             }
             required
             className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-blue-800 mb-1">
             Categoria <span className="text-red-600">*</span>
           </label>
           <select
-            value={formData.DocCategoria}
+            value={form.DocCategoria}
             onChange={(e) =>
-              setFormData((prev) => ({ ...prev, DocCategoria: e.target.value }))
+              setForm((prev) => ({ ...prev, DocCategoria: e.target.value }))
             }
             required
             className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Selecione uma categoria</option>
-            {categorias.map((cat: any) => (
+            {categorias.map((cat: Category) => (
               <option key={cat.CodCategoria} value={cat.CodCategoria}>
                 {cat.CategoriaNome}
               </option>
@@ -122,20 +117,18 @@ export default function DocumentForm() {
       <div className="pt-4">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={mutation.isLoading}
           className="bg-blue-700 text-white px-6 py-3 rounded-md shadow hover:bg-blue-800 transition-all duration-300 disabled:opacity-50"
         >
-          {isSubmitting ? "Enviando..." : "Salvar Documento"}
+          {mutation.isLoading ? "Enviando..." : "Salvar Documento"}
         </button>
-
-        {msg && (
-          <p
-            className={`mt-4 font-medium ${
-              msg.type === "success" ? "text-green-700" : "text-red-700"
-            }`}
-          >
-            {msg.text}
+        {mutation.isError && (
+          <p className="mt-4 text-red-600">
+            {(mutation.error as Error).message}
           </p>
+        )}
+        {mutation.isSuccess && (
+          <p className="mt-4 text-green-700">Documento enviado com sucesso.</p>
         )}
       </div>
     </form>

@@ -1,38 +1,44 @@
-'use client'
+"use client";
 
-import { useState } from 'react';
-import { FaEdit, FaTrash, FaPlus, FaUserSlash } from 'react-icons/fa';
-import toast from 'react-hot-toast';
-import api from '@/utils/api';
-import { useQuery } from 'react-query';
+import { useState } from "react";
+import { FaEdit, FaTrash, FaPlus, FaUserSlash } from "react-icons/fa";
+import toast from "react-hot-toast";
+import api from "@/utils/api";
+import { useQuery } from "react-query";
 
-const modulosDisponiveis: string[] = ['Admin', 'Financeiro', 'Dashboard'];
+const modulosDisponiveis: string[] = ["Admin", "Financeiro", "Dashboard"];
 
 export default function GestaoUsuarios() {
   const [usuarios, setUsuarios] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [novoUsuario, setNovoUsuario] = useState({
-    nome: '',
-    cpf: '',
-    senha: '',
+    nome: "",
+    cpf: "",
+    senha: "",
     modulos: [] as string[],
   });
 
-    const { data: usuariosArray, isLoading, refetch } = useQuery('adms', async () => {
-      const response = await api.get('api/user/novo')
+  const {
+    data: usuariosArray,
+    isLoading,
+    refetch,
+  } = useQuery(
+    "adms",
+    async () => {
+      const response = await api.get("api/user/novo");
       setUsuarios(response.data);
-      return response.data
-    }, {
+      return response.data;
+    },
+    {
       refetchOnWindowFocus: false,
       retry: 5,
-    });
+    }
+  );
 
   const toggleModulo = (modulo: string) => {
     setNovoUsuario((prev: any) => ({
       ...prev,
-      modulos: prev.modulos.includes(modulo)
-        ? [] 
-        : [modulo], 
+      modulos: prev.modulos.includes(modulo) ? [] : [modulo],
     }));
   };
 
@@ -54,8 +60,10 @@ export default function GestaoUsuarios() {
     const digito1 = calcDigito(cpf.substr(0, 9));
     const digito2 = calcDigito(cpf.substr(0, 10));
 
-    return digito1 === parseInt(cpf.charAt(9), 10)
-        && digito2 === parseInt(cpf.charAt(10), 10);
+    return (
+      digito1 === parseInt(cpf.charAt(9), 10) &&
+      digito2 === parseInt(cpf.charAt(10), 10)
+    );
   }
 
   const adicionarUsuario = async () => {
@@ -85,41 +93,40 @@ export default function GestaoUsuarios() {
 
     switch (modulos[0]) {
       case "Admin":
-        codSeg = 2
+        codSeg = 2;
         break;
       case "Financeiro":
-        codSeg = 3
+        codSeg = 3;
         break;
       case "Dashboard":
-        codSeg = 4
+        codSeg = 4;
         break;
-      default: 
-        codSeg = 2
+      default:
+        codSeg = 2;
     }
 
     const payload = {
       CodSeg: codSeg,
       user: nome,
       password: senha,
-      cpf: cpf
-    }
+      cpf: cpf,
+    };
 
-    
     try {
-      await api.post("api/user/novo", {...payload });
-      refetch();      
+      await api.post("api/user/novo", { ...payload });
+      refetch();
     } catch (error: any) {
       toast.error(error.response.data.error || error.response.data.message);
     }
-    setNovoUsuario({ nome: '', cpf: '', senha: '', modulos: [] });
+    setNovoUsuario({ nome: "", cpf: "", senha: "", modulos: [] });
     setShowModal(false);
   };
 
   const excluirUsuario = async (id: number) => {
-    if (confirm('Tem certeza que deseja excluir?')) {
+    if (confirm("Tem certeza que deseja excluir?")) {
       try {
         await api.delete("api/user/delete", {
-          data: { id: id }
+          data: { id: id },
         });
         toast.success("Usuário excluído.");
         refetch();
@@ -133,14 +140,23 @@ export default function GestaoUsuarios() {
     let cleaned = value.replace(/\D/g, "");
 
     if (cleaned.length <= 3) return cleaned;
-    if (cleaned.length <= 6) return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
-    if (cleaned.length <= 9) return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
-    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`;
+    if (cleaned.length <= 6)
+      return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
+    if (cleaned.length <= 9)
+      return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(
+        6
+      )}`;
+    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(
+      6,
+      9
+    )}-${cleaned.slice(9, 11)}`;
   };
 
   return (
     <div className="p-6 bg-blue-200 max-h-screen rounded-xl shadow-gray-400 shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-blue-900">Gestão de Usuários</h2>
+      <h2 className="text-2xl font-bold mb-4 text-blue-900">
+        Gestão de Admins
+      </h2>
 
       <div className="mb-4">
         <button
@@ -172,15 +188,15 @@ export default function GestaoUsuarios() {
                 <td className="px-4 py-2 text-black">{u.nome}</td>
                 <td className="px-4 py-2 text-center text-black">{u.cpf}</td>
                 <td className="px-4 py-2 text-center  text-red-800">
-                  {u.modulos.join(', ')}
+                  {u.modulos.join(", ")}
                 </td>
                 <td className="px-4 py-2 text-center">
                   <span
                     className={`font-semibold ${
-                      u.ativo ? 'text-green-700' : 'text-red-600'
+                      u.ativo ? "text-green-700" : "text-red-600"
                     }`}
                   >
-                    {u.ativo ? 'Ativo' : 'Inativo'}
+                    {u.ativo ? "Ativo" : "Inativo"}
                   </span>
                 </td>
                 <td className="px-4 py-2 flex items-center justify-center gap-3">
@@ -251,8 +267,8 @@ export default function GestaoUsuarios() {
                     onClick={() => toggleModulo(m)}
                     className={`px-3 py-1 rounded border ${
                       novoUsuario?.modulos?.includes(m)
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white text-gray-700'
+                        ? "bg-blue-600 text-white"
+                        : "bg-white text-gray-700"
                     }`}
                   >
                     {m}

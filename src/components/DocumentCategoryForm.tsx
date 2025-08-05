@@ -1,46 +1,53 @@
-import { useEffect, useState } from "react";
+"use client";
+
+import React from "react";
+import { useMutation, useQueryClient } from "react-query";
+
+interface Category {
+  CodCategoria: number;
+  CategoriaNome: string;
+  CategoriaCor: string;
+  CategoriaDescricao: string;
+}
 
 export default function DocumentCategoryForm() {
-  const [formData, setFormData] = useState({
-    CategoriaNome: "",
-    CategoriaCor: "",
-    CategoriaDescricao: "",
-  });
+  const queryClient = useQueryClient();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    try {
+  const mutation = useMutation(
+    async (newCat: Omit<Category, "CodCategoria">) => {
       const res = await fetch("/api/arquivos/categoria", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(newCat),
       });
-
-      const json = await res.json();
-
-      if (!res.ok) {
-        setError(json.error || "Erro ao criar categoria");
-      } else {
-        setData(json);
-        setFormData({
-          CategoriaNome: "",
-          CategoriaCor: "",
-          CategoriaDescricao: "",
-        });
-      }
-    } catch (err) {
-      setError("Erro inesperado. Tente novamente.");
-    } finally {
-      setIsLoading(false);
+      if (!res.ok) throw new Error("Erro ao criar categoria");
+      return res.json();
+    },
+    {
+      onSuccess: () => {
+        // Invalidate categorias query to refetch
+        queryClient.invalidateQueries("categorias");
+      },
     }
-  }
+  );
+
+  const [form, setForm] = React.useState({
+    CategoriaNome: "",
+    CategoriaCor: "#000000",
+    CategoriaDescricao: "",
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    mutation.mutate(form, {
+      onSettled: () =>
+        setForm({
+          CategoriaNome: "",
+          CategoriaCor: "#000000",
+          CategoriaDescricao: "",
+        }),
+    });
+  };
 
   return (
     <form
@@ -59,37 +66,28 @@ export default function DocumentCategoryForm() {
           <input
             type="text"
             placeholder="Nome da Categoria"
-            value={formData.CategoriaNome}
+            value={form.CategoriaNome}
             onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                CategoriaNome: e.target.value,
-              }))
+              setForm((prev) => ({ ...prev, CategoriaNome: e.target.value }))
             }
             required
             className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-blue-800 mb-1">
             Cor da Categoria <span className="text-red-600">*</span>
           </label>
           <input
-            type="text"
-            placeholder="Ex: #FFAA00"
-            value={formData.CategoriaCor}
+            type="color"
+            value={form.CategoriaCor}
             onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                CategoriaCor: e.target.value,
-              }))
+              setForm((prev) => ({ ...prev, CategoriaCor: e.target.value }))
             }
             required
-            className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full h-10 border border-gray-300 rounded-md p-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-blue-800 mb-1">
             Descrição
@@ -97,9 +95,9 @@ export default function DocumentCategoryForm() {
           <input
             type="text"
             placeholder="Descrição da Categoria"
-            value={formData.CategoriaDescricao}
+            value={form.CategoriaDescricao}
             onChange={(e) =>
-              setFormData((prev) => ({
+              setForm((prev) => ({
                 ...prev,
                 CategoriaDescricao: e.target.value,
               }))
@@ -112,18 +110,19 @@ export default function DocumentCategoryForm() {
       <div className="pt-4">
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={mutation.isLoading}
           className="bg-blue-700 text-white px-6 py-3 rounded-md shadow hover:bg-blue-800 transition-all duration-300 disabled:opacity-50"
         >
-          {isLoading ? "Enviando..." : "Criar Categoria"}
+          {mutation.isLoading ? "Enviando..." : "Criar Categoria"}
         </button>
 
-        {error && <p className="mt-4 text-red-600 font-semibold">{error}</p>}
-
-        {data && !error && (
-          <div className="mt-4 text-green-700">
-            Categoria <strong>{data.CategoriaNome}</strong> criada com sucesso!
-          </div>
+        {mutation.isError && (
+          <p className="mt-4 text-red-600 font-semibold">
+            {(mutation.error as Error).message}
+          </p>
+        )}
+        {mutation.isSuccess && (
+          <p className="mt-4 text-green-700">Categoria criada com sucesso!</p>
         )}
       </div>
     </form>

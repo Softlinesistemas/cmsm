@@ -10,6 +10,21 @@ import moment from "moment-timezone";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import CategoriasAccordion from "@/components/CategoriasAccordion";
+
+interface Doc {
+  CodDoc: number;
+  DocNome: string;
+  DocCaminho: string;
+  DocCategoria: number;
+}
+interface Categoria {
+  CodCategoria: number;
+  CategoriaNome: string;
+  CategoriaCor: string;
+  CategoriaDescricao: string;
+  docs: Doc[];
+}
 
 export default function Home() {
   const router = useRouter();
@@ -19,6 +34,16 @@ export default function Home() {
   const handleGovLogin = async () => {
     await signIn("govbr", { callbackUrl: "/acompanhamento" });
   };
+
+  const {
+    data: categorias = [],
+    isLoading,
+    isError,
+  } = useQuery<Categoria[]>("docs", async () => {
+    const res = await fetch("/api/arquivos/docs");
+    if (!res.ok) throw new Error("Erro ao carregar dados");
+    return res.json();
+  });
 
   const fetchConfig = async () => {
     try {
@@ -142,62 +167,7 @@ export default function Home() {
           </div>
         </div>
 
-        <section className="max-w-4xl mx-auto px-4 p-10">
-          <h2 className="text-center text-blue-900 font-semibold uppercase text-md sm:text-md mb-6">
-            Editais e Documentos
-          </h2>
-
-          <div className="space-y-4">
-            {editais.map((edital) => (
-              <div
-                key={edital.id}
-                className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow mb-2"
-              >
-                <a
-                  href={`${process.env.NEXT_PUBLIC_IMAGE_URL}${dataConfiguracao?.EditalCaminho}`}
-                  download
-                  target="_blank"
-                  className="bg-blue-900 text-white font-semibold px-4 py-2 rounded hover:bg-blue-800 transition-colors"
-                >
-                  {edital.titulo}
-                </a>
-                <p className="mt-2 md:mt-0 md:ml-4 text-sm text-gray-800">
-                  {edital.descricao}
-                </p>
-              </div>
-            ))}
-
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow">
-              <a
-                href={`${process.env.NEXT_PUBLIC_IMAGE_URL}${dataConfiguracao?.CronogramaCaminho}`}
-                download
-                target="_blank"
-                className="bg-yellow-700 text-white font-semibold px-4 py-2 rounded hover:bg-gray-800 transition-colors"
-              >
-                Cronograma
-              </a>
-              <p className="mt-2 md:mt-0 md:ml-4 text-sm text-gray-800">
-                Lista todas as datas importantes: inscrição, provas, resultados
-                e matrícula.
-              </p>
-            </div>
-
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-gray-100 p-4 rounded shadow">
-              <a
-                href={`${process.env.NEXT_PUBLIC_IMAGE_URL}${dataConfiguracao?.DocumentosCaminho}`}
-                download
-                target="_blank"
-                className="bg-green-800 text-white font-semibold px-4 py-2 rounded hover:bg-green-700 transition-colors"
-              >
-                Documentos
-              </a>
-              <p className="mt-2 md:mt-0 md:ml-4 text-sm text-gray-800">
-                Documentação obrigatória para inscrição e matrícula dos
-                candidatos.
-              </p>
-            </div>
-          </div>
-        </section>
+        <CategoriasAccordion categorias={categorias} />
       </main>
 
       <Footer />
