@@ -19,7 +19,10 @@ export const authOptions: AuthOptions = {
       type: "oauth",
       authorization: {
         url: `${process.env.GOVBR_URL}authorize`,
-        params: { scope: "openid email profile" },
+        params: {
+          scope:
+            "openid email profile govbr_confiabilidades govbr_confiabilidades_idtoken",
+        },
       },
       version: "2.0",
       issuer: process.env.GOVBR_URL!,
