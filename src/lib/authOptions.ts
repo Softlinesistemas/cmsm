@@ -8,6 +8,7 @@ import https from "https";
 const agent = new https.Agent({ rejectUnauthorized: false });
 
 export const authOptions: AuthOptions = {
+  debug: process.env.NEXT_PUBLIC_PREVIEW_ENV === "homologacao",
   pages: {
     signIn: "/login",
   },
@@ -29,6 +30,7 @@ export const authOptions: AuthOptions = {
       clientId: process.env.GOVBR_CLIENT_ID!,
       clientSecret: process.env.GOVBR_CLIENT_SECRET!,
       profile(profile: any) {
+        console.log(profile);
         return {
           id: profile.sub,
           cpf: profile.sub,
