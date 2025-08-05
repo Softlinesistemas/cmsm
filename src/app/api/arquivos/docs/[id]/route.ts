@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import getDBConnection from "@/db/conn";
 import dbConfig from "@/db/dbConfig";
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+// PUT: Atualiza um documento
+export async function PUT(request: NextRequest) {
   const db = getDBConnection(dbConfig());
-  const id = parseInt(params.id, 10);
+
+  const url = new URL(request.url);
+  const id = parseInt(url.pathname.split("/").pop() || "", 10);
 
   if (isNaN(id)) {
     return NextResponse.json({ error: "ID inválido." }, { status: 400 });
@@ -24,7 +24,6 @@ export async function PUT(
       );
     }
 
-    // Verifica se o documento existe
     const docExistente = await db("Docs").where("CodDoc", id).first();
     if (!docExistente) {
       return NextResponse.json(
@@ -33,7 +32,6 @@ export async function PUT(
       );
     }
 
-    // Verifica se a categoria existe
     const categoriaExiste = await db("DocCategoria")
       .where("CodCategoria", DocCategoria)
       .first();
@@ -44,8 +42,7 @@ export async function PUT(
       );
     }
 
-    // Atualiza
-    const atualizado = await db("Docs").where("CodDoc", id).update({
+    await db("Docs").where("CodDoc", id).update({
       DocNome,
       DocCategoria,
     });
@@ -63,12 +60,12 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+// DELETE: Exclui um documento
+export async function DELETE(request: NextRequest) {
   const db = getDBConnection(dbConfig());
-  const id = parseInt(params.id, 10);
+
+  const url = new URL(request.url);
+  const id = parseInt(url.pathname.split("/").pop() || "", 10);
 
   if (isNaN(id)) {
     return NextResponse.json({ error: "ID inválido." }, { status: 400 });
