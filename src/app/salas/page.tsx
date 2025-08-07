@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
-import Footer from '@/components/Footer';
-import Sidebar from '@/components/Sidebar';
-import Header from '@/components/HeaderAdm';
-import { Pencil, CheckCircle, XCircle, Trash2 } from 'lucide-react';
-import { useState, useEffect, useContext } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
-import api from '@/utils/api';
-import toast from 'react-hot-toast';
+import Footer from "@/components/Footer";
+import Sidebar from "@/components/Sidebar";
+import Header from "@/components/HeaderAdm";
+import { Pencil, CheckCircle, XCircle, Trash2 } from "lucide-react";
+import { useState, useEffect, useContext } from "react";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import api from "@/utils/api";
+import toast from "react-hot-toast";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { unparse as jsonToCSV } from "papaparse";
@@ -16,26 +16,30 @@ export default function SalasPage() {
   const queryClient = useQueryClient();
 
   const [form, setForm] = useState({
-    CodSala: '',
-    Sala: '',
+    CodSala: "",
+    Sala: "",
     QtdCadeiras: 0,
-    Predio: '',
-    Andar: '',
-    PortadorNec: '',
+    Predio: "",
+    Andar: "",
+    PortadorNec: "",
     QtdPortNec: 0,
-    Turma: '6º Ano',
+    Turma: "6º Ano",
   });
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const { data: salas = [], isLoading, refetch } = useQuery('salas', async () => {
-    const res = await api.get('api/sala');
+  const {
+    data: salas = [],
+    isLoading,
+    refetch,
+  } = useQuery("salas", async () => {
+    const res = await api.get("api/sala");
     return res.data.salas;
   });
 
   const { data: ensalamento = [], isLoading: loadingEnsalamento } = useQuery(
-    'ensalamento',
+    "ensalamento",
     async () => {
-      const res = await api.get('api/sala/ensalamento');
+      const res = await api.get("api/sala/ensalamento");
       return res.data;
     }
   );
@@ -55,36 +59,38 @@ export default function SalasPage() {
       if (editingId) {
         await api.put(`api/sala/${editingId}`, payload);
       } else {
-        await api.post('api/sala', payload);
+        await api.post("api/sala", payload);
       }
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('salas');
+        queryClient.invalidateQueries("salas");
         toast.success("Lista de salas atualizada.");
         resetForm();
       },
     }
   );
 
-  const gerarMut = useMutation(
-    () => api.post('api/sala/ensalamento'),
-    { onSuccess: () => {
-        queryClient.invalidateQueries('ensalamento');
-        toast.success('Ensalamento gerado com sucesso.');
-      }
-    }
-  );
+  const gerarMut = useMutation(() => api.post("api/sala/ensalamento"), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("ensalamento");
+      toast.success("Ensalamento gerado com sucesso.");
+    },
+  });
 
   const deleteMut = useMutation(
     async (id: number) => api.delete(`api/sala/${id}`),
-    { onSuccess: () => {
-      queryClient.invalidateQueries('salas')
-      toast.success("Sala excluída");
-    } }
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("salas");
+        toast.success("Sala excluída");
+      },
+    }
   );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
   };
@@ -97,31 +103,40 @@ export default function SalasPage() {
       CodSala: String(s.CodSala),
       Sala: s.Sala,
       QtdCadeiras: s.QtdCadeiras || 0,
-      Predio: s.Predio || '',
-      Andar: s.Andar || '',
-      PortadorNec: s.PortadorNec || 'N',
-      Turma: s.Turma || '',
+      Predio: s.Predio || "",
+      Andar: s.Andar || "",
+      PortadorNec: s.PortadorNec || "N",
+      Turma: s.Turma || "",
       QtdPortNec: s.QtdPortNec || 0,
     });
   };
 
   const alterarStatus = async (id: number, novoStatus: string) => {
-    try {    
-      const response = await api.put(`api/sala/${id}`, { Status: novoStatus })
+    try {
+      const response = await api.put(`api/sala/${id}`, { Status: novoStatus });
       toast.success(response.data.message);
       refetch();
     } catch (error: any) {
-      toast.error(error.response.data.error || error.response.data.message)
+      toast.error(error.response.data.error || error.response.data.message);
     }
-    queryClient.invalidateQueries('cotas')
-  }
+    queryClient.invalidateQueries("cotas");
+  };
 
   const handleDelete = (id: number) => {
-    if (confirm('Confirmar exclusão da sala?')) deleteMut.mutate(id);
+    if (confirm("Confirmar exclusão da sala?")) deleteMut.mutate(id);
   };
 
   const resetForm = () => {
-    setForm({ CodSala: '', Sala: '', QtdCadeiras: 0, Predio: '', Andar: '', PortadorNec: 'N', Turma: '', QtdPortNec: 0 });
+    setForm({
+      CodSala: "",
+      Sala: "",
+      QtdCadeiras: 0,
+      Predio: "",
+      Andar: "",
+      PortadorNec: "N",
+      Turma: "",
+      QtdPortNec: 0,
+    });
     setEditingId(null);
   };
 
@@ -232,7 +247,7 @@ export default function SalasPage() {
     const csv = jsonToCSV(rows, {
       delimiter: ";",
       header: true,
-      skipEmptyLines: true
+      skipEmptyLines: true,
     });
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -246,22 +261,27 @@ export default function SalasPage() {
     document.body.removeChild(link);
   }
 
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
       <div className="flex flex-1 min-h-0">
         <Sidebar />
         <main className="flex-1 p-4 md:p-8 overflow-auto min-w-0">
-          <h1 className="text-3xl font-bold text-blue-900 text-center mb-8">SALAS</h1>
+          <h1 className="text-3xl font-bold text-blue-900 text-center mb-8">
+            SALAS
+          </h1>
 
           {/* Cadastro de Salas */}
           <section className="bg-white p-6 rounded-2xl shadow-md border border-gray-200 max-w-full mx-auto mb-8">
-            <h2 className="text-xl font-semibold text-blue-900 mb-4">Cadastro de Salas</h2>
+            <h2 className="text-xl font-semibold text-blue-900 mb-4">
+              Cadastro de Salas
+            </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6">
               <div>
-                <label className="text-sm font-medium text-gray-700">Nome ou número da sala</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Nome ou número da sala
+                </label>
                 <input
                   name="Sala"
                   value={form.Sala}
@@ -270,7 +290,9 @@ export default function SalasPage() {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700">Andar</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Andar
+                </label>
                 <input
                   name="Andar"
                   value={form.Andar}
@@ -280,7 +302,9 @@ export default function SalasPage() {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700">Capacidade</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Capacidade
+                </label>
                 <input
                   name="QtdCadeiras"
                   type="number"
@@ -294,14 +318,21 @@ export default function SalasPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
               <div>
-                <label className="text-sm font-medium text-gray-700 block mb-2">Ano</label>
+                <label className="text-sm font-medium text-gray-700 block mb-2">
+                  Ano
+                </label>
                 <div className="flex flex-wrap gap-4 text-red-800">
                   <label className="text-sm flex items-center gap-1">
                     <input
                       type="checkbox"
                       className="mr-1"
-                      checked={form.Turma === '6º Ano'}
-                      onChange={() => setForm((f) => ({ ...f, Turma: f.Turma === '6º Ano' ? '' : '6º Ano' }))}
+                      checked={form.Turma === "6º Ano"}
+                      onChange={() =>
+                        setForm((f) => ({
+                          ...f,
+                          Turma: f.Turma === "6º Ano" ? "" : "6º Ano",
+                        }))
+                      }
                     />
                     6º Ano
                   </label>
@@ -309,15 +340,22 @@ export default function SalasPage() {
                     <input
                       type="checkbox"
                       className="mr-1"
-                      checked={form.Turma === '1º Ano'}
-                      onChange={() => setForm((f) => ({ ...f, Turma: f.Turma === '1º Ano' ? '' : '1º Ano' }))}
+                      checked={form.Turma === "1º Ano"}
+                      onChange={() =>
+                        setForm((f) => ({
+                          ...f,
+                          Turma: f.Turma === "1º Ano" ? "" : "1º Ano",
+                        }))
+                      }
                     />
                     1º Ano
                   </label>
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700 block mb-2">Portadores de necessidades especiais?</label>
+                <label className="text-sm font-medium text-gray-700 block mb-2">
+                  Portadores de Necessidades Especiais (PcD)?
+                </label>
                 <div className="flex gap-6 text-red-800">
                   <label className="text-sm flex items-center gap-1">
                     <input
@@ -325,7 +363,7 @@ export default function SalasPage() {
                       name="PortadorNec"
                       className="mr-1"
                       value="X"
-                      checked={form.PortadorNec === 'X'}
+                      checked={form.PortadorNec === "X"}
                       onChange={handleChange}
                     />
                     Sim
@@ -336,17 +374,19 @@ export default function SalasPage() {
                       name="PortadorNec"
                       className="mr-1"
                       value=""
-                      checked={form.PortadorNec === ''}
+                      checked={form.PortadorNec === ""}
                       onChange={handleChange}
                     />
                     Não
                   </label>
                 </div>
               </div>
-              {form.PortadorNec === 'X' && (
+              {form.PortadorNec === "X" && (
                 <div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Cadeiras reservadas</label>
+                    <label className="text-sm font-medium text-gray-700">
+                      Cadeiras reservadas
+                    </label>
                     <input
                       name="QtdPortNec"
                       type="number"
@@ -357,7 +397,10 @@ export default function SalasPage() {
                       className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <p className='text-sm text-red-600'>capacidade reservada para portadores de necessidades especiais</p>
+                  <p className="text-sm text-red-600">
+                    capacidade reservada para portadores de necessidades
+                    especiais
+                  </p>
                 </div>
               )}
             </div>
@@ -366,13 +409,15 @@ export default function SalasPage() {
               onClick={handleSubmit}
               className="bg-green-900 text-white px-6 py-2 rounded-md hover:bg-green-800 transition block mx-auto"
             >
-              {editingId ? 'Atualizar' : 'Gravar'}
+              {editingId ? "Atualizar" : "Gravar"}
             </button>
           </section>
 
           {/* Grid de Salas Cadastradas */}
           <section className="bg-white p-6 rounded-2xl shadow-md border border-gray-200 max-w-full mx-auto mb-10 overflow-x-auto">
-            <h2 className="text-xl font-semibold text-blue-900 mb-6">Salas Cadastradas</h2>
+            <h2 className="text-xl font-semibold text-blue-900 mb-6">
+              Salas Cadastradas
+            </h2>
             <table className="w-full text-sm border-collapse min-w-[600px]">
               <thead className="bg-gray-100 sticky top-0 text-blue-900">
                 <tr>
@@ -388,40 +433,72 @@ export default function SalasPage() {
               </thead>
               <tbody>
                 {isLoading ? (
-                  <tr><td colSpan={7} className="p-3 text-center">Carregando...</td></tr>
+                  <tr>
+                    <td colSpan={7} className="p-3 text-center">
+                      Carregando...
+                    </td>
+                  </tr>
                 ) : (
                   salas.map((s: any, idx: number) => (
                     <tr key={idx} className="hover:bg-gray-50 text-black">
                       {/* <td className="p-3 border text-center">{s.CodSala}</td> */}
                       <td className="p-3 border">{s.Sala}</td>
                       <td className="p-3 border text-center">{s.Andar}</td>
-                      <td className={`p-3 border text-center ${s.cadeirasOcupadas >= s.QtdCadeiras ? "text-red-600" : ""}`}>{s.cadeirasOcupadas}/{s.QtdCadeiras}</td>
+                      <td
+                        className={`p-3 border text-center ${
+                          s.cadeirasOcupadas >= s.QtdCadeiras
+                            ? "text-red-600"
+                            : ""
+                        }`}
+                      >
+                        {s.cadeirasOcupadas}/{s.QtdCadeiras}
+                      </td>
                       <td className="p-3 border text-center">{s.Turma}</td>
                       <td className="p-3 border text-center">
-                        <span className={`inline-block px-2 py-1 text-xs rounded-full ${
-                          s.PortadorNec === 'X' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {s.PortadorNec === 'X' ? 'Sim' : 'Não'}
+                        <span
+                          className={`inline-block px-2 py-1 text-xs rounded-full ${
+                            s.PortadorNec === "X"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {s.PortadorNec === "X" ? "Sim" : "Não"}
                         </span>
-                      </td>   
+                      </td>
                       <td className="p-3 border text-center">
-                         <span className={`inline-block px-2 py-1 text-xs rounded-full ${
-                          s.Status === 'Ativo' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {s.Status === 'Inativo' ? 'Inativo' : 'Ativo'}
+                        <span
+                          className={`inline-block px-2 py-1 text-xs rounded-full ${
+                            s.Status === "Ativo"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {s.Status === "Inativo" ? "Inativo" : "Ativo"}
                         </span>
-                      </td>   
+                      </td>
                       <td className="p-3 border text-center space-x-2">
-                        <button onClick={() => handleEdit(s)} className="text-yellow-500 hover:text-yellow-600 transition-transform hover:scale-110">
+                        <button
+                          onClick={() => handleEdit(s)}
+                          className="text-yellow-500 hover:text-yellow-600 transition-transform hover:scale-110"
+                        >
                           <Pencil size={18} />
                         </button>
-                        <button onClick={() => alterarStatus(s.CodSala, "Ativo")} className="text-green-500 hover:text-green-600 transition-transform hover:scale-110">
+                        <button
+                          onClick={() => alterarStatus(s.CodSala, "Ativo")}
+                          className="text-green-500 hover:text-green-600 transition-transform hover:scale-110"
+                        >
                           <CheckCircle size={18} />
                         </button>
-                        <button onClick={() => alterarStatus(s.CodSala, "Inativo")} className="text-red-500 hover:text-red-600 transition-transform hover:scale-110">
+                        <button
+                          onClick={() => alterarStatus(s.CodSala, "Inativo")}
+                          className="text-red-500 hover:text-red-600 transition-transform hover:scale-110"
+                        >
                           <XCircle size={18} />
                         </button>
-                        <button onClick={() => handleDelete(s.CodSala)} className="text-gray-500 hover:text-gray-700 transition-transform hover:scale-110">
+                        <button
+                          onClick={() => handleDelete(s.CodSala)}
+                          className="text-gray-500 hover:text-gray-700 transition-transform hover:scale-110"
+                        >
                           <Trash2 size={18} />
                         </button>
                       </td>
@@ -439,13 +516,15 @@ export default function SalasPage() {
               disabled={gerarMut.isLoading}
               className="bg-blue-900 text-white px-8 py-3 rounded-md hover:bg-blue-800 transition disabled:opacity-50"
             >
-              {gerarMut.isLoading ? 'Gerando...' : 'Gerar Ensalamento'}
+              {gerarMut.isLoading ? "Gerando..." : "Gerar Ensalamento"}
             </button>
           </div>
 
           {/* Grid do Ensalamento */}
           <section className="bg-white p-6 rounded-2xl shadow-md border border-gray-200 max-w-full mx-auto overflow-x-auto">
-            <h2 className="text-xl font-semibold text-blue-900 mb-6">Resultado do Ensalamento</h2>
+            <h2 className="text-xl font-semibold text-blue-900 mb-6">
+              Resultado do Ensalamento
+            </h2>
             <table className="w-full text-sm border-collapse min-w-[600px]">
               <thead className="bg-gray-100 text-blue-900">
                 <tr>
@@ -461,21 +540,25 @@ export default function SalasPage() {
                     <td className="p-3 border text-center">{item.cod}</td>
                     <td className="p-3 border">{item.sala}</td>
                     <td className="p-3 border">
-                      {item.participantes.map((p: any) => p.Nome).join(', ')}
+                      {item.participantes.map((p: any) => p.Nome).join(", ")}
                     </td>
                     <td className="p-3 border text-center space-x-2">
                       <button
                         className="bg-red-700 text-white px-4 py-1 rounded hover:bg-red-600 transition"
-                        onClick={() => exportToPDF(item.sala, item.participantes, item.cod)}
+                        onClick={() =>
+                          exportToPDF(item.sala, item.participantes, item.cod)
+                        }
                       >
                         Exportar PDF
                       </button>
                       <button
                         className="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-400 transition ml-2"
-                        onClick={() => exportToCSV(item.sala, item.participantes, item.cod)}
+                        onClick={() =>
+                          exportToCSV(item.sala, item.participantes, item.cod)
+                        }
                       >
                         Exportar CSV
-                      </button>              
+                      </button>
                     </td>
                   </tr>
                 ))}

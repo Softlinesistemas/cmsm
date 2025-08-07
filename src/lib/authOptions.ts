@@ -20,7 +20,7 @@ export const authOptions: AuthOptions = {
       authorization: {
         url: `${process.env.GOVBR_URL}authorize`,
         params: {
-          scope: "openid email profile govbr_confiabilidades birthdate",
+          scope: "openid email profile govbr_confiabilidades",
         },
       },
       version: "2.0",

@@ -122,19 +122,7 @@ const FormularioInscricao: React.FC<any> = ({
       >
         {/* FOTO + NOME + Nº INSCRIÇÃO */}
         <div className="grid grid-cols-12 gap-4 items-end">
-          <div className="col-span-12 md:col-span-2">
-            <label className="text-blue-800 font-medium mb-1 block">Foto</label>
-            <div className="w-24 h-24 border-2 border-dashed border-blue-300 rounded-md relative">
-              <Image
-                src="/api/candidato/foto"
-                fill
-                alt="Foto do candidato"
-                className="w-full h-full object-cover"
-                unoptimized
-              />
-            </div>
-          </div>
-          <div className="col-span-12 md:col-span-4">
+          <div className="col-span-12 md:col-span-6">
             <label className="text-blue-800 font-medium mb-1 block">
               Nome do Candidato
             </label>
@@ -354,7 +342,7 @@ const FormularioInscricao: React.FC<any> = ({
             {/* Necessidades */}
             <div>
               <label className="text-blue-800 font-medium mb-1 block">
-                Necessidades Especiais?
+                Necessidades Especiais (PcD)?
               </label>
               <select
                 name="necessidades"
@@ -367,21 +355,36 @@ const FormularioInscricao: React.FC<any> = ({
                 <option value="X">Sim</option>
               </select>
               {formData.necessidades === "X" && (
-                <select
-                  name="tipoNecessidade"
-                  value={formData.tipoNecessidade}
-                  onChange={handleChange}
-                  required
-                  className={`${baseInput} mt-2`}
-                  disabled={isAcompanhamento}
-                >
-                  <option value="">Tipo de Necessidade</option>
-                  <option value="visual">Visual</option>
-                  <option value="auditiva">Auditiva</option>
-                  <option value="motora">Motora</option>
-                  <option value="intelectual">Intelectual</option>
-                  <option value="outra">Outra</option>
-                </select>
+                <>
+                  <select
+                    name="tipoNecessidade"
+                    value={formData.tipoNecessidade}
+                    onChange={handleChange}
+                    required
+                    className={`${baseInput} mt-2`}
+                    disabled={isAcompanhamento}
+                  >
+                    <option value="">Tipo de Necessidade</option>
+                    <option value="visual">Visual</option>
+                    <option value="auditiva">Auditiva</option>
+                    <option value="motora">Motora</option>
+                    <option value="intelectual">Intelectual</option>
+                    <option value="outra">Outra</option>
+                  </select>
+
+                  {formData.tipoNecessidade === "outra" && (
+                    <input
+                      type="text"
+                      name="outraNecessidade"
+                      value={formData.outraNecessidade || ""}
+                      onChange={handleChange}
+                      placeholder="Descreva a outra necessidade"
+                      className={`${baseInput} mt-2`}
+                      disabled={isAcompanhamento}
+                      required
+                    />
+                  )}
+                </>
               )}
             </div>
 
@@ -426,7 +429,7 @@ const FormularioInscricao: React.FC<any> = ({
             </div>
 
             {/* Atendimento Especial */}
-            <div>
+            {/* <div>
               <label className="text-blue-800 font-medium mb-1 block">
                 Atendimento Especial?
               </label>
@@ -457,10 +460,10 @@ const FormularioInscricao: React.FC<any> = ({
                   <option value="outro">Outro</option>
                 </select>
               )}
-            </div>
+            </div> */}
 
             {/* Tipo de Cota */}
-            <div>
+            {/* <div>
               <label className="text-blue-800 font-medium mb-1 block">
                 Tipo de Cota
               </label>
@@ -485,13 +488,13 @@ const FormularioInscricao: React.FC<any> = ({
                     </option>
                   ))}
               </select>
-            </div>
+            </div> */}
 
             {/* Condições na Prova */}
             {!isAcompanhamento && (
               <div>
-                <label className="text-blue-800 font-medium mb-1 block">
-                  Condições Especiais na Prova?
+                <label className="text-blue-800 font-medium mb-1 block text-sm">
+                  Condições Específicas no Dia da Prova?
                 </label>
                 <select
                   name="necessitaCondicoes"
@@ -506,19 +509,16 @@ const FormularioInscricao: React.FC<any> = ({
                   <option value="X">Sim</option>
                 </select>
                 {formData.necessitaCondicoes === "X" && (
-                  <select
+                  <input
+                    type="text"
                     name="tipoAtendimentoProva"
                     value={formData.tipoAtendimentoProva}
                     onChange={handleChange}
                     required
                     className={`${baseInput} mt-2`}
                     disabled={isAcompanhamento}
-                  >
-                    <option value="">Tipo de Condição</option>
-                    <option value="tempoExtra">Tempo Extra</option>
-                    <option value="localAcessivel">Local Acessível</option>
-                    <option value="acompanhante">Acompanhante</option>
-                  </select>
+                    placeholder="Descreva a condição necessária"
+                  />
                 )}
               </div>
             )}

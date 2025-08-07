@@ -1,20 +1,20 @@
-'use client'
+"use client";
 
-import Header from '../../components/HeaderAdm'
-import Footer from '../../components/FooterAdm'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import FormularioInscricao from '@/components/inscricao/FormularioInscricao'
-import api from '@/utils/api'
-import bcrypt from 'bcryptjs';
-import { signIn } from 'next-auth/react'
-import toast from 'react-hot-toast'
-import { useSession } from 'next-auth/react'
+import Header from "../../components/HeaderAdm";
+import Footer from "../../components/FooterAdm";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import FormularioInscricao from "@/components/inscricao/FormularioInscricao";
+import api from "@/utils/api";
+import bcrypt from "bcryptjs";
+import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 
 export default function Formulario() {
-  const router = useRouter()
-  const dataLimiteEdicao = new Date('2026-06-01')
-  const [podeEditarExtras, setPodeEditarExtras] = useState(true)
+  const router = useRouter();
+  const dataLimiteEdicao = new Date("2026-06-01");
+  const [podeEditarExtras, setPodeEditarExtras] = useState(true);
   const [loading, setLoading] = useState(false);
   const [provisoryKey, setProvisoryKey] = useState("");
   const [provisoryUser, setProvisoryUser] = useState("");
@@ -24,188 +24,210 @@ export default function Formulario() {
 
   useEffect(() => {
     if (status === "authenticated" && session.user) {
-      setFormData({ ...formData, nome: session?.user?.name || "", emailCandidato: session?.user?.email || "", cpf: String(session?.user?.cpf), dataNascimento: session?.user?.birthdate || "", celular: session?.user?.phone_number || "", fotoPreview: session?.user?.picture || session?.user?.image || ""})
+      setFormData({
+        ...formData,
+        nome: session?.user?.name || "",
+        emailCandidato: session?.user?.email || "",
+        cpf: String(session?.user?.cpf),
+        dataNascimento: session?.user?.birthdate || "",
+        celular: session?.user?.phone_number || "",
+        fotoPreview: session?.user?.picture || session?.user?.image || "",
+      });
     }
   }, [status]);
 
   const [formData, setFormData] = useState({
-    nome: '',
-    numeroInscricao: '',
-    cpf: '',
-    dataNascimento: '',
-    sexo: '',
-    cep: '',
-    endereco: '',
-    cidade: '',
-    uf: '',
-    numero: '',
-    complemento: '',
-    necessidades: '',
-    tipoNecessidade: '',
-    transtornoFuncional: '',
+    nome: "",
+    numeroInscricao: "",
+    cpf: "",
+    dataNascimento: "",
+    sexo: "",
+    cep: "",
+    endereco: "",
+    cidade: "",
+    uf: "",
+    numero: "",
+    complemento: "",
+    necessidades: "",
+    tipoNecessidade: "",
+    outraNecessidade: "",
+    transtornoFuncional: "",
     transtornoTipos: [] as string[],
-    atendimentoEspecial: '',
-    tipoAtendimento: '',
-    tipoCota: '',
-    necessitaCondicoes: '',
-    tipoAtendimentoProva: '',
-    forcas: '',
-    ramoForcas: '',
-    dadosVaga: '',
-    nomeResponsavel: '',
-    cpfResponsavel: '',
-    dataNascimentoResponsavel: '',
-    sexoResponsavel: '',
-    cep_Resp: '',
-    endereco_Resp: '',
-    cidade_Resp: '',
-    uf_Resp: '',
-    numero_Resp: '',
-    complemento_Resp: '',
-    profissao: '',
-    celular: '',
-    parentesco: '',
-    emailResponsavel: '',
-    emailCandidato: '',
-    fotoPreview: '',
-    isencao: '',
-    Seletivo: '',
-    observacao: '',
-  })
+    atendimentoEspecial: "",
+    tipoAtendimento: "",
+    tipoCota: "",
+    necessitaCondicoes: "",
+    tipoAtendimentoProva: "",
+    forcas: "",
+    ramoForcas: "",
+    dadosVaga: "",
+    nomeResponsavel: "",
+    cpfResponsavel: "",
+    dataNascimentoResponsavel: "",
+    sexoResponsavel: "",
+    cep_Resp: "",
+    endereco_Resp: "",
+    cidade_Resp: "",
+    uf_Resp: "",
+    numero_Resp: "",
+    complemento_Resp: "",
+    profissao: "",
+    celular: "",
+    parentesco: "",
+    emailResponsavel: "",
+    emailCandidato: "",
+    fotoPreview: "",
+    isencao: "",
+    Seletivo: "",
+    observacao: "",
+  });
 
   useEffect(() => {
-    setPodeEditarExtras(new Date() <= dataLimiteEdicao)
-  }, [])
+    setPodeEditarExtras(new Date() <= dataLimiteEdicao);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<any>) => {
-    const { name, value, type, checked } = e.target
-    if (name === 'transtornoTipos') {
-      setFormData(prev => {
+    const { name, value, type, checked } = e.target;
+    if (name === "transtornoTipos") {
+      setFormData((prev) => {
         const list = prev.transtornoTipos.includes(value)
-          ? prev.transtornoTipos.filter(v => v !== value)
-          : [...prev.transtornoTipos, value]
-        return { ...prev, transtornoTipos: list }
-      })
+          ? prev.transtornoTipos.filter((v) => v !== value)
+          : [...prev.transtornoTipos, value];
+        return { ...prev, transtornoTipos: list };
+      });
     } else {
-      setFormData({ ...formData, [name]: value })
+      setFormData({ ...formData, [name]: value });
     }
-  }
+  };
 
-   const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-       if (!checkboxMarcado) {
-        toast.error("Por favor, marque a declaração de que não foi excluído por motivo disciplinar.");
-        return; // Impede o envio
-      }
-      if (loading) return;
-      setLoading(true);
-      const payload = {
-        CodIns: Number(formData.numeroInscricao),
-        Nome: formData.nome,
-        CPF: formData.cpf,
-        Nasc: formData.dataNascimento || null,
-        Sexo: formData.sexo || null,
-        Cep: formData.cep || null,
-        Endereco: formData.endereco || null,
-        Complemento: formData.complemento || null,
-        Bairro: null,
-        Cidade: formData.cidade || null,
-        UF: formData.uf || null,
-        CodCot1: formData?.tipoCota || null,
-        CodCot2: null,
-        CodCot3: null,
-        CodCot4: null,
-        CodCot5: null,
-        CodCot6: null,
-        CodCot7: null,
-        CodCot8: null,
-        CodCot9: null,
-        CodCot10: null,
-        PortadorNec: formData.necessidades || null,
-        AtendimentoEsp: formData.atendimentoEspecial || null,
-        Responsavel: formData.nomeResponsavel || null,
-        CPFResp: formData.cpfResponsavel || null,
-        NascResp: formData.dataNascimentoResponsavel || null,
-        SexoResp: formData.sexoResponsavel || null,
-        CepResp: formData.cep_Resp || null,
-        EnderecoResp: formData.endereco_Resp || null,
-        ComplementoResp: formData.complemento_Resp || null,
-        BairroResp: null,
-        CidadeResp: formData.cidade_Resp || null,
-        UFResp: formData.uf_Resp || null,
-        ProfissaoResp: formData.profissao || null,
-        EmailResp: formData.emailResponsavel || null,
-        TelResp: formData.celular || null,
-        Parentesco: formData.parentesco || null,
-        Email: formData.emailCandidato || null,
-        CaminhoFoto: formData.fotoPreview || null,
-        Seletivo: formData.Seletivo,
-        isencao:  formData.isencao,
-        observacao:  formData.observacao,
-  
-        // Campos nulos:
-        DataCad: null, // backend
-        HoraCad: null, // backend
-        RegistroGRU: null,
-        GRUData: null,
-        GRUValor: null,
-        GRUHora: null,
-        CodSala: null,
-        DataEnsalamento: null,
-        HoraEnsalamento: null,
-        CodUsuEnsalamento: null,
-        Status: null,
-        CaminhoResposta: null,
-        CaminhoRedacao: null,
-        RevisaoGabarito: null,
-        DataImportacao: null,
-        HoraImportacao: null,
-        CodUsuImportacao: null,
-        NotaMatematica: null,
-        NotaPortugues: null,
-        NotaRedacao: null,
-        DataRevisao: null,
-        CodUsuRev: null,
-      };
-  
-      try {
-        const nomeCompleto = formData.nome.trim().split(/\s+/);
-        
-        const primeiroNome = nomeCompleto[0];
-        const ultimoNome = nomeCompleto.length > 1 ? nomeCompleto[nomeCompleto.length - 1] : "";
-        
-        const user = `${primeiroNome.toLowerCase()}_${ultimoNome.toLowerCase()}`.replace(/[^\w]/g, '');
-        
-        const password = await bcrypt.hash(user, 10);
-        let userId = null;
-        if (!session?.user?.id) {
-          const response = await api.post("api/candidato/cadastro", {
-            user,
-            password,
-            email: formData.emailCandidato
-          }); 
-          userId = response.data.id
-        }
-        await api.post("api/candidato", {...payload, CodUsu: session?.user?.id || userId });
-  
-        if (userId) {
-          const res = await signIn("credentials", {
-            redirect: false,
-            user: formData.cpf?.replace(/\D/g, ""),
-            password,
-          });
-          setProvisoryKey(password);
-          setProvisoryUser(formData.cpf?.replace(/\D/g, ""));
-        }
-        toast.success("Inscrição realizada!");
-        router.push("/pagamento");
-        setPaymentButton(true);
-      } catch (error: any) {
-        toast.error(error.response.data.error || error.response.data.message)
-        console.error("Erro ao enviar dados:", error);
-      }
-      setLoading(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!checkboxMarcado) {
+      toast.error(
+        "Por favor, marque a declaração de que não foi excluído por motivo disciplinar."
+      );
+      return; // Impede o envio
+    }
+    if (loading) return;
+    setLoading(true);
+    const payload = {
+      CodIns: Number(formData.numeroInscricao),
+      Nome: formData.nome,
+      CPF: formData.cpf,
+      Nasc: formData.dataNascimento || null,
+      Sexo: formData.sexo || null,
+      Cep: formData.cep || null,
+      Endereco: formData.endereco || null,
+      Complemento: formData.complemento || null,
+      Bairro: null,
+      Cidade: formData.cidade || null,
+      UF: formData.uf || null,
+      CodCot1: formData?.tipoCota || null,
+      CodCot2: null,
+      CodCot3: null,
+      CodCot4: null,
+      CodCot5: null,
+      CodCot6: null,
+      CodCot7: null,
+      CodCot8: null,
+      CodCot9: null,
+      CodCot10: null,
+      PortadorNec: formData.necessidades || null,
+      AtendimentoEsp: formData.atendimentoEspecial || null,
+      Responsavel: formData.nomeResponsavel || null,
+      CPFResp: formData.cpfResponsavel || null,
+      NascResp: formData.dataNascimentoResponsavel || null,
+      SexoResp: formData.sexoResponsavel || null,
+      CepResp: formData.cep_Resp || null,
+      EnderecoResp: formData.endereco_Resp || null,
+      ComplementoResp: formData.complemento_Resp || null,
+      BairroResp: null,
+      CidadeResp: formData.cidade_Resp || null,
+      UFResp: formData.uf_Resp || null,
+      ProfissaoResp: formData.profissao || null,
+      EmailResp: formData.emailResponsavel || null,
+      TelResp: formData.celular || null,
+      Parentesco: formData.parentesco || null,
+      Email: formData.emailCandidato || null,
+      CaminhoFoto: formData.fotoPreview || null,
+      Seletivo: formData.Seletivo,
+      isencao:
+        formData.transtornoFuncional === "X" || formData.necessidades === "X"
+          ? "Pendente"
+          : formData.isencao,
+      observacao: formData.observacao,
+
+      // Campos nulos:
+      DataCad: null, // backend
+      HoraCad: null, // backend
+      RegistroGRU: null,
+      GRUData: null,
+      GRUValor: null,
+      GRUHora: null,
+      CodSala: null,
+      DataEnsalamento: null,
+      HoraEnsalamento: null,
+      CodUsuEnsalamento: null,
+      Status: null,
+      CaminhoResposta: null,
+      CaminhoRedacao: null,
+      RevisaoGabarito: null,
+      DataImportacao: null,
+      HoraImportacao: null,
+      CodUsuImportacao: null,
+      NotaMatematica: null,
+      NotaPortugues: null,
+      NotaRedacao: null,
+      DataRevisao: null,
+      CodUsuRev: null,
     };
+
+    try {
+      const nomeCompleto = formData.nome.trim().split(/\s+/);
+
+      const primeiroNome = nomeCompleto[0];
+      const ultimoNome =
+        nomeCompleto.length > 1 ? nomeCompleto[nomeCompleto.length - 1] : "";
+
+      const user =
+        `${primeiroNome.toLowerCase()}_${ultimoNome.toLowerCase()}`.replace(
+          /[^\w]/g,
+          ""
+        );
+
+      const password = await bcrypt.hash(user, 10);
+      let userId = null;
+      if (!session?.user?.id) {
+        const response = await api.post("api/candidato/cadastro", {
+          user,
+          password,
+          email: formData.emailCandidato,
+        });
+        userId = response.data.id;
+      }
+      await api.post("api/candidato", {
+        ...payload,
+        CodUsu: session?.user?.id || userId,
+      });
+
+      if (userId) {
+        const res = await signIn("credentials", {
+          redirect: false,
+          user: formData.cpf?.replace(/\D/g, ""),
+          password,
+        });
+        setProvisoryKey(password);
+        setProvisoryUser(formData.cpf?.replace(/\D/g, ""));
+      }
+      toast.success("Inscrição realizada!");
+      router.push("/pagamento");
+      setPaymentButton(true);
+    } catch (error: any) {
+      toast.error(error.response.data.error || error.response.data.message);
+      console.error("Erro ao enviar dados:", error);
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -214,9 +236,22 @@ export default function Formulario() {
         <h2 className="text-2xl font-bold text-center text-blue-800 mb-8">
           REQUERIMENTO DE INSCRIÇÃO
         </h2>
-        <FormularioInscricao primeiroCad={true} checkboxMarcado={checkboxMarcado} setCheckboxMarcado={setCheckboxMarcado} provisoryKey={provisoryKey} loading={loading} provisoryUser={provisoryUser} paymentButton={paymentButton} podeEditarExtras={podeEditarExtras} handleSubmit={handleSubmit} setFormData={setFormData} formData={formData} handleChange={handleChange}/>        
+        <FormularioInscricao
+          primeiroCad={true}
+          checkboxMarcado={checkboxMarcado}
+          setCheckboxMarcado={setCheckboxMarcado}
+          provisoryKey={provisoryKey}
+          loading={loading}
+          provisoryUser={provisoryUser}
+          paymentButton={paymentButton}
+          podeEditarExtras={podeEditarExtras}
+          handleSubmit={handleSubmit}
+          setFormData={setFormData}
+          formData={formData}
+          handleChange={handleChange}
+        />
       </main>
       <Footer />
     </div>
-  )
+  );
 }

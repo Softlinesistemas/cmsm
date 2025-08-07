@@ -97,7 +97,7 @@ export default function DocumentTable() {
           </tr>
         </thead>
         <tbody>
-          {categorias.map((cat) => (
+          {categorias?.map((cat) => (
             <tr key={cat.CodCategoria} className="align-top border-t">
               <td className="border px-4 py-2 font-semibold">
                 <span

@@ -1,247 +1,274 @@
-'use client'
-import React, { useState, useContext } from 'react'
-import Header from '@/components/HeaderAdm'
-import Sidebar from '@/components/Sidebar'
-import Footer from '@/components/FooterAdm'
-import api from '@/utils/api'
-import { useQuery } from 'react-query'
-import LoadingIcon from '@/components/common/LoadingIcon';
-import Image from 'next/image'
-import toast from 'react-hot-toast'
+"use client";
+import React, { useState, useContext } from "react";
+import Header from "@/components/HeaderAdm";
+import Sidebar from "@/components/Sidebar";
+import Footer from "@/components/FooterAdm";
+import api from "@/utils/api";
+import { useQuery } from "react-query";
+import LoadingIcon from "@/components/common/LoadingIcon";
+import Image from "next/image";
+import toast from "react-hot-toast";
 
 export default function AdminEditarCandidato() {
-  const [busca, setBusca] = useState('')
-  const [editando, setEditando] = useState(false)
-  const [motivoAlteracao, setMotivoAlteracao] = useState('')
-  const [erro, setErro] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [busca, setBusca] = useState("");
+  const [editando, setEditando] = useState(false);
+  const [motivoAlteracao, setMotivoAlteracao] = useState("");
+  const [erro, setErro] = useState("");
+  const [loading, setLoading] = useState(false);
   const [podeEditarExtras, setPodeEditarExtras] = useState(true);
 
-  const { data: cotas, isLoading, refetch } = useQuery('cotas', async () => {
-    const response = await api.get('api/cotas')
-    return response.data
-  }, {
-    refetchOnWindowFocus: false,
-    retry: 5,
-  });
+  const {
+    data: cotas,
+    isLoading,
+    refetch,
+  } = useQuery(
+    "cotas",
+    async () => {
+      const response = await api.get("api/cotas");
+      return response.data;
+    },
+    {
+      refetchOnWindowFocus: false,
+      retry: 5,
+    }
+  );
 
   const [formData, setFormData] = useState({
-      nome: '',
-      numeroInscricao: '',
-      cpf: '',
-      dataNascimento: '',
-      sexo: '',
-      cep: '',
-      endereco: '',
-      cidade: '',
-      uf: '',
-      numero: '',
-      complemento: '',
-      necessidades: '',
-      tipoNecessidade: '',
-      transtornoFuncional: '',
-      transtornoTipos: [] as string[],
-      atendimentoEspecial: '',
-      tipoAtendimento: '',
-      tipoCota: '',
-      necessitaCondicoes: '',
-      tipoAtendimentoProva: '',
-      forcas: '',
-      ramoForcas: '',
-      dadosVaga: '',
-      nomeResponsavel: '',
-      cpfResponsavel: '',
-      dataNascimentoResponsavel: '',
-      sexoResponsavel: '',
-      cep_Resp: '',
-      endereco_Resp: '',
-      cidade_Resp: '',
-      uf_Resp: '',
-      numero_Resp: '',
-      complemento_Resp: '',
-      profissao: '',
-      celular: '',
-      parentesco: '',
-      emailResponsavel: '',
-      emailCandidato: '',
-      fotoPreview: '',
-      Seletivo: '',
-      isencao: '',
-      observacao: ''
-    })
+    nome: "",
+    numeroInscricao: "",
+    cpf: "",
+    dataNascimento: "",
+    sexo: "",
+    cep: "",
+    endereco: "",
+    cidade: "",
+    uf: "",
+    numero: "",
+    complemento: "",
+    necessidades: "",
+    tipoNecessidade: "",
+    outraNecessidade: "",
+    transtornoFuncional: "",
+    transtornoTipos: [] as string[],
+    atendimentoEspecial: "",
+    tipoAtendimento: "",
+    tipoCota: "",
+    necessitaCondicoes: "",
+    tipoAtendimentoProva: "",
+    forcas: "",
+    ramoForcas: "",
+    dadosVaga: "",
+    nomeResponsavel: "",
+    cpfResponsavel: "",
+    dataNascimentoResponsavel: "",
+    sexoResponsavel: "",
+    cep_Resp: "",
+    endereco_Resp: "",
+    cidade_Resp: "",
+    uf_Resp: "",
+    numero_Resp: "",
+    complemento_Resp: "",
+    profissao: "",
+    celular: "",
+    parentesco: "",
+    emailResponsavel: "",
+    emailCandidato: "",
+    fotoPreview: "",
+    Seletivo: "",
+    isencao: "",
+    observacao: "",
+  });
 
   // Busca candidato por nome, cpf ou inscrição
   async function handleBuscar() {
     if (!busca.trim()) {
-      setErro('Digite nome, CPF ou número da inscrição para buscar')
-      return
+      setErro("Digite nome, CPF ou número da inscrição para buscar");
+      return;
     }
-    setErro('')
-    setLoading(true)
+    setErro("");
+    setLoading(true);
     try {
-      const response = await api.get(`/api/candidato/pesquisa?query=${encodeURIComponent(busca)}`)
-    
+      const response = await api.get(
+        `/api/candidato/pesquisa?query=${encodeURIComponent(busca)}`
+      );
+
       const data = response.data;
       if (data.length === 0) {
-        setErro('Nenhum candidato encontrado.')
+        setErro("Nenhum candidato encontrado.");
       } else {
         const candidato = data[0];
-        populaForm(candidato); 
+        populaForm(candidato);
       }
     } catch (e: any) {
-      setErro('Erro na busca: ' + e.message)
+      setErro("Erro na busca: " + e.message);
     } finally {
-      setLoading(false)
-      setEditando(false)
-      setMotivoAlteracao('')
+      setLoading(false);
+      setEditando(false);
+      setMotivoAlteracao("");
     }
   }
 
   function populaForm(candidate: any) {
     setFormData({
-      nome: candidate.Nome ?? '',
-      numeroInscricao: (candidate.CodIns != null ? String(candidate.CodIns) : ''),
-      cpf: candidate.CPF ?? '',
-      dataNascimento: candidate.Nasc ? new Date(candidate.Nasc).toISOString().split('T')[0] : '',
-      sexo: candidate?.Sexo ? (candidate?.Sexo === "F" ? "feminino" : "masculino") : '',
-      cep: candidate.Cep ?? '',
-      endereco: candidate.Endereco ?? '',
-      cidade: candidate.Cidade ?? '',
-      uf: candidate.UF ?? '',
-      numero: candidate.Numero ?? '',
-      complemento: candidate.Complemento ?? '',
-      necessidades: candidate.PortadorNec ?? '',
-      tipoNecessidade: candidate.TipoNecessidade ?? '',
-      transtornoFuncional: candidate.TranstornoFuncional ?? '',
+      nome: candidate.Nome ?? "",
+      numeroInscricao: candidate.CodIns != null ? String(candidate.CodIns) : "",
+      cpf: candidate.CPF ?? "",
+      dataNascimento: candidate.Nasc
+        ? new Date(candidate.Nasc).toISOString().split("T")[0]
+        : "",
+      sexo: candidate?.Sexo
+        ? candidate?.Sexo === "F"
+          ? "feminino"
+          : "masculino"
+        : "",
+      outraNecessidade: candidate.outraNecessidade ?? "",
+      cep: candidate.Cep ?? "",
+      endereco: candidate.Endereco ?? "",
+      cidade: candidate.Cidade ?? "",
+      uf: candidate.UF ?? "",
+      numero: candidate.Numero ?? "",
+      complemento: candidate.Complemento ?? "",
+      necessidades: candidate.PortadorNec ?? "",
+      tipoNecessidade: candidate.TipoNecessidade ?? "",
+      transtornoFuncional: candidate.TranstornoFuncional ?? "",
       transtornoTipos: candidate.TranstornoTipos ?? [],
-      atendimentoEspecial: candidate.AtendimentoEsp ?? '',
-      tipoAtendimento: candidate.TipoAtendimento ?? '',
-      tipoCota: candidate.CodCot1 ?? '',
-      necessitaCondicoes: candidate.NecessitaCondicoes ?? '',
-      tipoAtendimentoProva: candidate.TipoAtendimentoProva ?? '',
-      forcas: candidate.Forcas ?? '',
-      ramoForcas: candidate.RamoForcas ?? '',
-      dadosVaga: candidate.DadosVaga ?? '',
-      nomeResponsavel: candidate.Responsavel ?? '',
-      cpfResponsavel: candidate.CPFResp ?? '',
-      dataNascimentoResponsavel: candidate.NascResp ? new Date(candidate.NascResp).toISOString().split('T')[0] : '',
-      sexoResponsavel: candidate?.SexoResp ? (candidate?.SexoResp === "F" ? "feminino" : "masculino") : '',
-      cep_Resp: candidate.CepResp ?? '',
-      endereco_Resp: candidate.EnderecoResp ?? '',
-      cidade_Resp: candidate.CidadeResp ?? '',
-      uf_Resp: candidate.UFResp ?? '',
-      numero_Resp: candidate.NumeroResp ?? '',
-      complemento_Resp: candidate.ComplementoResp ?? '',
-      profissao: candidate.ProfissaoResp ?? '',
-      celular: candidate.TelResp ?? '',
-      parentesco: candidate.Parentesco ?? '',
-      emailResponsavel: candidate.EmailResp ?? '',
-      emailCandidato: candidate.Email ?? '',
-      fotoPreview: candidate.CaminhoFoto ?? '',
-      Seletivo: candidate.Seletivo ?? '',
-      isencao: candidate.isencao ?? '',
-      observacao: candidate.observacao ?? '',
+      atendimentoEspecial: candidate.AtendimentoEsp ?? "",
+      tipoAtendimento: candidate.TipoAtendimento ?? "",
+      tipoCota: candidate.CodCot1 ?? "",
+      necessitaCondicoes: candidate.NecessitaCondicoes ?? "",
+      tipoAtendimentoProva: candidate.TipoAtendimentoProva ?? "",
+      forcas: candidate.Forcas ?? "",
+      ramoForcas: candidate.RamoForcas ?? "",
+      dadosVaga: candidate.DadosVaga ?? "",
+      nomeResponsavel: candidate.Responsavel ?? "",
+      cpfResponsavel: candidate.CPFResp ?? "",
+      dataNascimentoResponsavel: candidate.NascResp
+        ? new Date(candidate.NascResp).toISOString().split("T")[0]
+        : "",
+      sexoResponsavel: candidate?.SexoResp
+        ? candidate?.SexoResp === "F"
+          ? "feminino"
+          : "masculino"
+        : "",
+      cep_Resp: candidate.CepResp ?? "",
+      endereco_Resp: candidate.EnderecoResp ?? "",
+      cidade_Resp: candidate.CidadeResp ?? "",
+      uf_Resp: candidate.UFResp ?? "",
+      numero_Resp: candidate.NumeroResp ?? "",
+      complemento_Resp: candidate.ComplementoResp ?? "",
+      profissao: candidate.ProfissaoResp ?? "",
+      celular: candidate.TelResp ?? "",
+      parentesco: candidate.Parentesco ?? "",
+      emailResponsavel: candidate.EmailResp ?? "",
+      emailCandidato: candidate.Email ?? "",
+      fotoPreview: candidate.CaminhoFoto ?? "",
+      Seletivo: candidate.Seletivo ?? "",
+      isencao: candidate.isencao ?? "",
+      observacao: candidate.observacao ?? "",
     });
   }
 
   const handleChange = (e: React.ChangeEvent<any>) => {
-    const { name, value, type, checked } = e.target
-    if (name === 'transtornoTipos') {
-      setFormData(prev => {
+    const { name, value, type, checked } = e.target;
+    if (name === "transtornoTipos") {
+      setFormData((prev) => {
         const list = prev.transtornoTipos.includes(value)
-          ? prev.transtornoTipos.filter(v => v !== value)
-          : [...prev.transtornoTipos, value]
-        return { ...prev, transtornoTipos: list }
-      })
+          ? prev.transtornoTipos.filter((v) => v !== value)
+          : [...prev.transtornoTipos, value];
+        return { ...prev, transtornoTipos: list };
+      });
     } else {
-      setFormData({ ...formData, [name]: value })
+      setFormData({ ...formData, [name]: value });
     }
-  }
+  };
 
   async function handleSalvar(e: React.FormEvent) {
     e.preventDefault();
-    setErro('');
+    setErro("");
 
     if (!motivoAlteracao.trim()) {
-      toast.error('Informe o motivo da alteração.')
-      setErro('Informe o motivo da alteração.');
-      return;
-    }
-    
-    if (!formData) {
-      toast.error('Nenhum candidato selecionado para salvar.')
-      setErro('Nenhum candidato selecionado para salvar.');
+      toast.error("Informe o motivo da alteração.");
+      setErro("Informe o motivo da alteração.");
       return;
     }
 
-     const payload = {
-        CodIns: Number(formData.numeroInscricao),
-        Nome: formData.nome,
-        CPF: formData.cpf,
-        Nasc: formData.dataNascimento || null,
-        Sexo: formData.sexo || null,
-        Cep: formData.cep || null,
-        Endereco: formData.endereco || null,
-        Complemento: formData.complemento || null,
-        Bairro: null,
-        Cidade: formData.cidade || null,
-        UF: formData.uf || null,
-        CodCot1: formData?.tipoCota || null,
-        CodCot2: null,
-        CodCot3: null,
-        CodCot4: null,
-        CodCot5: null,
-        CodCot6: null,
-        CodCot7: null,
-        CodCot8: null,
-        CodCot9: null,
-        CodCot10: null,
-        PortadorNec: formData.necessidades || null,
-        AtendimentoEsp: formData.atendimentoEspecial || null,
-        Responsavel: formData.nomeResponsavel || null,
-        CPFResp: formData.cpfResponsavel || null,
-        NascResp: formData.dataNascimentoResponsavel || null,
-        SexoResp: formData.sexoResponsavel || null,
-        CepResp: formData.cep_Resp || null,
-        EnderecoResp: formData.endereco_Resp || null,
-        ComplementoResp: formData.complemento_Resp || null,
-        BairroResp: null,
-        CidadeResp: formData.cidade_Resp || null,
-        UFResp: formData.uf_Resp || null,
-        ProfissaoResp: formData.profissao || null,
-        EmailResp: formData.emailResponsavel || null,
-        TelResp: formData.celular || null,
-        Parentesco: formData.parentesco || null,
-        Email: formData.emailCandidato || null,
-        CaminhoFoto: formData.fotoPreview || null,
-        Seletivo: formData.Seletivo,
-        isencao:  formData.isencao,
-        observacao:  formData.observacao,
-  
-        // Campos nulos:
-        DataCad: null, // backend
-        HoraCad: null, // backend
-        RegistroGRU: null,
-        GRUData: null,
-        GRUValor: null,
-        GRUHora: null,
-        CodSala: null,
-        DataEnsalamento: null,
-        HoraEnsalamento: null,
-        CodUsuEnsalamento: null,
-        Status: null,
-        CaminhoResposta: null,
-        CaminhoRedacao: null,
-        RevisaoGabarito: null,
-        DataImportacao: null,
-        HoraImportacao: null,
-        CodUsuImportacao: null,
-        NotaMatematica: null,
-        NotaPortugues: null,
-        NotaRedacao: null,
-        DataRevisao: null,
-        CodUsuRev: null,
-      };
+    if (!formData) {
+      toast.error("Nenhum candidato selecionado para salvar.");
+      setErro("Nenhum candidato selecionado para salvar.");
+      return;
+    }
+
+    const payload = {
+      CodIns: Number(formData.numeroInscricao),
+      Nome: formData.nome,
+      CPF: formData.cpf,
+      Nasc: formData.dataNascimento || null,
+      Sexo: formData.sexo || null,
+      Cep: formData.cep || null,
+      Endereco: formData.endereco || null,
+      Complemento: formData.complemento || null,
+      Bairro: null,
+      Cidade: formData.cidade || null,
+      UF: formData.uf || null,
+      CodCot1: formData?.tipoCota || null,
+      CodCot2: null,
+      CodCot3: null,
+      CodCot4: null,
+      CodCot5: null,
+      CodCot6: null,
+      CodCot7: null,
+      CodCot8: null,
+      CodCot9: null,
+      CodCot10: null,
+      PortadorNec: formData.necessidades || null,
+      AtendimentoEsp: formData.atendimentoEspecial || null,
+      Responsavel: formData.nomeResponsavel || null,
+      CPFResp: formData.cpfResponsavel || null,
+      NascResp: formData.dataNascimentoResponsavel || null,
+      SexoResp: formData.sexoResponsavel || null,
+      CepResp: formData.cep_Resp || null,
+      EnderecoResp: formData.endereco_Resp || null,
+      ComplementoResp: formData.complemento_Resp || null,
+      BairroResp: null,
+      CidadeResp: formData.cidade_Resp || null,
+      UFResp: formData.uf_Resp || null,
+      ProfissaoResp: formData.profissao || null,
+      EmailResp: formData.emailResponsavel || null,
+      TelResp: formData.celular || null,
+      Parentesco: formData.parentesco || null,
+      Email: formData.emailCandidato || null,
+      CaminhoFoto: formData.fotoPreview || null,
+      Seletivo: formData.Seletivo,
+      isencao:
+        formData.transtornoFuncional === "X" || formData.necessidades === "X"
+          ? "Pendente"
+          : formData.isencao,
+      observacao: formData.observacao,
+
+      // Campos nulos:
+      DataCad: null, // backend
+      HoraCad: null, // backend
+      RegistroGRU: null,
+      GRUData: null,
+      GRUValor: null,
+      GRUHora: null,
+      CodSala: null,
+      DataEnsalamento: null,
+      HoraEnsalamento: null,
+      CodUsuEnsalamento: null,
+      Status: null,
+      CaminhoResposta: null,
+      CaminhoRedacao: null,
+      RevisaoGabarito: null,
+      DataImportacao: null,
+      HoraImportacao: null,
+      CodUsuImportacao: null,
+      NotaMatematica: null,
+      NotaPortugues: null,
+      NotaRedacao: null,
+      DataRevisao: null,
+      CodUsuRev: null,
+    };
 
     try {
       setLoading(true);
@@ -250,16 +277,16 @@ export default function AdminEditarCandidato() {
         motivoAlteracao,
       });
 
-      toast.success('Alterações salvas com sucesso!');
+      toast.success("Alterações salvas com sucesso!");
       setEditando(false);
-      setMotivoAlteracao('');
+      setMotivoAlteracao("");
     } catch (err: any) {
       // err.response.data ou err.message, conforme sua API
       const msg =
         err.response?.data?.message ||
         err.response?.statusText ||
         err.message ||
-        'Erro desconhecido';
+        "Erro desconhecido";
       toast.error(msg);
       // setErro('Erro ao salvar: ' + msg);
     } finally {
@@ -267,66 +294,79 @@ export default function AdminEditarCandidato() {
     }
   }
 
-
   const einCpfMask = (value: string) => {
     let cleaned = value.replace(/\D/g, "");
 
     if (cleaned.length <= 3) return cleaned;
-    if (cleaned.length <= 6) return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
-    if (cleaned.length <= 9) return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6)}`;
-    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9, 11)}`;
+    if (cleaned.length <= 6)
+      return `${cleaned.slice(0, 3)}.${cleaned.slice(3)}`;
+    if (cleaned.length <= 9)
+      return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(
+        6
+      )}`;
+    return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(
+      6,
+      9
+    )}-${cleaned.slice(9, 11)}`;
   };
 
   const phoneMask = (value: string) => {
     let cleaned = value.replace(/\D/g, "");
-    
+
     if (cleaned.length === 0) return "";
     if (cleaned.length <= 2) return cleaned;
-    if (cleaned.length <= 6) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
-    if (cleaned.length <= 10) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
-    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7, 11)}`;
+    if (cleaned.length <= 6)
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+    if (cleaned.length <= 10)
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(
+        6
+      )}`;
+    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(
+      7,
+      11
+    )}`;
   };
 
-   const cepMask = (value: string) => {
+  const cepMask = (value: string) => {
     let cleaned = value.replace(/\D/g, "");
 
     if (cleaned.length <= 5) return cleaned;
-    return `${cleaned.slice(0, 5)}-${cleaned.slice(5, 8)}`; 
-   };
+    return `${cleaned.slice(0, 5)}-${cleaned.slice(5, 8)}`;
+  };
 
-   const fetchAddress = async (cep: string, resp = false) => {
-    const num = cep.replace(/\D/g, '')
-    if (num.length !== 8) return
+  const fetchAddress = async (cep: string, resp = false) => {
+    const num = cep.replace(/\D/g, "");
+    if (num.length !== 8) return;
     try {
-      const res = await fetch(`https://viacep.com.br/ws/${num}/json/`)
-      const data = await res.json()
+      const res = await fetch(`https://viacep.com.br/ws/${num}/json/`);
+      const data = await res.json();
       if (!data.erro) {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           ...(resp
             ? {
-              cep_Resp: num,
-              endereco_Resp: data.logradouro || '',
-              complemento_Resp: data.complemento || '',
-              cidade_Resp: data.localidade || '',
-              uf_Resp: data.uf || ''
-            }
+                cep_Resp: num,
+                endereco_Resp: data.logradouro || "",
+                complemento_Resp: data.complemento || "",
+                cidade_Resp: data.localidade || "",
+                uf_Resp: data.uf || "",
+              }
             : {
-              cep: num,
-              endereco: data.logradouro || '',
-              complemento: data.complemento || '',
-              cidade: data.localidade || '',
-              uf: data.uf || ''
-            })
-        }))
+                cep: num,
+                endereco: data.logradouro || "",
+                complemento: data.complemento || "",
+                cidade: data.localidade || "",
+                uf: data.uf || "",
+              }),
+        }));
       }
-    } catch { }
-  }
+    } catch {}
+  };
 
   const baseInput = `
     w-full bg-white text-gray-900 border border-blue-300 rounded px-3 py-2 text-sm
     focus:outline-none focus:ring focus:ring-blue-100 focus:border-blue-600
-  `
+  `;
 
   return (
     <div className="flex flex-col min-h-fu bg-gray-100">
@@ -342,11 +382,16 @@ export default function AdminEditarCandidato() {
 
         {/* Conteúdo principal: ocupa restante do espaço, scroll vertical */}
         <main className="flex-1 overflow-auto p-6 max-w-4xl mx-auto w-full">
-          <h1 className="text-3xl font-bold mb-6 text-blue-800">Editar Candidato</h1>
+          <h1 className="text-3xl font-bold mb-6 text-blue-800">
+            Editar Candidato
+          </h1>
 
           {/* Campo de busca */}
           <div className="mb-8">
-            <label htmlFor="busca" className="block font-semibold text-blue-700 mb-2">
+            <label
+              htmlFor="busca"
+              className="block font-semibold text-blue-700 mb-2"
+            >
               Buscar por nome, CPF ou número da inscrição:
             </label>
             <div className="flex flex-col sm:flex-row gap-3">
@@ -354,10 +399,10 @@ export default function AdminEditarCandidato() {
                 id="busca"
                 type="text"
                 value={busca}
-                onChange={e => setBusca(e.target.value)}
+                onChange={(e) => setBusca(e.target.value)}
                 className="flex-grow border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
                 placeholder="Digite para buscar..."
-                onKeyDown={e => e.key === 'Enter' && handleBuscar()}
+                onKeyDown={(e) => e.key === "Enter" && handleBuscar()}
                 disabled={loading}
               />
               <button
@@ -365,7 +410,7 @@ export default function AdminEditarCandidato() {
                 disabled={loading}
                 className="bg-blue-800 text-white px-5 py-2 rounded hover:bg-blue-900 disabled:opacity-50 transition"
               >
-                {loading ? 'Buscando...' : 'Buscar'}
+                {loading ? "Buscando..." : "Buscar"}
               </button>
             </div>
             {erro && <p className="text-red-600 mt-2 font-medium">{erro}</p>}
@@ -379,52 +424,91 @@ export default function AdminEditarCandidato() {
             >
               {/* Número da inscrição - somente leitura */}
               <div className="grid grid-cols-12 gap-4 items-end">
-                <div className="col-span-12 md:col-span-2">
-                  <label className="text-blue-800 font-medium mb-1 block">Foto</label>
-                  <div className="w-24 h-24 border-2 border-dashed border-blue-300 rounded-md relative">
-                    <Image src="/api/candidato/foto" fill alt='Foto do candidato' className="w-full h-full object-cover" unoptimized/>
-                  </div>
-                </div>
-                <div className="col-span-12 md:col-span-4">
-                  <label className="text-blue-800 font-medium mb-1 block">Nome do Candidato</label>
-                  <input name="nome" value={formData?.nome} onChange={handleChange} required className={baseInput}  />
+                <div className="col-span-12 md:col-span-6">
+                  <label className="text-blue-800 font-medium mb-1 block">
+                    Nome do Candidato
+                  </label>
+                  <input
+                    name="nome"
+                    value={formData?.nome}
+                    onChange={handleChange}
+                    required
+                    className={baseInput}
+                  />
                 </div>
                 <div className="col-span-12 md:col-span-3">
-                    <label className="block text-blue-800 font-medium mb-1">Vaga</label>
-                    <select
-                      name="Seletivo"
-                      value={formData?.Seletivo}
-                      onChange={handleChange}
-                      required
-                      className={`${baseInput}`}
-                    >
-                      <option value="">Selecione a vaga</option>
-                      <option value="6° ano">6° ano</option>
-                      <option value="1° ano">1° ano</option>
-                    </select>
-                  </div>
+                  <label className="block text-blue-800 font-medium mb-1">
+                    Vaga
+                  </label>
+                  <select
+                    name="Seletivo"
+                    value={formData?.Seletivo}
+                    onChange={handleChange}
+                    required
+                    className={`${baseInput}`}
+                  >
+                    <option value="">Selecione a vaga</option>
+                    <option value="6° ano">6° ano</option>
+                    <option value="1° ano">1° ano</option>
+                  </select>
+                </div>
                 <div className="col-span-12 md:col-span-3">
-                  <label className="text-blue-800 font-medium mb-1 block">Nº Inscrição</label>
-                  <input name="numeroInscricao" value={formData?.numeroInscricao} onChange={handleChange} className={baseInput} readOnly disabled/>
+                  <label className="text-blue-800 font-medium mb-1 block">
+                    Nº Inscrição
+                  </label>
+                  <input
+                    name="numeroInscricao"
+                    value={formData?.numeroInscricao}
+                    onChange={handleChange}
+                    className={baseInput}
+                    readOnly
+                    disabled
+                  />
                 </div>
               </div>
 
               {/* DADOS DO CANDIDATO */}
               <div className="space-y-4">
-                <h3 className="text-blue-800 font-semibold border-b border-blue-200 pb-2">Dados do Candidato</h3>
+                <h3 className="text-blue-800 font-semibold border-b border-blue-200 pb-2">
+                  Dados do Candidato
+                </h3>
                 <div className="grid grid-cols-12 gap-4">
                   {/* Linha 1 */}
                   <div className="col-span-12 md:col-span-4">
-                    <label className="block text-blue-800 font-medium mb-1">CPF</label>
-                    <input maxLength={14} value={einCpfMask(formData?.cpf || "")} name="cpf" onChange={handleChange} required className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      CPF
+                    </label>
+                    <input
+                      maxLength={14}
+                      value={einCpfMask(formData?.cpf || "")}
+                      name="cpf"
+                      onChange={handleChange}
+                      required
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-4">
-                    <label className="block text-blue-800 font-medium mb-1">Data de Nasc.</label>
-                    <input type="date" name="dataNascimento" value={formData?.dataNascimento} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Data de Nasc.
+                    </label>
+                    <input
+                      type="date"
+                      name="dataNascimento"
+                      value={formData?.dataNascimento}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-4">
-                    <label className="block text-blue-800 font-medium mb-1">Sexo</label>
-                    <select name="sexo" value={formData?.sexo} onChange={handleChange} className={baseInput}>
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Sexo
+                    </label>
+                    <select
+                      name="sexo"
+                      value={formData?.sexo}
+                      onChange={handleChange}
+                      className={baseInput}
+                    >
                       <option value="">Selecione</option>
                       <option value="masculino">Masculino</option>
                       <option value="feminino">Feminino</option>
@@ -432,11 +516,21 @@ export default function AdminEditarCandidato() {
                   </div>
                   {/* Linha 2 */}
                   <div className="col-span-12 md:col-span-3">
-                    <label className="block text-blue-800 font-medium mb-1">CEP</label>
-                    <input name="cep" value={cepMask(formData?.cep)} onChange={handleChange} onBlur={() => fetchAddress(formData?.cep)} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      CEP
+                    </label>
+                    <input
+                      name="cep"
+                      value={cepMask(formData?.cep)}
+                      onChange={handleChange}
+                      onBlur={() => fetchAddress(formData?.cep)}
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-3">
-                    <label className="block text-blue-800 font-medium mb-1">UF</label>
+                    <label className="block text-blue-800 font-medium mb-1">
+                      UF
+                    </label>
                     <select
                       name="uf"
                       value={formData?.uf}
@@ -475,21 +569,50 @@ export default function AdminEditarCandidato() {
                     </select>
                   </div>
                   <div className="col-span-12 md:col-span-6">
-                    <label className="block text-blue-800 font-medium mb-1">Cidade</label>
-                    <input name="cidade" value={formData?.cidade} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Cidade
+                    </label>
+                    <input
+                      name="cidade"
+                      value={formData?.cidade}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                   {/* Linha 3 */}
                   <div className="col-span-12 md:col-span-8">
-                    <label className="block text-blue-800 font-medium mb-1">Endereço</label>
-                    <input name="endereco" value={formData?.endereco} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Endereço
+                    </label>
+                    <input
+                      name="endereco"
+                      value={formData?.endereco}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-6 md:col-span-2">
-                    <label className="block text-blue-800 font-medium mb-1">Número</label>
-                    <input name="numero" value={formData?.numero} onChange={handleChange} className={baseInput} maxLength={6} />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Número
+                    </label>
+                    <input
+                      name="numero"
+                      value={formData?.numero}
+                      onChange={handleChange}
+                      className={baseInput}
+                      maxLength={6}
+                    />
                   </div>
                   <div className="col-span-6 md:col-span-2">
-                    <label className="block text-blue-800 font-medium mb-1">Complemento</label>
-                    <input name="complemento" value={formData?.complemento} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Complemento
+                    </label>
+                    <input
+                      name="complemento"
+                      value={formData?.complemento}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                 </div>
               </div>
@@ -499,13 +622,26 @@ export default function AdminEditarCandidato() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Necessidades */}
                   <div>
-                    <label className="text-blue-800 font-medium mb-1 block">Necessidades Especiais?</label>
-                    <select name="necessidades" value={formData?.necessidades} onChange={handleChange} className={baseInput}>
+                    <label className="text-blue-800 font-medium mb-1 block">
+                      Necessidades Especiais (PcD)?
+                    </label>
+                    <select
+                      name="necessidades"
+                      value={formData?.necessidades}
+                      onChange={handleChange}
+                      className={baseInput}
+                    >
                       <option value="">Não</option>
                       <option value="X">Sim</option>
                     </select>
-                    {formData?.necessidades === 'X' && (
-                      <select name="tipoNecessidade" value={formData?.tipoNecessidade} onChange={handleChange} required className={`${baseInput} mt-2`}>
+                    {formData?.necessidades === "X" && (
+                      <select
+                        name="tipoNecessidade"
+                        value={formData?.tipoNecessidade}
+                        onChange={handleChange}
+                        required
+                        className={`${baseInput} mt-2`}
+                      >
                         <option value="">Tipo de Necessidade</option>
                         <option value="visual">Visual</option>
                         <option value="auditiva">Auditiva</option>
@@ -514,19 +650,47 @@ export default function AdminEditarCandidato() {
                         <option value="outra">Outra</option>
                       </select>
                     )}
+                    {formData.tipoNecessidade === "outra" && (
+                      <input
+                        type="text"
+                        name="outraNecessidade"
+                        value={formData.outraNecessidade || ""}
+                        onChange={handleChange}
+                        placeholder="Descreva a outra necessidade"
+                        className={`${baseInput} mt-2`}
+                        required
+                      />
+                    )}
                   </div>
 
                   {/* Transtorno Funcional */}
                   <div>
-                    <label className="text-blue-800 font-medium mb-1 block">Transtorno Funcional?</label>
-                    <select name="transtornoFuncional" value={formData?.transtornoFuncional} onChange={handleChange} className={baseInput}>
+                    <label className="text-blue-800 font-medium mb-1 block">
+                      Transtorno Funcional?
+                    </label>
+                    <select
+                      name="transtornoFuncional"
+                      value={formData?.transtornoFuncional}
+                      onChange={handleChange}
+                      className={baseInput}
+                    >
                       <option value="">Não</option>
                       <option value="X">Sim</option>
                     </select>
-                    {formData?.transtornoFuncional === 'X' && (
+                    {formData?.transtornoFuncional === "X" && (
                       <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
-                        {['TDA', 'TDAH', 'TOD', 'DISLEXIA', 'DISCALCULIA', 'OUTROS'].map(tipo => (
-                          <label key={tipo} className="inline-flex items-center">
+                        {[
+                          "TDA",
+                          "TDAH",
+                          "TOD",
+                          "DISLEXIA",
+                          "DISCALCULIA",
+                          "OUTROS",
+                        ].map((tipo) => (
+                          <label
+                            key={tipo}
+                            className="inline-flex items-center"
+                          >
                             <input
                               type="checkbox"
                               name="transtornoTipos"
@@ -542,14 +706,27 @@ export default function AdminEditarCandidato() {
                   </div>
 
                   {/* Atendimento Especial */}
-                  <div>
-                    <label className="text-blue-800 font-medium mb-1 block">Atendimento Especial?</label>
-                    <select name="atendimentoEspecial" value={formData?.atendimentoEspecial} onChange={handleChange} className={baseInput}>
+                  {/* <div>
+                    <label className="text-blue-800 font-medium mb-1 block">
+                      Atendimento Especial?
+                    </label>
+                    <select
+                      name="atendimentoEspecial"
+                      value={formData?.atendimentoEspecial}
+                      onChange={handleChange}
+                      className={baseInput}
+                    >
                       <option value="">Não</option>
                       <option value="X">Sim</option>
                     </select>
-                    {formData?.atendimentoEspecial === 'X' && (
-                      <select name="tipoAtendimento" value={formData?.tipoAtendimento} onChange={handleChange} required className={`${baseInput} mt-2`}>
+                    {formData?.atendimentoEspecial === "X" && (
+                      <select
+                        name="tipoAtendimento"
+                        value={formData?.tipoAtendimento}
+                        onChange={handleChange}
+                        required
+                        className={`${baseInput} mt-2`}
+                      >
                         <option value="">Tipo de Atendimento</option>
                         <option value="leitura">Leitura em voz alta</option>
                         <option value="tempo-extra">Tempo extra</option>
@@ -558,51 +735,66 @@ export default function AdminEditarCandidato() {
                         <option value="outro">Outro</option>
                       </select>
                     )}
-                  </div>
+                  </div> */}
 
                   {/* Tipo de Cota */}
-                  <div>
-                    <label className="text-blue-800 font-medium mb-1 block">Tipo de Cota</label>
+                  {/* <div>
+                    <label className="text-blue-800 font-medium mb-1 block">
+                      Tipo de Cota
+                    </label>
                     <select
                       name="tipoCota"
                       value={formData?.tipoCota}
                       onChange={handleChange}
                       disabled={!podeEditarExtras}
-                      className={`${baseInput} ${!podeEditarExtras ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                      className={`${baseInput} ${
+                        !podeEditarExtras
+                          ? "bg-gray-100 cursor-not-allowed"
+                          : ""
+                      }`}
                     >
                       <option value="">Selecione</option>
 
                       {cotas
-                        ?.filter((cota: any) => cota.Status === 'Ativo')
+                        ?.filter((cota: any) => cota.Status === "Ativo")
                         .map((cota: any) => (
                           <option key={cota.id} value={cota.id}>
                             {cota.Descricao}
                           </option>
-                      ))}
+                        ))}
                     </select>
-                  </div>
+                  </div> */}
 
                   {/* Condições na Prova */}
                   <div>
-                    <label className="text-blue-800 font-medium mb-1 block">Condições Especiais na Prova?</label>
+                    <label className="text-blue-800 font-medium mb-1 block text-sm">
+                      Condições Específicas no Dia da Prova?
+                    </label>
                     <select
                       name="necessitaCondicoes"
                       value={formData?.necessitaCondicoes}
                       onChange={handleChange}
                       disabled={!podeEditarExtras}
-                      className={`${baseInput} ${!podeEditarExtras ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                      className={`${baseInput} ${
+                        !podeEditarExtras
+                          ? "bg-gray-100 cursor-not-allowed"
+                          : ""
+                      }`}
                     >
                       <option value="">Selecione</option>
                       <option value="">Não</option>
                       <option value="X">Sim</option>
                     </select>
-                    {formData?.necessitaCondicoes === 'X' && (
-                      <select name="tipoAtendimentoProva" value={formData?.tipoAtendimentoProva} onChange={handleChange} required className={`${baseInput} mt-2`}>
-                        <option value="">Tipo de Condição</option>
-                        <option value="tempoExtra">Tempo Extra</option>
-                        <option value="localAcessivel">Local Acessível</option>
-                        <option value="acompanhante">Acompanhante</option>  
-                      </select>
+                    {formData?.necessitaCondicoes === "X" && (
+                      <input
+                        type="text"
+                        name="tipoAtendimentoProva"
+                        value={formData.tipoAtendimentoProva}
+                        onChange={handleChange}
+                        required
+                        className={`${baseInput} mt-2`}
+                        placeholder="Descreva a condição necessária"
+                      />
                     )}
                   </div>
                 </div>
@@ -625,40 +817,89 @@ export default function AdminEditarCandidato() {
 
               {/* DADOS DO RESPONSÁVEL */}
               <div className="space-y-4">
-                <h3 className="text-blue-800 font-semibold border-b border-blue-200 pb-2">Dados do Responsável</h3>
+                <h3 className="text-blue-800 font-semibold border-b border-blue-200 pb-2">
+                  Dados do Responsável
+                </h3>
                 <div className="grid grid-cols-12 gap-4">
                   <div className="col-span-12 md:col-span-6">
-                    <label className="block text-blue-800 font-medium mb-1">Nome</label>
-                    <input name="nomeResponsavel" value={formData?.nomeResponsavel} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Nome
+                    </label>
+                    <input
+                      name="nomeResponsavel"
+                      value={formData?.nomeResponsavel}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-6">
-                    <label className="block text-blue-800 font-medium mb-1">CPF</label>
-                    <input maxLength={14} name="cpfResponsavel" value={einCpfMask(formData?.cpfResponsavel || "")} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      CPF
+                    </label>
+                    <input
+                      maxLength={14}
+                      name="cpfResponsavel"
+                      value={einCpfMask(formData?.cpfResponsavel || "")}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-4">
-                    <label className="block text-blue-800 font-medium mb-1">Data de Nasc.</label>
-                    <input type="date" name="dataNascimentoResponsavel" value={formData?.dataNascimentoResponsavel} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Data de Nasc.
+                    </label>
+                    <input
+                      type="date"
+                      name="dataNascimentoResponsavel"
+                      value={formData?.dataNascimentoResponsavel}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-4">
-                    <label className="block text-blue-800 font-medium mb-1">Sexo</label>
-                    <select name="sexoResponsavel" value={formData?.sexoResponsavel} onChange={handleChange} className={baseInput}>
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Sexo
+                    </label>
+                    <select
+                      name="sexoResponsavel"
+                      value={formData?.sexoResponsavel}
+                      onChange={handleChange}
+                      className={baseInput}
+                    >
                       <option value="">Selecione</option>
                       <option value="masculino">Masculino</option>
                       <option value="feminino">Feminino</option>
                     </select>
                   </div>
                   <div className="col-span-12 md:col-span-4">
-                    <label className="block text-blue-800 font-medium mb-1">Profissão</label>
-                    <input name="profissao" value={formData?.profissao} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Profissão
+                    </label>
+                    <input
+                      name="profissao"
+                      value={formData?.profissao}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
 
                   {/* Endereço Responsável */}
                   <div className="col-span-12 md:col-span-3">
-                    <label className="block text-blue-800 font-medium mb-1">CEP</label>
-                    <input name="cep_Resp" value={formData?.cep_Resp} onChange={handleChange} onBlur={() => fetchAddress(formData?.cep_Resp, true)} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      CEP
+                    </label>
+                    <input
+                      name="cep_Resp"
+                      value={formData?.cep_Resp}
+                      onChange={handleChange}
+                      onBlur={() => fetchAddress(formData?.cep_Resp, true)}
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-3">
-                    <label className="block text-blue-800 font-medium mb-1">UF</label>
+                    <label className="block text-blue-800 font-medium mb-1">
+                      UF
+                    </label>
                     <select
                       name="uf_Resp"
                       value={formData?.uf_Resp}
@@ -697,29 +938,73 @@ export default function AdminEditarCandidato() {
                     </select>
                   </div>
                   <div className="col-span-12 md:col-span-6">
-                    <label className="block text-blue-800 font-medium mb-1">Cidade</label>
-                    <input name="cidade_Resp" value={formData?.cidade_Resp} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Cidade
+                    </label>
+                    <input
+                      name="cidade_Resp"
+                      value={formData?.cidade_Resp}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-8">
-                    <label className="block text-blue-800 font-medium mb-1">Endereço</label>
-                    <input name="endereco_Resp" value={formData?.endereco_Resp} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Endereço
+                    </label>
+                    <input
+                      name="endereco_Resp"
+                      value={formData?.endereco_Resp}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-6 md:col-span-2">
-                    <label className="block text-blue-800 font-medium mb-1">Número</label>
-                    <input name="numero_Resp" value={formData?.numero_Resp} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Número
+                    </label>
+                    <input
+                      name="numero_Resp"
+                      value={formData?.numero_Resp}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-6 md:col-span-2">
-                    <label className="block text-blue-800 font-medium mb-1">Complemento</label>
-                    <input name="complemento_Resp" value={formData?.complemento_Resp} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Complemento
+                    </label>
+                    <input
+                      name="complemento_Resp"
+                      value={formData?.complemento_Resp}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
 
                   <div className="col-span-12 md:col-span-4">
-                    <label className="block text-blue-800 font-medium mb-1">Celular</label>
-                    <input type="tel" name="celular"  placeholder="(99) 99999-9999" value={phoneMask(formData?.celular)} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Celular
+                    </label>
+                    <input
+                      type="tel"
+                      name="celular"
+                      placeholder="(99) 99999-9999"
+                      value={phoneMask(formData?.celular)}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-4">
-                    <label className="block text-blue-800 font-medium mb-1">Parentesco</label>
-                    <select name="parentesco" value={formData?.parentesco} onChange={handleChange} className={baseInput}>
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Parentesco
+                    </label>
+                    <select
+                      name="parentesco"
+                      value={formData?.parentesco}
+                      onChange={handleChange}
+                      className={baseInput}
+                    >
                       <option value="">Selecione</option>
                       <option value="pai">Pai</option>
                       <option value="mãe">Mãe</option>
@@ -728,13 +1013,26 @@ export default function AdminEditarCandidato() {
                   </div>
                   {/* Forças Armadas */}
                   <div className="col-span-12 md:col-span-4">
-                    <label className="text-blue-800 font-medium mb-1 block">Forças Armadas?</label>
-                    <select name="forcas" value={formData?.forcas} onChange={handleChange} className={baseInput} >
+                    <label className="text-blue-800 font-medium mb-1 block">
+                      Forças Armadas?
+                    </label>
+                    <select
+                      name="forcas"
+                      value={formData?.forcas}
+                      onChange={handleChange}
+                      className={baseInput}
+                    >
                       <option value="">Não</option>
                       <option value="X">Sim</option>
                     </select>
-                    {formData?.forcas === 'X' && (
-                      <select name="ramoForcas" value={formData?.ramoForcas} onChange={handleChange} required className={`${baseInput} mt-2`}>
+                    {formData?.forcas === "X" && (
+                      <select
+                        name="ramoForcas"
+                        value={formData?.ramoForcas}
+                        onChange={handleChange}
+                        required
+                        className={`${baseInput} mt-2`}
+                      >
                         <option value="">Ramo das Forças</option>
                         <option value="exercito">Exército</option>
                         <option value="marinha">Marinha</option>
@@ -743,27 +1041,53 @@ export default function AdminEditarCandidato() {
                     )}
                   </div>
 
-
                   <div className="col-span-12 md:col-span-4">
-                    <label className="block text-blue-800 font-medium mb-1">Email Responsavel</label>
-                    <input type="email" name="emailResponsavel" value={formData?.emailResponsavel} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Email Responsavel
+                    </label>
+                    <input
+                      type="email"
+                      name="emailResponsavel"
+                      value={formData?.emailResponsavel}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-4">
-                    <label className="block text-blue-800 font-medium mb-1">Email Candidato</label>
-                    <input type="email" name="emailCandidato" value={formData?.emailCandidato} onChange={handleChange} className={baseInput}  />
+                    <label className="block text-blue-800 font-medium mb-1">
+                      Email Candidato
+                    </label>
+                    <input
+                      type="email"
+                      name="emailCandidato"
+                      value={formData?.emailCandidato}
+                      onChange={handleChange}
+                      className={baseInput}
+                    />
                   </div>
                 </div>
               </div>
 
               {/* BOTÃO */}
               <div className="text-center flex flex-col gap-2 w-full">
-                 <div className="col-span-12 md:col-span-4">
-                    <label className="block text-blue-800 font-medium mb-1">Motivo da alteração</label>
-                    <input type="text" value={motivoAlteracao} onChange={(e: any) => setMotivoAlteracao(e.target.value)} className={baseInput}  />
-                  </div>
-                <button disabled={loading} type="submit" className="bg-blue-800 hover:bg-blue-900 text-white font-semibold py-3 px-8 rounded">
-                  {loading ? <LoadingIcon /> :"Atualizar"}
-                </button>               
+                <div className="col-span-12 md:col-span-4">
+                  <label className="block text-blue-800 font-medium mb-1">
+                    Motivo da alteração
+                  </label>
+                  <input
+                    type="text"
+                    value={motivoAlteracao}
+                    onChange={(e: any) => setMotivoAlteracao(e.target.value)}
+                    className={baseInput}
+                  />
+                </div>
+                <button
+                  disabled={loading}
+                  type="submit"
+                  className="bg-blue-800 hover:bg-blue-900 text-white font-semibold py-3 px-8 rounded"
+                >
+                  {loading ? <LoadingIcon /> : "Atualizar"}
+                </button>
               </div>
             </form>
           )}
@@ -773,5 +1097,5 @@ export default function AdminEditarCandidato() {
       {/* Footer fixo no final */}
       <Footer />
     </div>
-  )
+  );
 }

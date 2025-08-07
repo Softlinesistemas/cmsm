@@ -23,11 +23,15 @@ export async function middleware(request: NextRequest) {
     "/formulario",
   ];
 
-  if (!token?.cpf && protectedPaths.includes(request.nextUrl.pathname)) {
+  if (
+    !token?.cpf &&
+    protectedPaths.includes(request.nextUrl.pathname) &&
+    process.env.NEXT_PUBLIC_PREVIEW_ENV !== "homologacao"
+  ) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (token?.cpf) {
+  if (token?.cpf && process.env.NEXT_PUBLIC_PREVIEW_ENV !== "homologacao") {
     const candidatoUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}api/candidato/${token.cpf}`;
 
     try {

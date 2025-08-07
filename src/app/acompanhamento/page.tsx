@@ -101,6 +101,7 @@ export default function Formulario() {
         complemento: candidato.Complemento || "",
         necessidades: candidato.PortadorNec || "",
         tipoNecessidade: "",
+        outraNecessidade: "",
         transtornoFuncional: "",
         transtornoTipos: [],
         atendimentoEspecial: candidato.AtendimentoEsp || "",
